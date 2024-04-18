@@ -40,4 +40,4 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 - Read More
 - Don't forget to test
-- You are good to go..
+- You are good to go.
