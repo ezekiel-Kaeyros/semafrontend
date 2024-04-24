@@ -34,9 +34,9 @@ const FourthStep: React.FC<{
 
       <div className="flex items-center justify-center mt-14">
         <Button
-          disabled={load || loading || error>0  ? true : false}
-                  onClick={async () => {
-              setLoading(true)
+          disabled={load || loading || error > 0 ? true : false}
+          onClick={async () => {
+            setLoading(true);
             const response = await registered({
               company_nane: name,
               app_id: '2448667798617426',
@@ -48,16 +48,14 @@ const FourthStep: React.FC<{
                 'EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
             });
             console.log(response);
-            setLoading(false)
+            setLoading(false);
             if (response == 200) {
               window.location.href = 'dashboard/bulk-messages';
             }
-
-            
           }}
-          className={`flex justify-center items-center rounded-3xl text-white bg-[#2196F3] text-lg px-5 py-2  ${load || error > 0 ||loading ? 'opacity-40' : 'opacity-100 gap-5'}`}
+          className={`flex justify-center items-center rounded-3xl text-white bg-[#2196F3] text-lg px-5 py-2  ${load || error > 0 || loading ? 'opacity-40' : 'opacity-100 gap-5'}`}
         >
-          <span>{load ? 'loading.....' : 'Go to Login'}</span>
+          <span>{load || loading ? 'loading.....' : 'Go to Login'}</span>
           {!load && <Image src={img3} alt="" />}
         </Button>
       </div>

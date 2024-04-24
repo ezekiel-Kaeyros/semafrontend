@@ -1,5 +1,5 @@
 import React from 'react';
-import { RevenueCardProps } from './revenueCard';
+import { RevenueCardProps } from './revenueCard.d';
 
 const RevenueCard: React.FC<RevenueCardProps> = ({
   content,

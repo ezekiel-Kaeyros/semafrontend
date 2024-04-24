@@ -7,7 +7,7 @@ import {
   Modal,
 } from '@nextui-org/react';
 import React from 'react';
-import { ModalPropsType } from './modal';
+import { ModalPropsType } from './modal.d';
 import { Button } from '../button/Button';
 
 const CustomModal: React.FC<ModalPropsType & ModalProps> = ({
@@ -28,7 +28,6 @@ const CustomModal: React.FC<ModalPropsType & ModalProps> = ({
       backdrop="blur"
       isOpen={isOpen}
       onClose={onClose}
-     
     >
       <ModalContent>
         {(onClose) => (

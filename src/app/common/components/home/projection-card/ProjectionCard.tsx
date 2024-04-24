@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProjectionCardProps } from './projectionCard';
+import { ProjectionCardProps } from './projectionCard.d';
 
 const ProjectionCard: React.FC<ProjectionCardProps> = ({ graph, title }) => {
   return (

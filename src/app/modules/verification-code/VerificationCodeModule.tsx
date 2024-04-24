@@ -6,7 +6,7 @@ import VerificationHeaderUI from '@/app/common/components/verification-code-ui/v
 import { Spinner } from '@nextui-org/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { VerificationCodeModuleType } from './verificationCodeModule';
+import { VerificationCodeModuleType } from './verificationCodeModule.d';
 import { useRouter } from 'next/navigation';
 import { formatTime } from '@/redux/utils';
 // import { formatTime } from '@/redux/utils';

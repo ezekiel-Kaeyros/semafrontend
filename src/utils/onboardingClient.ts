@@ -1,8 +1,6 @@
 'use server';
 // import axios from 'axios';
 
-
-
 export const registered = async (data: any) => {
   'use server';
   //   const data =

@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import CustomModal from '../../ui/modal/Modal';
+//import CustomModal from '../../ui/modal/Modal';
 import logo from '../../../../../public/images/sema-logo 1.svg';
 import checkTrue from '../../../../../public/images/number.svg';
 import { useEffect, useState } from 'react';
@@ -10,42 +10,54 @@ import SecondStep from './step-onbaording/SecondStep';
 import ThirdStep from './step-onbaording/ThirdStep';
 import FourthStep from './step-onbaording/FourthStep';
 import axios from 'axios';
-import { registered } from '@/utils/onboardingClient';
-// import {  registered } from '@/utils/onboardingClient';
 
-const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
-  isOpen,
-  onClose,
-}) => {
+const OnboardingModal = () => {
   const [step, setStep] = useState(1);
   const [load, setLoad] = useState(false);
   const [error, setError] = useState(0);
-  const [launch, setLaunch] = useState(0);
   const [wabaId, setWabaId] = useState('');
+  // const [number, setNumber] = useState('');
+  // const [name, setName] = useState('');
   const [numberId, setNumberId] = useState('');
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   // let window:any
-
-  const registerHandler = async (number_id: string, waba_id: string) => {
+  window.fbAsyncInit = function () {
+    console.log('step1 {');
+    FB.init({
+      appId: '2448667798617426',
+      autoLogAppEvents: true,
+      xfbml: true,
+      version: 'v18.0',
+    });
+  };
+  const registerHandler = async (number_id, waba_id) => {
     const headers = {
       Authorization:
         'Bearer EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
     };
-    setLoad(true);
-    setError(0);
-   
+    console.log(
+      'https://graph.facebook.com/v19.0/' + waba_id + '/phone_numbers'
+    );
+    console.log('numberId', number_id);
+    console.log('waba_id', waba_id);
     try {
-      const response = await axios.get(
-        `https://graph.facebook.com/v19.0/${waba_id}/phone_numbers`,
-        { headers }
-      );
-      // console.log('response', response);
-      // console.log('status', response.status);
+      setLoad(true);
+      console.log('numberId', number_id);
+      console.log('waba_id', waba_id);
+      const response = await axios({
+        method: 'GET',
+        url: `https://graph.facebook.com/v19.0/${waba_id}/phone_numbers`,
+        headers: {
+          Authorization:
+            'Bearer EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
+        },
+      });
+      console.log('response', response);
 
       if (response.status == 200 || response.status == 201) {
-        // console.log('data[0]', response.data.data[0]);
-        
+        setNumber(response.data.data[0].display_phone_number);
+        setName(response.data.data[0].verified_names);
         const bodyRegisterNumber = {
           pin: '341665',
           messaging_product: 'whatsapp',
@@ -55,13 +67,12 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
           bodyRegisterNumber,
           { headers }
         );
-        // console.log('response2', response2);
+        console.log('response2', response2);
 
         if (
           (response2.status == 200 || response2.status == 201) &&
           response2.data.success
         ) {
-          setLaunch(0)
           setStep(4);
 
           setName(response.data.data[0].verified_name);
@@ -70,86 +81,59 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
           );
 
           setLoad(false);
+          setError(0);
         } else {
-          setLaunch(0);
-          setWabaId('')
-          // console.log('error2',response2);
-          
           setLoad(false);
           setError(1);
           return response2.status;
         }
       } else {
-         setLaunch(0);
-         setWabaId('');
         setLoad(false);
+
         setError(1);
-          // console.log('error', response);
-
         return response.status;
-
       }
     } catch (error) {
-       setLaunch(0);
-       setWabaId('');
-      // console.log('errorFinal',error);
-      
       setLoad(false);
       setError(1);
       return error;
     }
   };
-  (window as any).fbAsyncInit = function () {
-    // console.log('step1');
 
-    FB.init({
-      appId: '2448667798617426',
-      autoLogAppEvents: true,
-      xfbml: true,
-      version: 'v18.0',
-    });
-  };
+  const sessionInfoListener = async (event) => {
+    console.log('11111b11111111');
 
-  const sessionInfoListener = async (event: any) => {
-    console.log('event', event);
-
-    if (event.origin !== 'https://www.facebook.com') {
-      console.log('error');
-
-      return;
-    }
-    console.log(65);
-
+    if (event.origin !== 'https://www.facebook.com') return;
     try {
-      console.log(2);
-
+      console.log('222222222222');
+      console.log('event', event);
       const data = JSON.parse(event.data);
+      console.log('data', data);
       if (data.type === 'WA_EMBEDDED_SIGNUP') {
         // if user finishes the Embedded Signup flow
+        console.log('ok11111');
 
         if (data.event === 'FINISH') {
-          // console.log(3);
-
           const { phone_number_id, waba_id } = data.data;
+
           setWabaId(waba_id);
           setNumberId(phone_number_id);
-          const value = launch + 1;
-          setLaunch(value)
-          //  registerHandler(phone_number_id, waba_id);
 
           //   window.location.href = 'dashboard/bulk-messages';
         }
         // if user cancels the Embedded Signup flow
         else {
+          console.log('333333333333333333');
+
           const { current_step } = data.data;
         }
       }
     } catch (error) {
-      // Don’t parse info that’s not a JSON
-      // console.log('Non JSON Response', event.data);
-      // console.log(4);
+      console.log('444444444444444');
       console.log(error);
-      
+
+      // Don’t parse info that’s not a JSON
+      console.log('Non JSON Response', event.data);
     }
   };
 
@@ -157,7 +141,9 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
   ////////////////////////
 
   // Load the JavaScript SDK asynchronously
-  (function (d: any, s: any, id: any) {
+  (function (d, s, id) {
+    console.log('step2 {{');
+
     var js,
       fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
@@ -169,16 +155,17 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
 
   // Facebook Login with JavaScript SDK
   function launchWhatsAppSignup() {
+    console.log('step3{{{{{');
+
     // Conversion tracking code
     //fbq && fbq('trackCustom', 'WhatsAppOnboardingStart', {appId: '2448667798617426', feature: 'whatsapp_embedded_signup'});
 
     // Launch Facebook login
     FB.login(
-      function (response: any) {
-        // console.log(123456789);
-
+      function (response) {
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
+          console.log('accessToken', accessToken);
           //Use this token to call the debug_token API and get the shared WABA's ID
         } else {
           console.log('User cancelled login or did not fully authorize.');
@@ -223,17 +210,18 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
     );
   }
 
-   useEffect(() => {
+  useEffect(() => {
     if (
       step == 3 &&
       numberId.length > 0 &&
-      wabaId.length > 0 &&
-     launch==1
+      wabaId.length > 0 
+   //   name.length == 0 &&
+   //   number.length == 0
     ) {
-        // alert(1)
+      console.log('testing');
       registerHandler(numberId, wabaId);
     }
-  }, [step, numberId, wabaId, error, name, number,launch]);
+  }, [step, numberId, wabaId, error, name, number]);
   return (
     <div className=" text-white">
       {step < 4 && (

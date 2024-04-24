@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { TopSalesCardProps } from '../top-sales-card/topSalesCard';
-import { TopSellingProductsCardProps } from './topSellingProductsCard';
+import { TopSalesCardProps } from '../top-sales-card/topSalesCard.d';
+import { TopSellingProductsCardProps } from './topSellingProductsCard.d';
 
 const TopSellingProductsCard: React.FC<TopSellingProductsCardProps> = ({
   title,

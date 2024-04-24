@@ -3,7 +3,7 @@ import React from 'react';
 // import emptyBulkMessageIcon from "../../../../../../../../public/emptyBulkMessage.png"
 import Image from 'next/image';
 import { Button } from '@/app/common/ui/button/Button';
-import { EmptyUIType } from './emptyUI';
+import { EmptyUIType } from './emptyUI.d';
 // import { EmptyUIType } from './EmptyUI'
 
 const EmptyUIComp: React.FC<EmptyUIType> = ({

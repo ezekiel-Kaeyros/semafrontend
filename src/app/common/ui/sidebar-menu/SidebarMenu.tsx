@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { SidebarMenuProps } from './sidebarMenu';
+import { SidebarMenuProps } from './sidebarMenu.d';
 import DownIcon from './icons/DownIcon';
 import { usePathname } from 'next/navigation';
 import AnimateClick from '../../ui/animate-click/AnimateClick';

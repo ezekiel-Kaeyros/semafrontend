@@ -10,7 +10,7 @@ import EmailIcon from '../../../../../../public/icons/loginUserIcon.svg';
 import PasswordIcon from '../../../../../../public/icons/passwordIcon.svg';
 import { Button } from '../../../ui/button/Button';
 import Card from '../../../ui/card/Card';
-import { LoginFormValues } from './loginForm';
+import { LoginFormValues } from './loginForm.d';
 
 import { useRouter } from 'next/navigation';
 

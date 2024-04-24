@@ -1,5 +1,5 @@
 import React from 'react';
-import { RevenueByLocationCardProps } from './revenueByLocationCard';
+import { RevenueByLocationCardProps } from './revenueByLocationCard.d';
 
 const RevenueByLocationCard: React.FC<RevenueByLocationCardProps> = ({
   data,

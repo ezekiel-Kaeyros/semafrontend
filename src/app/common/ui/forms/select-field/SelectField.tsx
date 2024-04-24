@@ -1,5 +1,5 @@
 import React from 'react';
-import { OneObjectType, SelectFieldProps } from './selectField';
+import { OneObjectType, SelectFieldProps } from './selectField.d';
 
 const SelectField: React.FC<SelectFieldProps> = ({
   title,

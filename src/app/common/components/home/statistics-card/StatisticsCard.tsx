@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { StatisticsCardProps } from './statisticsCard';
+import { StatisticsCardProps } from './statisticsCard.d';
 import IncreaseIcon from '../../../../../../public/icons/riseIcon.svg';
 import DecreaseIcon from '../../../../../../public/icons/riseDownIcon.svg';
 

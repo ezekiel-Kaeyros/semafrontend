@@ -13,12 +13,11 @@ import logo from '../../../../public/images/sema-logo-2.svg';
 import vector from '../../../../public/images/Vector-background.svg';
 import close from '../../../../public/icons/close.svg';
 import greyPasswordIcon from '../../../../public/icons/greyPassword.png';
-import {AuthService} from '@/services';
+import { AuthService } from '@/services';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/hooks/useAuth';
 import { login } from '@/redux/features/auth-slice';
 import { setUserCookies } from '@/cookies/cookies';
-
 
 type SignInType = {
   email: string;
@@ -29,50 +28,39 @@ type SignInType = {
 
 const SignInModule = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {dispatch }=useAuth()
-   const pathName = usePathname();
-   const { push } = useRouter();
-   const urlSplit = pathName.split('/');
+  const { dispatch } = useAuth();
+  const pathName = usePathname();
+  const { push } = useRouter();
+  const urlSplit = pathName.split('/');
   const {
     register,
     handleSubmit,
-  
-   formState: { errors, isValid }
-   
+
+    formState: { errors, isValid },
   } = useForm<SignInType>({
     mode: 'onChange' || 'onBlur' || 'onSubmit',
   });
 
- 
- 
-
-
-
-
-
-
- 
-
-
-
   const onSubmit: SubmitHandler<SignInType> = (data) => {
     try {
-    setIsLoading(true)
-      const response = new AuthService().login2(data).then((result) => {
-        if (result.status == 200) {
-           setUserCookies({...result.data,email:data.email});
-        dispatch(login(result.data))
-        push(`/${urlSplit[1]}/dashboard`);
-      }
-      }).catch((error) => {
-        alert('something wrong try again')
-         setIsLoading(false);
-      });
+      setIsLoading(true);
+      const response = new AuthService()
+        .login2(data)
+        .then((result) => {
+          if (result.status == 200) {
+            setUserCookies({ ...result.data, email: data.email });
+            dispatch(login(result.data));
+            push(`/${urlSplit[1]}/dashboard`);
+          }
+        })
+        .catch((error) => {
+          alert('something wrong try again');
+          setIsLoading(false);
+        });
     } catch (error) {
-       setIsLoading(false);
-    console.error(error);
-    
-  }
+      setIsLoading(false);
+      console.error(error);
+    }
   };
 
   return (
@@ -83,13 +71,17 @@ const SignInModule = () => {
       }}
       className="relative w-full h-screen flex justify-center place-items-center  px-5 "
     >
-       <Link href={'/'}>
-       <Image src={close} className=' absolute top-10 left-10  cursor-pointer' alt={'close'} />
-       </Link>
+      <Link href={'/'}>
+        <Image
+          src={close}
+          className=" absolute top-10 left-10  cursor-pointer"
+          alt={'close'}
+        />
+      </Link>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="w-[400px] z-20 ">
         <div className="flex justify-center items-center">
-          <Image src={logo} alt="log" className=' h-44 w-40'  />
+          <Image src={logo} alt="log" className=" h-44 w-40" />
         </div>
         <div>
           <h1
@@ -98,7 +90,7 @@ const SignInModule = () => {
             }}
             className="text-[2.5rem] font-bold mb-4 text-center md:text-left"
           >
-   Get started
+            Get started
           </h1>
         </div>
 
@@ -156,17 +148,26 @@ const SignInModule = () => {
         </div>
 
         <div className="w-full">
-          <p className="mb-[1rem] text-center mt-10 ">Don&apos;t have an account ?</p>
-          <Button href="/signup" variant="mainColorTwo" className="w-full py-4 tex-white">
+          <p className="mb-[1rem] text-center mt-10 ">
+            Don&apos;t have an account ?
+          </p>
+          <Button
+            href="/signup"
+            variant="mainColorTwo"
+            className="w-full py-4 tex-white"
+          >
             Sign Up
           </Button>
         </div>
       </div>
-      <div className=' absolute w-full md:h-1/2 h-1/4 bottom-0 left-0 overflow-hidden z-10 '>
-      <Image src={vector} className=' object-cover ' alt={'vector'} width={1900} />
+      <div className=" absolute w-full md:h-1/2 h-1/4 bottom-0 left-0 overflow-hidden z-10 ">
+        <Image
+          src={vector}
+          className=" object-cover "
+          alt={'vector'}
+          width={1900}
+        />
       </div>
-
-  
     </form>
   );
 };

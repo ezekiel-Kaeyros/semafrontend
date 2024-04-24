@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopSalesCardProps } from './topSalesCard';
+import { TopSalesCardProps } from './topSalesCard.d';
 
 const TopSalesCard: React.FC<TopSalesCardProps> = ({ data, graph, title }) => {
   const dummy = [

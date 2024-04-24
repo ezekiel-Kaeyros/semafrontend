@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileInputProps } from './fileInput';
+import { FileInputProps } from './fileInput.d';
 import Image from 'next/image';
 import AnimateClick from '../../animate-click/AnimateClick';
 

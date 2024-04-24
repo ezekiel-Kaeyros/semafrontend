@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { BulkMessageTabType } from './bulk-message-tab/bulkMessageTab';
+import { BulkMessageTabType } from './bulk-message-tab/bulkMessageTab.d';
 import BulkMessageTab from './bulk-message-tab/BulkMessageTab';
 import { useBolkMessage } from '@/app/hooks/useBulkMessage';
 import { BulkMessageTabTypeI } from '@/redux/features/types';
