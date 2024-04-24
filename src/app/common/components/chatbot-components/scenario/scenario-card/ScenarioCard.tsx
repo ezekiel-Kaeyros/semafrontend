@@ -5,6 +5,7 @@ import { ScenarioCardProps } from './ScenarioCard.d';
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 import EditIcon from '../../../../../../../public/icons/chatbot/editIcon.svg';
 import DeleteIcon from '../../../../../../../public/icons/chatbot/deleteIcon.svg';
+import InformationIcon from '../../../../../../../public/icons/chatbot/information.svg';
 
 const ScenarioCard: React.FC<ScenarioCardProps> = ({
   isActive,
@@ -12,7 +13,7 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
   numberOfQuestions,
 }) => {
   return (
-    <div className="rounded-lg p-4 bg-mainDarkLight w-64 max-w-lg">
+    <div className="rounded-lg p-4 bg-mainDarkLight w-72 max-w-lg">
       <div className="flex justify-between items-center">
         <h1>{name}</h1>
         {(isActive && (
@@ -33,6 +34,9 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
       <div className="ml-auto flex gap-x-2 w-fit">
         <AnimateClick>
           <Image src={EditIcon} alt="Edit icon" />
+        </AnimateClick>
+        <AnimateClick>
+          <Image src={InformationIcon} alt="Edit icon" />
         </AnimateClick>
         <AnimateClick>
           <Image src={DeleteIcon} alt="Delete icon" />

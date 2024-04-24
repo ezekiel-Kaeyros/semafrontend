@@ -26,6 +26,9 @@ const config: Config = {
         danger: 'red',
         success: 'red',
         warning: 'red',
+        darkText:'#656B9F',
+        grayText:"#C3C7CB"
+
       },
     },
   },

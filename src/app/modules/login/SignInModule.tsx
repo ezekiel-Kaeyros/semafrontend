@@ -9,9 +9,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Toaster } from 'react-hot-toast';
 
 import loginUserIcon from '../../../../public/icons/userIcon.svg';
-import logo from '../../../../public/logo.png';
+import logo from '../../../../public/images/sema-logo-2.svg';
+import vector from '../../../../public/images/Vector-background.svg';
+import close from '../../../../public/icons/close.svg';
 import greyPasswordIcon from '../../../../public/icons/greyPassword.png';
-import AuthService from '@/services/authService';
+import {AuthService} from '@/services';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/hooks/useAuth';
 import { login } from '@/redux/features/auth-slice';
@@ -58,7 +60,7 @@ const SignInModule = () => {
     setIsLoading(true)
       const response = new AuthService().login2(data).then((result) => {
         if (result.status == 200) {
-           setUserCookies(result.data);
+           setUserCookies({...result.data,email:data.email});
         dispatch(login(result.data))
         push(`/${urlSplit[1]}/dashboard`);
       }
@@ -79,21 +81,24 @@ const SignInModule = () => {
       style={{
         fontFamily: 'visby-regular',
       }}
-      className="w-full h-screen flex justify-center items-center"
+      className="relative w-full h-screen flex justify-center place-items-center  px-5 "
     >
+       <Link href={'/'}>
+       <Image src={close} className=' absolute top-10 left-10  cursor-pointer' alt={'close'} />
+       </Link>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="w-[400px]">
+      <div className="w-[400px] z-20 ">
         <div className="flex justify-center items-center">
-          <Image src={logo} alt="log" />
+          <Image src={logo} alt="log" className=' h-44 w-40'  />
         </div>
         <div>
           <h1
             style={{
               fontFamily: 'visby-bold',
             }}
-            className="text-[2.5rem] font-bold"
+            className="text-[2.5rem] font-bold mb-4 text-center md:text-left"
           >
-            Log In to <span className="text-mainColor">Marketit Business</span>{' '}
+   Get started
           </h1>
         </div>
 
@@ -132,13 +137,13 @@ const SignInModule = () => {
         </div>
 
         <div>
-          <p className="dark:text-white mt-4">
+          <p className="text-white text-sm mt-4">
             Forgotten your password?
-            <Link href={'/'} className="text-mainColor ml-2">
+            <Link href={'/'} className="text-primary ml-2">
               Reset Password
             </Link>
           </p>
-          <div className="w-full my-8">
+          <div className="w-full mt-5 mb-8">
             <Button
               disabled={!isValid || isLoading ? true : false}
               variant={!isValid || isLoading ? 'disabled' : 'mainColor'}
@@ -150,13 +155,18 @@ const SignInModule = () => {
           </div>
         </div>
 
-        <div className="w-full my-8">
-          <p className="mb-[1rem] text-center">Don&apos;t have an account ?</p>
-          <Button href="/signup" variant="outline" className="w-full py-4">
+        <div className="w-full">
+          <p className="mb-[1rem] text-center mt-10 ">Don&apos;t have an account ?</p>
+          <Button href="/signup" variant="mainColorTwo" className="w-full py-4 tex-white">
             Sign Up
           </Button>
         </div>
       </div>
+      <div className=' absolute w-full md:h-1/2 h-1/4 bottom-0 left-0 overflow-hidden z-10 '>
+      <Image src={vector} className=' object-cover ' alt={'vector'} width={1900} />
+      </div>
+
+  
     </form>
   );
 };

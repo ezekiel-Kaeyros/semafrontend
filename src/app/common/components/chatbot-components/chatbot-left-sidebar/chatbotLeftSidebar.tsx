@@ -20,6 +20,8 @@ import { BACKEND_CHATBOT_API_URL } from '@/utils/backendUrls';
 import Skeleton from './Skeleton';
 import { allConersationType, conversationType } from '@/utils/types';
 import { ChatsByCompanyReturnType } from '@/redux/features/types';
+import { ChatbotService, ChatConversationType } from '@/services';
+import { getUserCookies } from '@/cookies/cookies';
 
 const ChatbotLeftSidebar = () => {
   const dispatch = useDispatch();
@@ -38,15 +40,13 @@ const ChatbotLeftSidebar = () => {
   };
 
   let token = '100609346426084';
+console.log(BACKEND_CHATBOT_API_URL + token);
 
   // Fetching all chats
-  const loadChatsByCompany = async ({
-    token,
-  }: {
-    token: string;
-  }) => {
-    const response = await axios.get(BACKEND_CHATBOT_API_URL);
-    if (response.status === 200) {
+  const loadChatsByCompany = async () => {
+    const hisEmail=getUserCookies().email
+    const response = await new ChatbotService().loadChatsByCompany({email:hisEmail});
+    if (response) {
       console.log('response.data', response.data);
 
       dispatch(setCompanyChats(response.data.data));
@@ -59,7 +59,7 @@ const ChatbotLeftSidebar = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['chatsByCompany', token],
-    queryFn: () => loadChatsByCompany({ token: token }),
+    queryFn: () => loadChatsByCompany(),
     refetchInterval: 5000,
   });
 
@@ -69,12 +69,10 @@ const ChatbotLeftSidebar = () => {
       
   //   }
   // }, [data]);
-
   const sortedChatsByDate =
-    data?.data?.conversations &&
-    sortDataByDate(
-      (data?.data?.conversations && data?.data?.conversations) || []
-    );
+  typeof data !== 'undefined' && !(data instanceof Error) && data.data?.conversations
+    ? sortDataByDate(data.data.conversations)
+    : [];
 
   return (
     <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600 w-[100%] dark:bg-mainDark border-r-[0.02px] h-[100%]">
@@ -91,10 +89,10 @@ const ChatbotLeftSidebar = () => {
               <Skeleton />
             </div>
           )}
-          {data && data.data &&
-            Array.isArray(data.data.conversations) &&
+          {!(data instanceof Error)&&data && data.data &&
+             Array.isArray(data.data.conversations) &&
             data.data.conversations.length > 0 &&
-            data.data.conversations.map((item: conversationType, key: any) => (
+            data.data.conversations.map((item: ChatConversationType, key: any) => (
               <ChatItem
                 id={item.phone_number}
                 handleSelected={() => handleSelected(item)}

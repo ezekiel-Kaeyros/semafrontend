@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/app/common/ui/button/Button';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import bulk_messageIcon from '../../../../public/right_side_bar/bulk_message.png';
 import BulkMessageTabs from '@/app/common/components/bulk-messages/bulk-message-tabs/BulkMessageTabs';
@@ -14,9 +14,10 @@ import {
 import BulkMessageForm from '@/app/common/components/forms/bulk-message-form/BulkMessageForm';
 import ChoosePricing from '@/app/common/components/bulk-messages/payment-mode/choose-pricing/ChoosePricing';
 import { useQuery } from '@tanstack/react-query';
-import AuthService from '@/services/authService';
+import {AuthService} from '@/services';
 
 const BulkMessage = () => {
+  // const { user }=useAuth()
   const { modalTogle, dispatch } = useModal();
   const [modalPricing, setModalPricing] = useState(false);
   const viewPricingHandler = () => {
@@ -25,7 +26,10 @@ const BulkMessage = () => {
   const handleOnClickOpenModal = () => {
     dispatch(toggleOpenModal(true));
   };
-
+//   useEffect(() => {
+//   user && console.log('user',user);
+  
+// },[user])
   const {
     data: posts,
     error,

@@ -1,6 +1,6 @@
-import DataService from './dataService';
+import DataService from '../dataService';
 
-export default class PointOfSalesService extends DataService {
+export  class PointOfSalesService extends DataService {
   createPointOfSales = (data: any) => {
     return this.post('/auth/login', data);
   };

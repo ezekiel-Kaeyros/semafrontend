@@ -60,7 +60,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   } else if (
     request.cookies.get('user_dba_data') &&
-    !protectedPath.includes(pathname)
+    !protectedPath.includes(pathname) &&
+    !pathname.includes('/dashboard/chatbot') &&
+    !pathname.includes('/dashboard/bulk-messages')
   ) {
     return NextResponse.redirect(new URL(`/${locale}/dashboard/`, request.url));
   } else {

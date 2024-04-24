@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL ='https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod';
 
-export default class dataServiceBulkmessage {
+export  class dataServiceBulkmessage {
   client: any;
   constructor() {
     this.client = axios.create({

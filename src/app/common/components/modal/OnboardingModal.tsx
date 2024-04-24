@@ -10,13 +10,98 @@ import SecondStep from './step-onbaording/SecondStep';
 import ThirdStep from './step-onbaording/ThirdStep';
 import FourthStep from './step-onbaording/FourthStep';
 import axios from 'axios';
+import { registered } from '@/utils/onboardingClient';
+// import {  registered } from '@/utils/onboardingClient';
 
 const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
   isOpen,
   onClose,
 }) => {
-    // let window:any
+  const [step, setStep] = useState(1);
+  const [load, setLoad] = useState(false);
+  const [error, setError] = useState(0);
+  const [launch, setLaunch] = useState(0);
+  const [wabaId, setWabaId] = useState('');
+  const [numberId, setNumberId] = useState('');
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  // let window:any
+
+  const registerHandler = async (number_id: string, waba_id: string) => {
+    const headers = {
+      Authorization:
+        'Bearer EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
+    };
+    setLoad(true);
+    setError(0);
+   
+    try {
+      const response = await axios.get(
+        `https://graph.facebook.com/v19.0/${waba_id}/phone_numbers`,
+        { headers }
+      );
+      // console.log('response', response);
+      // console.log('status', response.status);
+
+      if (response.status == 200 || response.status == 201) {
+        // console.log('data[0]', response.data.data[0]);
+        
+        const bodyRegisterNumber = {
+          pin: '341665',
+          messaging_product: 'whatsapp',
+        };
+        const response2 = await axios.post(
+          `https://graph.facebook.com/v19.0/${response.data.data[0].id}/register`,
+          bodyRegisterNumber,
+          { headers }
+        );
+        // console.log('response2', response2);
+
+        if (
+          (response2.status == 200 || response2.status == 201) &&
+          response2.data.success
+        ) {
+          setLaunch(0)
+          setStep(4);
+
+          setName(response.data.data[0].verified_name);
+          setNumber(
+            response.data.data[0].display_phone_number.replaceAll(' ', '')
+          );
+
+          setLoad(false);
+        } else {
+          setLaunch(0);
+          setWabaId('')
+          // console.log('error2',response2);
+          
+          setLoad(false);
+          setError(1);
+          return response2.status;
+        }
+      } else {
+         setLaunch(0);
+         setWabaId('');
+        setLoad(false);
+        setError(1);
+          // console.log('error', response);
+
+        return response.status;
+
+      }
+    } catch (error) {
+       setLaunch(0);
+       setWabaId('');
+      // console.log('errorFinal',error);
+      
+      setLoad(false);
+      setError(1);
+      return error;
+    }
+  };
   (window as any).fbAsyncInit = function () {
+    // console.log('step1');
+
     FB.init({
       appId: '2448667798617426',
       autoLogAppEvents: true,
@@ -26,53 +111,31 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
   };
 
   const sessionInfoListener = async (event: any) => {
-    if (event.origin !== 'https://www.facebook.com') return;
+    console.log('event', event);
+
+    if (event.origin !== 'https://www.facebook.com') {
+      console.log('error');
+
+      return;
+    }
+    console.log(65);
+
     try {
+      console.log(2);
+
       const data = JSON.parse(event.data);
       if (data.type === 'WA_EMBEDDED_SIGNUP') {
         // if user finishes the Embedded Signup flow
+
         if (data.event === 'FINISH') {
+          // console.log(3);
+
           const { phone_number_id, waba_id } = data.data;
-          const response = await axios.get(
-            `https://graph.facebook.com/v19.0/${waba_id}/phone_numbers`
-          );
-          console.log('response', response);
-
-          if (response.status == 200) {
-            const bodyRegisterNumber = {
-              pin: '341665',
-              messaging_product: 'whatsapp',
-            };
-            const response2 = await axios.post(
-              `https://graph.facebook.com/v19.0/${response.data.data[0].id}/register`,
-              bodyRegisterNumber
-            );
-            console.log('response2', response2);
-
-            if (response2.status == 200 && response2.data.success) {
-              const bodyRegisterUser = {
-                app_id: '2448667798617426',
-                waba_id: waba_id,
-                phone_number_id: phone_number_id,
-                phone_number: response.data.data[0].phone_number.replaceAll(
-                  ' ',
-                  ''
-                ),
-                verify_token: 'francenelle',
-                token:
-                  'EAAizDOZAPPVIBO9sihZC4ZB0j5ft7TfMqhvPdIO38cg5ZAAbdNhczVUgHH2GiwLZCqtZANZBl1jZBrstlGfzZAJXzEUvGFN4UTNNPszoW1rM8OlRngHZBIMKivERzcbZClWPfcg2ZCVPTkhgc3EvPSAJgFFa6V7PvMGYuKO0V6ZCsnQFuEGcyIa1ImUDhT9hxvgSSjFZBJ',
-              };
-              const response3 = await axios.post(
-                `https://nh9dzfa8o7.execute-api.eu-central-1.amazonaws.com/prod/whatsapp-access`,
-                bodyRegisterUser
-              );
-              console.log('response3', response3);
-
-              if (response3.status == 200) {
-                setStep(4);
-              }
-            }
-          }
+          setWabaId(waba_id);
+          setNumberId(phone_number_id);
+          const value = launch + 1;
+          setLaunch(value)
+          //  registerHandler(phone_number_id, waba_id);
 
           //   window.location.href = 'dashboard/bulk-messages';
         }
@@ -81,9 +144,12 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
           const { current_step } = data.data;
         }
       }
-    } catch {
+    } catch (error) {
       // Don’t parse info that’s not a JSON
-      console.log('Non JSON Response', event.data);
+      // console.log('Non JSON Response', event.data);
+      // console.log(4);
+      console.log(error);
+      
     }
   };
 
@@ -109,6 +175,8 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
     // Launch Facebook login
     FB.login(
       function (response: any) {
+        // console.log(123456789);
+
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
           //Use this token to call the debug_token API and get the shared WABA's ID
@@ -122,65 +190,51 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
         override_default_response_type: true,
         scope: 'whatsapp_business_management, whatsapp_business_messaging',
 
-        //   extras: {
-        //     feature: 'whatsapp_embedded_signup',
-        //     version: 2,
-        //     sessionInfoVersion: 2,
-        //     setup: {
-        //       business: {
-        //         name: 'Acme Inc.',
-        //         email: 'johndoe@acme.com',
-        //         phone: {
-        //           code: 1,
-        //           number: '6505551234',
-        //         },
-        //         website: 'https://www.acme.com',
-        //         address: {
-        //           streetAddress1: '1 Acme Way',
-        //           city: 'Acme Town',
-        //           state: 'CA',
-        //           zipPostal: '94000',
-        //           country: 'US',
-        //         },
-        //         timezone: 'UTC-08:00',
-        //       },
-        //       phone: {
-        //         displayName: 'Acme Inc',
-        //         category: 'ENTERTAIN',
-        //         description: 'Acme Inc. is a leading entertainment company.',
-        //       },
-        //     },
-        //   },
+        extras: {
+          feature: 'whatsapp_embedded_signup',
+          version: 2,
+          sessionInfoVersion: 2,
+          setup: {
+            business: {
+              name: 'Acme Inc.',
+              email: 'johndoe@acme.com',
+              phone: {
+                code: 1,
+                number: '6505551234',
+              },
+              website: 'https://www.acme.com',
+              address: {
+                streetAddress1: '1 Acme Way',
+                city: 'Acme Town',
+                state: 'CA',
+                zipPostal: '94000',
+                country: 'US',
+              },
+              timezone: 'UTC-08:00',
+            },
+            phone: {
+              displayName: 'Acme Inc',
+              category: 'ENTERTAIN',
+              description: 'Acme Inc. is a leading entertainment company.',
+            },
+          },
+        },
       }
     );
   }
 
-  const [step, setStep] = useState(1);
-  useEffect(() => {
-    console.log(step);
-  }, [step]);
+   useEffect(() => {
+    if (
+      step == 3 &&
+      numberId.length > 0 &&
+      wabaId.length > 0 &&
+     launch==1
+    ) {
+        // alert(1)
+      registerHandler(numberId, wabaId);
+    }
+  }, [step, numberId, wabaId, error, name, number,launch]);
   return (
-    // <Modal
-    //   backdrop="blur"
-    //   isOpen={isOpen}
-    //   onOpenChange={onClose}
-    //   //   className=" sm:h-[95vh] h-screen lg:w-[69vw] sm:w-[80vw]  w-[100vw]   sm:z-10 z-[5000]"
-    //   size="5xl"
-    //   radius="lg"
-    //   closeButton={false}
-    //   placement="center"
-    //   classNames={{
-    //     wrapper: 'px-8 pt-10 overflow-y-auto',
-    //     // body: '  ',
-    //     // backdrop: "bg-[#292f46]/50 backdrop-opacity-40",
-    //     // base: "border-[#292f46] bg-[#19172c] dark:bg-[#19172c] text-[#a8b0d3]",
-    //     // header: "border-b-[1px] border-[#292f46]",
-    //     // footer: "border-t-[1px] border-[#292f46]",
-    //     closeButton: 'hidden',
-    //   }}
-    // >
-    //   <ModalContent>
-    //     <>
     <div className=" text-white">
       {step < 4 && (
         <>
@@ -242,13 +296,30 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
         {step == 1 && <FirstStep />}
         {step == 2 && <SecondStep />}
         {step == 3 && <ThirdStep />}
-        {step == 4 && <FourthStep />}
+        {step == 4 && (
+          <FourthStep
+            load={load}
+            error={error}
+            name={name}
+            numberId={numberId}
+            number={number}
+            waba_id={wabaId}
+          />
+        )}
       </div>
+
+      {error > 0 && (
+        <p className="mt-5 mb-10 font-bold text-[red] text-center">
+          something wrong try later
+        </p>
+      )}
 
       {step < 4 && (
         <div className="flex justify-end items-center gap-5 mb-5">
           {step > 1 && (
             <Button
+              className={`${load ? 'opacity-40' : 'opacity-100'}`}
+              disabled={load}
               onClick={() => {
                 if (step > 1) {
                   const value = step - 1;
@@ -262,8 +333,9 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
           )}
           {step < 4 && (
             <Button
-              className="bg-[#2196F3]"
-              onClick={() => {
+              disabled={load}
+              className={`bg-[#2196F3] ${load ? 'opacity-40' : 'opacity-100'}`}
+              onClick={async () => {
                 if (step < 3) {
                   const value = step + 1;
 
@@ -279,9 +351,6 @@ const OnboardingModal: React.FC<{ isOpen?: boolean; onClose?: any }> = ({
         </div>
       )}
     </div>
-    //     </>
-    //   </ModalContent>
-    // </Modal>
   );
 };
 export default OnboardingModal;

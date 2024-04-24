@@ -5,7 +5,7 @@ import EmptyBulkMessage from './empty-bulk-message/EmptyBulkMessage';
 import { useBolkMessage } from '@/app/hooks/useBulkMessage';
 import TableSaveTemplete from './table-save-template-msg/TableSaveTemplete';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import BulkMessagesService from '@/services/bulkMessagesService';
+import {BulkMessagesService} from '@/services';
 import { queries } from '@testing-library/react';
 
 const SavedTemplates = () => {

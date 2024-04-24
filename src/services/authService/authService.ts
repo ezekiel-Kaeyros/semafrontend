@@ -1,7 +1,7 @@
 
-import DataServiceUserService from './dataServiceUserService';
+import {DataServiceUserService} from '../dataServiceUserService';
 
-export default class AuthService extends DataServiceUserService {
+export  class AuthService extends DataServiceUserService {
   login = async (data: { email: string; password: string }) => {
  try {
      const response = await this.post(

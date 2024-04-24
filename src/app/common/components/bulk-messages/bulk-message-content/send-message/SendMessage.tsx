@@ -1,7 +1,9 @@
 
 // import Scenario from '../../../chatbot/scenario/Scenario';
 import React, { useEffect, useState } from 'react';
-import folderImg from '../../../../../../../public/images/folder-add.svg';
+import folderImg from '../../../../../../../public/icons/note-text.svg';
+import call from '../../../../../../../public/icons/call.svg';
+import add from '../../../../../../../public/icons/add-circle.svg';
 // import RessourcesAccordion from './Ressources-accordion/RessourcesAccordion';
 // import ScenarioForm from './Scenario-form/ScenarioForm';
 import Image from 'next/image';
@@ -10,7 +12,7 @@ import * as XLSX from 'xlsx';
 import toast, { Toaster } from 'react-hot-toast';
 import { useDropzone } from 'react-dropzone';
 import { useQuery,useMutation,useQueryClient } from '@tanstack/react-query';
-import BulkMessagesService from '@/services/bulkMessagesService';
+import {BulkMessagesService} from '@/services';
 import { postBulkMessage } from './actionSendMessage';
 import InputField from '@/app/common/ui/forms/text-field/InputField';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -31,9 +33,9 @@ type TypeResponseBulkMsg = {
   status?: number;
 };
 const SendMessage = () => {
-  const { isRefresh,dispatch}=useBolkMessage()
-  const clientQuery = useQueryClient()
- 
+  const { isRefresh, dispatch } = useBolkMessage();
+  const clientQuery = useQueryClient();
+
   const { data: posts, error } = useQuery({
     queryKey: ['getTemplete'],
     queryFn: new BulkMessagesService().getTemplateByClient,
@@ -47,7 +49,7 @@ const SendMessage = () => {
   const [data, setData] = useState<string[]>([]);
   const [dataInput, setDataInput] = useState<string[]>([]);
   const [fileName, setFileName] = useState('');
-  const sendBulkMessage = async (number:string[],name:string) => {
+  const sendBulkMessage = async (number: string[], name: string) => {
     const dataToSendForBulkmessage = {
       recipients_phone_numbers: number,
       template_name: name,
@@ -65,7 +67,7 @@ const SendMessage = () => {
     } catch (error) {
       setIsLoading(false);
     }
-}
+  };
 
   const handleFileSelected = async (e: any) => {
     const ext = e.target?.files[0]?.name.split('.').pop();
@@ -115,16 +117,16 @@ const SendMessage = () => {
   };
   const addNumber = () => {
     let dummyTableNumber: string[] = dataInput;
-   if (dummyTableNumber.length>0) {
-     const check =dummyTableNumber.filter((item)=>item===numberToSend)
-     if (check.length==0) {
+    if (dummyTableNumber.length > 0) {
+      const check = dummyTableNumber.filter((item) => item === numberToSend);
+      if (check.length == 0) {
         dummyTableNumber.push(numberToSend);
         setDataInput(dummyTableNumber);
-     }
-   } else {
+      }
+    } else {
       dummyTableNumber.push(numberToSend);
       setDataInput(dummyTableNumber);
-   }
+    }
   };
   // const sendBulkMessage = async (data: {
   //   recipients_phone_numbers: string[];
@@ -147,31 +149,38 @@ const SendMessage = () => {
   //   },
   // })
   const {
+    setValue,
     register,
     handleSubmit,
     watch,
     reset,
-    formState: { isValid,errors },
-  } = useForm<{ numberToSend: string }>({mode:'onChange'||'onBlur'||'onTouched'});
+    formState: { isValid, errors },
+  } = useForm<{ numberToSend: string }>({
+    mode: 'onChange' || 'onBlur' || 'onTouched',
+  });
   let numberToSend = watch('numberToSend');
   const onSubmit: SubmitHandler<{ numberToSend: string }> = async (data) => {
-    reset()
+    reset();
   };
 
   useEffect(() => {
     if (isRefresh) {
       clientQuery.invalidateQueries({ queryKey: ['getTemplete'] });
-      dispatch(refesh(false))
+      dispatch(refesh(false));
     }
-    if (dataInput.length <= 5 && isAdd) {
+    if (dataInput.length < 5 && isAdd) {
       addNumber();
+      setValue('numberToSend', '');
     }
     setIsAdd(false);
-  }, [isAdd, dataInput,refesh]);
+    if (dataInput.length == 5 || isLoading) {
+      setValue('numberToSend', '');
+    }
+  }, [isAdd, dataInput, refesh, numberToSend, isLoading]);
   return (
     <div>
       <Toaster position="top-center" reverseOrder={false} />
-      <div>
+      <div className="flex justify-center w-full items-center mb-5 mt-12">
         <label htmlFor="">select template :</label>
         <select
           name=""
@@ -227,14 +236,14 @@ const SendMessage = () => {
           Enter the phone numbers
         </div>
       </div>
-      <div className="flex ">
+      <div className="flex justify-center">
         <form
           className={`${
             step != 'file' ? '-translate-x-[200%] hidden' : 'translate-x-0'
-          } duration-300 ease-linear mt-6 w-8/12`}
+          } duration-300 ease-linear  w-8/12 m-auto `}
         >
           <div className="flex items-center justify-center w-full">
-            <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-transparent dark:hover:bg-bray-800  hover:bg-gray-100 dark:border-gray-100 dark:hover:border-gray-100 dark:hover:bg-gray-500">
+            <label className="flex flex-col items-center justify-center w-full h-64 border border-[#212529] rounded-lg cursor-pointer bg-[#212529] dark:hover:bg-bray-800  hover:bg-gray-100 dark:border-gray-100 dark:hover:border-gray-100 dark:hover:bg-gray-500">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Image
                   src={folderImg}
@@ -245,9 +254,9 @@ const SendMessage = () => {
                 <>
                   {' '}
                   <h2 className="mb-2 text-white  font-semibold text-center">
-                    file
+                    Drag or Drop a single file to send your message
                   </h2>
-                  <p className="text-white  text-center">upload file</p>
+                  <p className="text-white  text-center">{'( XLXS File )'}</p>
                 </>
               </div>
 
@@ -287,7 +296,7 @@ const SendMessage = () => {
           )}
           <div className="mt-6">
             <Button
-              className="w-auto"
+              className="w-auto m-auto px-8"
               disabled={
                 isLoading ||
                 !inputValue ||
@@ -334,7 +343,7 @@ const SendMessage = () => {
                 }
               }}
             >
-              {isLoading ? 'transfering...' : 'send message'}
+              {isLoading ? 'transfering...' : 'send '}
             </Button>
           </div>
         </form>
@@ -342,18 +351,18 @@ const SendMessage = () => {
         <form
           className={`${
             step == 'file' ? '-translate-x-[200%] hidden' : 'translate-x-0'
-          } duration-300 ease-linear mt-6 w-8/12`}
+          } duration-300 ease-linear m-auto w-8/12 text-center`}
           onSubmit={handleSubmit(onSubmit)}
         >
-          <p>no more than 5 numbers</p>
+          <p className="mb-5">Enter your numbers (5 numbers max)</p>
           {dataInput && (
-            <div className="grid grid-cols-3 gap-3 mb-5">
+            <div className="w-6/12 m-auto grid grid-cols-3 gap-3 my-10 text-sm">
               {dataInput.map((Item, index) => (
                 <div key={index} className="grid grid-cols-1 mt-5 gap-3">
                   {/* { filename && filename?.map(({ name }) => { */}
                   {/* return ( */}
-                  <div className="border border-[lightgray] rounded-lg">
-                    <div className="flex justify-between px-3 py-4">
+                  <div className="border border-[lightgray] rounded-3xl">
+                    <div className="flex justify-between items-center px-3 py-2">
                       <div>
                         <h1>{Item}</h1>
                       </div>
@@ -374,46 +383,43 @@ const SendMessage = () => {
               ))}
             </div>
           )}
-          <InputField
-            name="templateName"
-            title="Phone number"
-            register={register('numberToSend', {
-              required: true,
-              // pattern: /^(237)6(9|7|6|5|2|8)[0-9]{7}$/,
-            })}
-            placeholder="Enter the phone number"
-            style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2"
-            labelTextStyle="font-bold"
-            classes={'w-[50%] rounded-lg'}
-          />
+          <div className="w-6/12 m-auto">
+            {' '}
+            <InputField
+              icon={call}
+              icon2={
+                numberToSend &&
+                numberToSend.length > 0 &&
+                dataInput.length < 5 &&
+                add
+              }
+              name="templateName"
+              // title="Enter your numbers  (5 numbers max)"
+              register={register('numberToSend', {
+                required: true,
+                // pattern: /^(237)6(9|7|6|5|2|8)[0-9]{7}$/,
+              })}
+              placeholder="Enter the phone number"
+              style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2"
+              labelTextStyle="font-bold"
+              // classes={'w-[50%] rounded-lg m-auto'}
+              action={() => {
+                if (dataInput.length < 5) {
+                  setIsAdd(true);
+                }
+              }}
+            />
+          </div>
           {errors.numberToSend && numberToSend && (
             <p className="my-3 text-red-500 text-xs">
               Number must be to the format 237 6xx xxx xxx without spaces
             </p>
           )}
-          <div className="mt-5 flex">
-            <div className="mr-5">
-              <Button
-                type="submit"
-                className="w-auto"
-                disabled={
-                  !isValid || dataInput.length == 5 || isLoading ? true : false
-                }
-                variant={
-                  !isValid || dataInput.length == 5 || isLoading
-                    ? 'disabled'
-                    : 'mainColor'
-                }
-                onClick={() => {
-                  setIsAdd(true);
-                }}
-              >
-                {'+ validate number'}
-              </Button>
-            </div>
+          <div className="mt-5  w-6/12 m-auto">
+        
             <div>
               <Button
-                className="w-auto"
+                className="w-full px-8"
                 disabled={
                   isLoading || dataInput.length < 1 || templeteValues.name == ''
                     ? true
@@ -425,10 +431,10 @@ const SendMessage = () => {
                     : 'primary'
                 }
                 onClick={async () => {
-                  sendBulkMessage(dataInput,templeteValues.name)
+                  sendBulkMessage(dataInput, templeteValues.name);
                 }}
               >
-                {isLoading ? 'transfering...' : 'send message'}
+                {isLoading ? 'transfering...' : 'Send'}
               </Button>
             </div>
           </div>

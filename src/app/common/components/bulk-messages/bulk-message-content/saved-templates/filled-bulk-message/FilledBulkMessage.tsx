@@ -1,5 +1,5 @@
 import App from '@/app/common/ui/table/CustomTable';
-import BulkMessagesService from '@/services/bulkMessagesService';
+import {BulkMessagesService} from '@/services';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import TableHistoryTemplete from './TableHistoryBulkMessage/TableHistoryBulkMessageTemplate';

@@ -31,7 +31,7 @@ const buttonVariants = cva(
           'bg-transparent w-full text-primary border border-primary hover:bg-primary hover:text-white hover:border-greenpale',
         disabled: 'bg-primary opacity-50 w-full text-white',
         mainColor: 'bg-primary text-white',
-        mainColorTwo: 'bg-mainColorTwo text-white',
+        mainColorTwo: 'bg-mainDarkLight text-white',
         transparent: 'bg-transparentBg text-black',
         transparentAddVar: 'bg-transparentBg border-mainColor border-[3px]',
         bgColorDark: 'bg-bgColorDark text-white',

@@ -6,11 +6,14 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Toaster } from 'react-hot-toast';
-import logo from '../../../../public/logo.png';
+import logo from '../../../../public/images/sema-logo-2.svg';
+import vector from '../../../../public/images/Vector-background.svg';
+import close from '../../../../public/icons/close.svg';
 import RadioButton from '@/app/common/ui/forms/radio/RadioButton';
 import { useQuery,useMutation } from '@tanstack/react-query';
-import AuthService from '@/services/authService';
+import {AuthService} from '@/services';
 import { usePathname,useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type SignUpType = {
   email: string;
@@ -18,36 +21,31 @@ type SignUpType = {
   password: string;
   confirmPassword: string;
   agreeCondition: boolean;
-  company:string
+  company: string;
 };
 
 const SignUpModule = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const pathName = usePathname()
-  const { push } = useRouter()
-  const urlSplit=pathName.split('/')
-  
+  const pathName = usePathname();
+  const { push } = useRouter();
+  const urlSplit = pathName.split('/');
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
-    watch
+    watch,
   } = useForm<SignUpType>({
     mode: 'onChange' || 'onBlur' || 'onSubmit',
   });
-  let company = watch('company')
-  let phone = watch('phone')
-  let email = watch('email')
-  let password=watch('password')
-
-
+  let company = watch('company');
+  let phone = watch('phone');
+  let email = watch('email');
+  let password = watch('password');
 
   const onSubmit: SubmitHandler<SignUpType> = (data) => {
-
-
     try {
-     setIsLoading(true);
+      setIsLoading(true);
       const response = new AuthService()
         .register({ email, phone, password, company })
         .then((result) => {
@@ -61,20 +59,27 @@ const SignUpModule = () => {
 
           // alert(errors?.message)
         });
-   } catch (error) {
-     setIsLoading(false);
-   }
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <form
-      className="w-full h-screen flex justify-center items-center overflow-scroll"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <div className="w-full relative px-3 h-screen overflow-y-scroll flex justify-center pb-10 ">
+      <Link href={'/'}>
+        <Image
+          src={close}
+          className=" absolute top-10 left-10  cursor-pointer"
+          alt={'close'}
+        />
+      </Link>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="w-[400px] ">
-        <div className="flex justify-center items-center">
-          <Image src={logo} alt="log" />
+      <form
+        className="w-[400px] flex flex-col py-5 z-20 "
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <div className="flex justify-center items-center mb-1">
+          <Image src={logo} alt="log" className=" w-36" />
         </div>
         <div
           style={{
@@ -83,7 +88,7 @@ const SignUpModule = () => {
           className="w-full flex flex-col text-center mb-[2rem]"
         >
           <h1 className="text-[2.5rem] font-bold">Sign Up</h1>
-          <p>Get Started</p>
+          <p className=" text-grayText font-[visby-medium]">Get Started</p>
         </div>
 
         <div className="flex flex-col gap-[1.5rem]">
@@ -185,7 +190,7 @@ const SignUpModule = () => {
 
         {/* Search field */}
 
-        <div className="mt-4">
+        <div className="mt-2">
           <RadioButton
             register={register('confirmPassword', { required: true })}
             name={'agreeCondition'}
@@ -214,8 +219,28 @@ const SignUpModule = () => {
             )}
           </Button>
         </div>
+        <div className="w-full ">
+          <p className="mb-[1rem] text-center mt-10 ">
+            Already have an account ?
+          </p>
+          <Button
+            href="/login"
+            variant="mainColorTwo"
+            className="w-full py-4 tex-white font-[visby-regular]"
+          >
+            Sign In
+          </Button>
+        </div>
+      </form>
+      <div className=" absolute w-full md:h-1/2 h-1/4 bottom-0 left-0 overflow-hidden z-10 ">
+        <Image
+          src={vector}
+          className=" object-cover "
+          alt={'vector'}
+          width={1900}
+        />
       </div>
-    </form>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import { Button } from '@/app/common/ui/button/Button';
-import BulkMessagesService from '@/services/bulkMessagesService';
+import {BulkMessagesService} from '@/services';
 import {
   Table,
   TableHeader,

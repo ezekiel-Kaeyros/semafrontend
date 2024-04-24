@@ -127,7 +127,7 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
     //  console.log(debouncedValue, 'text-normal');
 
     const payload = {
-      name: data.name.trim().toLocaleLowerCase().replaceAll(' ', '_'),
+      name: data.name.trim().toLocaleLowerCase().replaceAll("/ |'/", '_'),
       // language: urlSplit[1].toLocaleLowerCase() == 'en' ? 'en' : 'fr',
       language: 'fr',
       body_text: textBodyToSend,

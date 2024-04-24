@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = 'https://tmil8s59c9.execute-api.eu-central-1.amazonaws.com';
 
-export default class DataServiceUserService {
+export  class DataServiceUserService {
   client: any;
   constructor() {
     this.client = axios.create({
