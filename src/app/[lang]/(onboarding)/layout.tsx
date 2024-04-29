@@ -11,6 +11,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className=" w-screen h-screen ">{children}</body>
+      <script
+        async
+        defer
+        crossOrigin="anonymous"
+        // crossorigin="anonymous"
+        src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v19.0&appId=2448667798617426"
+        nonce="ZyCL3JcB"
+      ></script>
     </html>
   );
 }

@@ -14,18 +14,26 @@ import EmojiPicker from 'emoji-picker-react';
 import { useClickOutside } from '@/app/hooks/useClickOutside';
 import { addChat } from '@/redux/features/chat-bot-slice';
 import { useChatBot } from '@/app/hooks/useChatBot';
+import { ChatbotService } from '@/services';
+import { Toaster, toast } from 'react-hot-toast';
 
 type ActivityFormValues = {
   message: string;
 };
 
-const ChatbotBottomSection = () => {
-  const { register, handleSubmit, reset } = useForm<ActivityFormValues>();
+const ChatbotBottomSection: React.FC<{ number?: string; numberId: string }> = ({
+  number,
+  numberId,
+}) => {
+  const { register, handleSubmit, reset, watch } =
+    useForm<ActivityFormValues>();
+  let message = watch('message');
   const [showEmojis, setShowEmojis] = useState(false);
+  const [load, setload] = useState(false);
 
   const [clientToggle, setClientToggle] = useState(true);
   const [generatedID, setGeneratedID] = useState(1);
-
+  const { chatsCompany } = useChatBot();
   const handleShowEmojie = () => {
     setShowEmojis((showEmojis) => !showEmojis);
   };
@@ -38,37 +46,57 @@ const ChatbotBottomSection = () => {
 
   const { conversations, selectedConversation, dispatch } = useChatBot();
 
-  const onSubmit: SubmitHandler<any> = (data: any) => {
-    setGeneratedID((generatedID) => generatedID + 1);
+  const onSubmit: SubmitHandler<ActivityFormValues> = async (data) => {
+    setload(true);
+    const response = new ChatbotService()
+      .sendchat({
+        ...data,
+        phone_number: number!,
+        phone_number_id: chatsCompany.phone_number_id,
+      })
+      .then((result) => {
+        if (result.status == 200) {
+          console.log('=============', result.data);
+          setload(false);
+          reset();
+          toast.success('envoyé');
+        }
+      })
+      .catch((error) => {
+        console.log('error', error.response.data);
+        setload(false);
+        toast.error("échec d'envoie de messages surement la session est terminée");
+      });
+    // setGeneratedID((generatedID) => generatedID + 1);
 
-    setClientToggle((clientToggle) => !clientToggle);
+    // setClientToggle((clientToggle) => !clientToggle);
 
-    if (clientToggle) {
-      data = {
-        selectedConversation: selectedConversation,
-        conversations: conversations,
-        id: generatedID,
-        message: data.message,
-        messageTime: new Date().toString(),
-        client: true,
-        name: 'Thierry Monthé',
-      };
-    } else {
-      data = {
-        selectedConversation: selectedConversation,
-        conversations: conversations,
-        id: generatedID,
-        message: data.message,
-        messageTime: new Date().toString(),
-        client: true,
-        name: 'VitalMove Therapy Center',
-      };
-    }
+    // if (clientToggle) {
+    //   data = {
+    //     selectedConversation: selectedConversation,
+    //     conversations: conversations,
+    //     id: generatedID,
+    //     message: data.message,
+    //     messageTime: new Date().toString(),
+    //     client: true,
+    //     name: 'Thierry Monthé',
+    //   };
+    // } else {
+    //   data = {
+    //     selectedConversation: selectedConversation,
+    //     conversations: conversations,
+    //     id: generatedID,
+    //     message: data.message,
+    //     messageTime: new Date().toString(),
+    //     client: true,
+    //     name: 'VitalMove Therapy Center',
+    //   };
+    // }
 
-    console.log(data);
-    reset();
+    // console.log(data);
+    // reset();
 
-    dispatch(addChat(data));
+    // dispatch(addChat(data));
   };
 
   return (
@@ -76,6 +104,8 @@ const ChatbotBottomSection = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="px-[1rem] flex flex-row  right-0 first-letter:  justify-between  border-slate-600  w-full rounded-full dark:bg-mainDarkLight border-t-[0.02px]  "
     >
+      <Toaster position="top-center" reverseOrder={false} />
+
       <div className="md:w-[85%] w-full flex justify-between items-center">
         <div className="w-full bg-mainDark rounded-full mr-8">
           <InputField
@@ -114,7 +144,16 @@ const ChatbotBottomSection = () => {
       </div>
       <div className="md:flex items-center py-2  justify-end hidden">
         <div className="ml-8">
-          <Button rightIcon={sendIconIcon}>Send</Button>
+          <Button
+            disabled={load || !message ? true : false}
+            variant={!load && message ? 'default' : 'disabled'}
+            // onClick={() => {
+            //   alert(message);
+            // }}
+            rightIcon={sendIconIcon}
+          >
+            {load ? 'sending...' : 'Send'}
+          </Button>
         </div>
       </div>
 

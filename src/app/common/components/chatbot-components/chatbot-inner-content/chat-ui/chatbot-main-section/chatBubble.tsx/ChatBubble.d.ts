@@ -4,4 +4,5 @@ export type ChatBubbleProps = {
   profilePicture?: any;
   date: string;
   isBot: boolean;
+  isAdmin?: boolean;
 };

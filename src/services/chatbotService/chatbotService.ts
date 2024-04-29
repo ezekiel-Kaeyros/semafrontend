@@ -20,10 +20,10 @@ const clientPhonenumber:ClientNumber[]= [
 
 export  class ChatbotService extends DataService {
   client: any;
-  constructor(){
+  constructor() {
     super();
-    this.client=axios.create({
-      baseURL:BASE_URL ,
+    this.client = axios.create({
+      baseURL: BASE_URL,
       timeout: 30000,
       timeoutErrorMessage: 'Time out!',
       headers: {
@@ -31,8 +31,21 @@ export  class ChatbotService extends DataService {
       },
     });
   }
-  sendchat = (data: any) => {
-    return this.post('/create', data);
+  sendchat = async (data: {
+    message: string;
+    phone_number: string;
+    phone_number_id: string;
+  }): Promise<{ data: any; status: number }> => {
+    console.log(data);
+    const response = await this.post(
+      'https://back.chatbot.sem-a.com/chats',
+      data
+    );
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error('Failed to fetch data');
+    }
   };
 
   getChatsByCompany = (id: string): Promise<ChatsByCompanyReturnType> => {
@@ -41,9 +54,15 @@ export  class ChatbotService extends DataService {
 
   loadChatsByCompany = async (params: {
     token?: string;
-    email:string
+    email: string;
   }): Promise<ChatsByCompanyReturnType> => {
-    const response:ChatsByCompanyReturnType = await this.get('https://back.chatbot.sem-a.com/companychats/' + ( clientPhonenumber.find((item)=>item.email===params.email)?.numberId? clientPhonenumber.find((item)=>item.email===params.email)?.numberId:"100609346426084"));
+    const response: ChatsByCompanyReturnType = await this.get(
+      'https://back.chatbot.sem-a.com/companychats/' +
+        (clientPhonenumber.find((item) => item.email === params.email)?.numberId
+          ? clientPhonenumber.find((item) => item.email === params.email)
+              ?.numberId
+          : '100609346426084')
+    );
     if (response.status === 200) {
       return response;
     } else {

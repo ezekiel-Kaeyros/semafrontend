@@ -21,7 +21,10 @@ const ChatUI = ({ id }: { id: string | number }) => {
         <ChatbotMainSection selectedChat={selectedChat} />
       </div>
       <div className="fixed  max-w-4xl rounded-full bottom-4 left-[42%] right-8">
-        <ChatbotBottomSection />
+        <ChatbotBottomSection
+          number={selectedChat?.phone_number}
+          numberId={id.toString()}
+        />
       </div>
     </div>
   );

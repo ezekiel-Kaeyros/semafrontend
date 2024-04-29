@@ -15,7 +15,7 @@ import TopSellingProductsCard from '@/app/common/components/home/top-selling-pro
 import TopSalesCard from '@/app/common/components/home/top-sales-card/TopSalesCard';
 import { Button } from '@nextui-org/react';
 import { useState } from 'react';
-import OnboardingModal from '@/app/common/components/modal/OnboardingModal';
+// import OnboardingModal from '@/app/common/components/modal/OnboardingModal';
 import Link from 'next/link';
 
 const Home = () => {

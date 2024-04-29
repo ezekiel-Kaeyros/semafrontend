@@ -4,8 +4,9 @@ import img3 from '../../../../../../public/icons/arrow-right (1).svg';
 import axios from 'axios';
 import { removeUserCookies } from '@/cookies/cookies';
 import { Button } from '@nextui-org/react';
-import { registered } from '@/utils/onboardingClient';
+// import { registered } from '@/utils/onboardingClient';
 import { useState } from 'react';
+import { registered } from '@/utils/onboardingClient';
 const FourthStep: React.FC<{
   load?: boolean;
   error: number;

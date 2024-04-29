@@ -30,6 +30,7 @@ const ChatbotMainSection: React.FC<ChatbotMainSectionProps> = ({
             <ChatBubble
               date={formatDate(chat?.date?.toString())}
               isBot={chat?.is_bot}
+              isAdmin={chat?.is_admin}
               message={chat?.text}
               name={selectedChat?.phone_number}
               key={key}
