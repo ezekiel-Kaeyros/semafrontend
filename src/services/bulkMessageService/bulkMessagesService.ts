@@ -101,11 +101,31 @@ export  class BulkMessagesService extends dataServiceBulkmessage {
     // data:any
     status: any;
   }> => {
-    const hisEmail=getUserCookies().email;
-    return this.get('/broadcast-session/'+( clientPhonenumber.find((item)=>item.email===hisEmail)?.numberId? clientPhonenumber.find((item)=>item.email===hisEmail)?.numberId:"100609346426084") + id);
+    const hisEmail = getUserCookies().email;
+    console.log(
+      'test_url',
+      '/broadcast-session/' +
+        (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
+          ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
+          : '100609346426084') +
+        id
+    );
+    
+
+    return this.get('/broadcast-session/'+( clientPhonenumber.find((item)=>item.email===hisEmail)?.numberId? clientPhonenumber.find((item)=>item.email===hisEmail)?.numberId:"100609346426084/") + id);
   };
   getDetailTemplateSession = async (id: string) => {
-    const hisEmail=getUserCookies().email;
+    const hisEmail = getUserCookies().email;
+    // console.log(
+    //   'test_url',
+    //   'https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod/broadcast-session/' +
+    //     (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
+    //       ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
+    //       : '100609346426084') +
+    //     '/' +
+    //     id
+    // );
+    
     const response = await this.get(
       'https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod/broadcast-session/'+( clientPhonenumber.find((item)=>item.email===hisEmail)?.numberId? clientPhonenumber.find((item)=>item.email===hisEmail)?.numberId:"100609346426084")+"/" +
         id

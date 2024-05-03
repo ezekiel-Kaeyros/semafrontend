@@ -10,9 +10,9 @@ import logo from '../../../../public/images/sema-logo-2.svg';
 import vector from '../../../../public/images/Vector-background.svg';
 import close from '../../../../public/icons/close.svg';
 import RadioButton from '@/app/common/ui/forms/radio/RadioButton';
-import { useQuery,useMutation } from '@tanstack/react-query';
-import {AuthService} from '@/services';
-import { usePathname,useRouter } from 'next/navigation';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { AuthService } from '@/services';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 type SignUpType = {
@@ -115,7 +115,7 @@ const SignUpModule = () => {
                 register={register('email', {
                   required: true,
                   minLength: 3,
-                  pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  pattern: /^[\w.-]+@([\w-]+\.)+[\w-]{2,}$/,
                 })}
                 // icon={ShopIcon}
                 style="rounded-2xl bg-inputBg2 border border-gray-300 py-[20px] px-[30px] w-full"

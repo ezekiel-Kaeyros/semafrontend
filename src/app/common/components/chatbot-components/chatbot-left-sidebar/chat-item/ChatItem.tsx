@@ -14,8 +14,11 @@ const ChatItem: React.FC<ChatItemProps> = ({
   message,
   number,
   status,
+  color,
 }) => {
   const pathname = usePathname();
+
+  // console.log(color, 'this is my color');
 
   return (
     <AnimateClick>
@@ -44,7 +47,9 @@ const ChatItem: React.FC<ChatItemProps> = ({
           <div className="flex flex-col items-end">
             <h1 className="text-xs opacity-60">{date || 'Dec 10 09:04'}</h1>
             <div
-              className={`mt-2 text-xs font-bold bg-[#182881] py-1 px-3 rounded-full`}
+              className={`mt-2 text-xs font-bold py-1 px-3 rounded-full`}
+              style={{ background: `${color}` }}
+              // style={{ background: `${color}` }}
             >
               {(status && status) || 'open'}
             </div>

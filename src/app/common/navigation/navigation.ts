@@ -32,12 +32,12 @@ export const navigation = [
     icon: bulkMessageIcon,
     selectedIcon: bulkMessageSelectedIcon,
   },
-  {
-    id: 4,
-    title: 'Loyalty Program',
-    // url: '/loyalty-program',
-    url: '/dashboard/loyalty-program?step=1',
-    icon: serviceThreeIcon,
-    selectedIcon: serviceThreeSelectedIcon,
-  },
+  // {
+  //   id: 4,
+  //   title: 'Loyalty Program',
+  //   // url: '/loyalty-program',
+  //   url: '/dashboard/loyalty-program?step=1',
+  //   icon: serviceThreeIcon,
+  //   selectedIcon: serviceThreeSelectedIcon,
+  // },
 ];

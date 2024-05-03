@@ -6,8 +6,11 @@ export type ChatMessageType = {
 };
 
 export type ChatConversationType = {
-  phone_number: string;
   chat_messages: ChatMessageType[];
+  phone_number: string;
+  unread_msg: number;
+  color?: string | any;
+  label?: string | any;
 };
 
 export type ChatsByCompanyReturnType = {

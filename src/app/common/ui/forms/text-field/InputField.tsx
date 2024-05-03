@@ -49,7 +49,7 @@ const InputField: React.FC<InputFieldProps> = ({
       )}
       <div className={`relative w-full  ${classes} `}>
         <input
-          className={`appearance-none dark:bg-mainDarkLight focus:dark:outline-primary dark:text-white focus:dark:bg-mainDarkLight border border-slate-700 relative w-full leading-tight bg-transparent  rounded-xl py-4 ${icon1 || icon ? 'pl-[12%] ' : 'pl-6'} ${icon2 ? ' pr-[12%]' : 'pr-6'}  focus:border-primary' focus:outline-none`}
+          className={` appearance-none dark:bg-mainDarkLight focus:dark:outline-primary dark:text-white focus:dark:bg-mainDarkLight border border-slate-700 relative w-full leading-tight bg-transparent  rounded-xl py-4 ${icon1 || icon ? 'pl-[12%] ' : 'pl-6'} ${icon2 ? ' pr-[12%]' : 'pr-6'}  focus:border-primary' focus:outline-none`}
           id={name}
           type={type ? type : 'text'}
           placeholder={placeholder}
@@ -58,20 +58,21 @@ const InputField: React.FC<InputFieldProps> = ({
           ref={(el) => {
             reference.current = el;
           }}
-          style={{
-            fontFamily: 'visby-regular',
-          }}
+          // style={{
+          //   fontFamily: 'visby-regular',
+          // }}
           {...register}
         />
-        {icon1 || icon && (
-          <Image
-            className="absolute ml-4 mt-auto mb-auto left-0  top-[10%] h-[80%] w-[5%]"
-            src={icon1 ? icon1 : icon}
-            alt="Icon"
-            width={width ? width : 30}
-            height={height ? height : 30}
-          />
-        )}
+        {icon1 ||
+          (icon && (
+            <Image
+              className="absolute ml-4 mt-auto mb-auto left-0  top-[10%] h-[80%] w-[5%]"
+              src={icon1 ? icon1 : icon}
+              alt="Icon"
+              width={width ? width : 30}
+              height={height ? height : 30}
+            />
+          ))}
 
         {icon2 && (
           <Image

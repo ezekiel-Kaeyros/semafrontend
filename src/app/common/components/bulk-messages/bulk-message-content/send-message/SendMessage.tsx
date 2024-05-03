@@ -19,6 +19,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import Item from 'antd/es/list/Item';
 import { useBolkMessage } from '@/app/hooks/useBulkMessage';
 import { refesh } from '@/redux/features/bulk-message-slice';
+import { Select, SelectItem } from '@nextui-org/react';
 type bulkmessageDataType = {
   name: string;
   id: string;
@@ -40,7 +41,7 @@ const SendMessage = () => {
     queryKey: ['getTemplete'],
     queryFn: new BulkMessagesService().getTemplateByClient,
   });
-  const [step, setStep] = useState('file');
+  const [step, setStep] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
@@ -54,6 +55,7 @@ const SendMessage = () => {
       recipients_phone_numbers: number,
       template_name: name,
     };
+    console.log('dataToSendForBulkmessage', dataToSendForBulkmessage);
 
     try {
       setIsLoading(true);
@@ -181,7 +183,44 @@ const SendMessage = () => {
     <div>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex justify-center w-full items-center mb-5 mt-12">
-        <label htmlFor="">select template :</label>
+        <Select
+          // color="secondary"
+          size='lg'
+          label="select template"
+          placeholder="select template"
+          selectionMode="single"
+          className="max-w-sm "
+          onChange={(e: any) => {
+            console.log(e,'------------------------------------------------------');
+            
+            if (e.target.value !== '') {
+              getIdHandler(e);
+            }
+          }}
+        >
+          {/* {animals.map((animal) => (
+            <SelectItem key={animal.value} value={animal.value}>
+              {animal.label}
+            </SelectItem>
+          ))} */}
+
+          {posts &&
+            posts?.data?.data &&
+            posts?.data?.data.map((item: bulkmessageDataType) => {
+              if (item.status == 'APPROVED') {
+                return (
+                  <SelectItem
+                    key={item.name}
+                    value={item.name}
+                    className="py-3 px-2"
+                  >
+                    {item.name}
+                  </SelectItem>
+                );
+              }
+            })}
+        </Select>
+        {/* <label htmlFor="">select template :</label>
         <select
           name=""
           id=""
@@ -204,23 +243,9 @@ const SendMessage = () => {
                 );
               }
             })}
-        </select>
+        </select> */}
       </div>
       <div className="w-fit m-auto flex bg-mainDarkLight rounded-full justify-between h-fit my-5">
-        <div
-          onClick={() => {
-            if (step !== 'file') {
-              setStep('file');
-            }
-          }}
-          className={`h-full text-center px-5 py-3  text-xs ${
-            step == 'file'
-              ? 'bg-primary text-white rounded-full font-bolder'
-              : 'bg-transparent text-white cursor-pointer '
-          }`}
-        >
-          Upload xlsx file
-        </div>
         <div
           onClick={() => {
             if (step == 'file') {
@@ -229,11 +254,25 @@ const SendMessage = () => {
           }}
           className={`h-full text-center px-5 py-3  text-xs ${
             step != 'file'
-              ? 'bg-primary text-white rounded-full font-bolder'
+              ? 'bg-[blue] text-white rounded-full font-bolder'
+              : 'bg-transparent text-white cursor-pointer '
+          }`}
+        >
+          To number
+        </div>
+        <div
+          onClick={() => {
+            if (step != 'file') {
+              setStep('file');
+            }
+          }}
+          className={`h-full text-center px-5 py-3  text-xs ${
+            step == 'file'
+              ? 'bg-[blue] text-white rounded-full font-bolder'
               : 'bg-transparent text-white cursor-pointer'
           }`}
         >
-          Enter the phone numbers
+          In bulk
         </div>
       </div>
       <div className="flex justify-center">
@@ -349,7 +388,7 @@ const SendMessage = () => {
         </form>
 
         <form
-          className={`${
+          className={` ${
             step == 'file' ? '-translate-x-[200%] hidden' : 'translate-x-0'
           } duration-300 ease-linear m-auto w-8/12 text-center`}
           onSubmit={handleSubmit(onSubmit)}
@@ -362,7 +401,7 @@ const SendMessage = () => {
                   {/* { filename && filename?.map(({ name }) => { */}
                   {/* return ( */}
                   <div className="border border-[lightgray] rounded-3xl">
-                    <div className="flex justify-between items-center px-3 py-2">
+                    <div className="flex justify-between items-center px-3 py-2 ">
                       <div>
                         <h1>{Item}</h1>
                       </div>
@@ -370,7 +409,7 @@ const SendMessage = () => {
                         onClick={() => {
                           deleNumber(Item);
                         }}
-                        className="flex items-center justify-center text-2xl cursor-pointer"
+                        className="flex items-center justify-center text-xl cursor-pointer"
                       >
                         {/* <Image src={crossIcom} alt="cross Icon" className='cursor-pointer' onClick={handleRemoveFile}/> */}
                         x
@@ -397,12 +436,12 @@ const SendMessage = () => {
               // title="Enter your numbers  (5 numbers max)"
               register={register('numberToSend', {
                 required: true,
-                // pattern: /^(237)6(9|7|6|5|2|8)[0-9]{7}$/,
+                 pattern: /^[0-9]{1,18}$/,
               })}
               placeholder="Enter the phone number"
-              style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2"
+              style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2 font-[serif] hidden"
               labelTextStyle="font-bold"
-              // classes={'w-[50%] rounded-lg m-auto'}
+              classes={'font-[serif]'}
               action={() => {
                 if (dataInput.length < 5) {
                   setIsAdd(true);
@@ -412,11 +451,10 @@ const SendMessage = () => {
           </div>
           {errors.numberToSend && numberToSend && (
             <p className="my-3 text-red-500 text-xs">
-              Number must be to the format 237 6xx xxx xxx without spaces
+              Number must be only the numbers with the length lesser than 19
             </p>
           )}
           <div className="mt-5  w-6/12 m-auto">
-        
             <div>
               <Button
                 className="w-full px-8"

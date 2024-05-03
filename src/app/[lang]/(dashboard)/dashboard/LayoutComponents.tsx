@@ -19,7 +19,7 @@ const LayoutComponents = ({
         <Sidebar />
       </div>
       <div
-        className={`${sideBarToggle ? 'w-[95.8%]' : ' w-[86%]'} h-screen  ml-auto  `}
+        className={`${sideBarToggle ? 'w-[95.8%]' : ' w-[86%]'} h-screen  ml-auto overflow-y-scroll scrollbar-hide `}
       >
         {children}
       </div>

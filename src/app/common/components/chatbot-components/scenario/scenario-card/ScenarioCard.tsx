@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { ScenarioCardProps } from './ScenarioCard.d';
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 import EditIcon from '../../../../../../../public/icons/chatbot/editIcon.svg';
-import DeleteIcon from '../../../../../../../public/icons/chatbot/deleteIcon.svg';
 import InformationIcon from '../../../../../../../public/icons/chatbot/information.svg';
+import DeleteIcon from '../../../../../../../public/icons/chatbot/deleteIcon.svg';
 
 const ScenarioCard: React.FC<ScenarioCardProps> = ({
   isActive,
@@ -26,7 +26,7 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
           </div>
         )}
       </div>
-      <div className="flex my-6 justify-between">
+      <div className="flex my-6 justify-between text-grayText font-[articulat]">
         <h1>Questions</h1>
         <h1>{numberOfQuestions}</h1>
       </div>

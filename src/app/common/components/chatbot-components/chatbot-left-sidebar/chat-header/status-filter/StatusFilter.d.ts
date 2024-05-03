@@ -12,7 +12,7 @@ export type StatusFitlerProps = {
 export const options = [
   {
     id: 1,
-    status: 'opened',
+    status: 'New',
     numberOfChats: '4',
     color: '#182881',
   },
@@ -24,14 +24,14 @@ export const options = [
   },
   {
     id: 3,
-    status: 'closed',
-    numberOfChats: '10',
-    color: '#157A3F',
-  },
-  {
-    id: 4,
     status: 'expired',
     numberOfChats: '5',
     color: '#B00020',
+  },
+  {
+    id: 4,
+    status: 'solved',
+    numberOfChats: '10',
+    color: '#157A3F',
   },
 ];

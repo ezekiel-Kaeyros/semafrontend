@@ -28,6 +28,8 @@ const CustomModal: React.FC<ModalPropsType & ModalProps> = ({
       backdrop="blur"
       isOpen={isOpen}
       onClose={onClose}
+      size="4xl"
+      isDismissable={false}
     >
       <ModalContent>
         {(onClose) => (

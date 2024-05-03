@@ -20,6 +20,7 @@ import { uploadToCloudinary } from '@/utils/cloudinary';
 import { postBulkMessageTemplate } from './action';
 import { newSessionImport } from '@/utils/newImportSession';
 import { newUploadToCloudinary } from '@/utils/newCloudinary';
+// import toast, { Toaster } from 'react-hot-toast';
 
 type ActivityFormValues = {
   name: string;
@@ -94,7 +95,9 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
       setBtnState(true);
       // console.log(
       //   'debounce',
-      //   debouncedValue.toLocaleLowerCase().replaceAll(' ', '')
+      //   debouncedValue
+      //     .toLocaleLowerCase()
+      //     .replaceAll(/[ .*+?^${}()|[\]\\#@êâôûöïüäëÿ%·`òàùỳèç£&é"'èà/,;:!?./§><-]/g, '_')
       // );
 
       // console.log(debouncedValue,'debounce');
@@ -108,6 +111,7 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
     // console.log('bulk message page');
     // console.log('data', data);
 
+  try {
     const sessionImportKey = await newSessionImport(
       acceptedFiles[0].size.toString(),
       acceptedFiles[0],
@@ -120,14 +124,20 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
       acceptedFiles[0],
       'https://bulkmessage.sem-a.com'
     );
-    // console.log('imageTemplateUrl', imageTemplateUrl);
+    // console.log('imageTemplateUrl', imageTemplateUrl.status);
 
     const textBodyToSend = debouncedValue.replace(/(<([^>]+)>)/gi, '');
     // console.log(textBodyToSend, 'text-format');
     //  console.log(debouncedValue, 'text-normal');
 
     const payload = {
-      name: data.name.trim().toLocaleLowerCase().replaceAll("/ |'/", '_'),
+      name: data.name
+        .trim()
+        .toLocaleLowerCase()
+        .replaceAll(
+          /[ .*+?^${}()|[\]\\#@êâôûöïüäëÿ%·`òàùỳèç£&é"'èà/,;:!?./§><-]/gi,
+          '_'
+        ),
       // language: urlSplit[1].toLocaleLowerCase() == 'en' ? 'en' : 'fr',
       language: 'fr',
       body_text: textBodyToSend,
@@ -141,9 +151,15 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
     dispatch(refesh(true));
     reset();
     setIsLoad(false);
+    toast.success('template enregistré');
     setTimeout(() => {
       props.modalHandler();
     }, 1000);
+  } catch (error) {
+    console.log('error', error);
+    setIsLoad(false);
+    toast.error('une erreur est survenue revenez plus tard');
+  }
   };
   const getText = (e: any) => {
     setValueText(e.target.value);
@@ -156,6 +172,7 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
       ref={chatContainerRef}
     >
       {/* no-scrollbar */}
+      <Toaster position="top-center" reverseOrder={false} />
 
       <div className="" ref={editorRef}>
         <h1 className="text-[25px] font-bold">Create Template Message</h1>
@@ -267,8 +284,8 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
 
           <div className="my-2">
             <InputField
-              name="footer_text"
-              title="footer_text"
+              name="Signature"
+              title="Signature"
               register={register('footer_text', { required: true })}
               placeholder="your satisfaction, our priority"
               style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2"

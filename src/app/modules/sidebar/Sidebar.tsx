@@ -9,7 +9,7 @@ import { navigation } from '@/app/common/navigation/navigation';
 // import Profile from '@/app/common/components/profile/Profile';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import service7Icon from '../../../../public/left_side_bar_icons/service7.png';
 import logo from '../../../../public/logo.png';
@@ -21,12 +21,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { toggleSideBar } from '@/redux/features/chat-bot-slice';
 import SidebarMenu from '@/app/common/ui/sidebar-menu/SidebarMenu';
+import { Button } from '@/app/common/ui/button/Button';
+import { removeUserCookies } from '@/cookies/cookies';
 
 //
 
 const Sidebar = () => {
   // const [sidebarToggle, setSidebarToggle] = useState<boolean>(false);
-
+  const { push } = useRouter();
   const dispatch = useDispatch();
   const sideBarToggle: boolean = useSelector(
     (state: RootState) => state.ChatBotSlice.sideBarToggle
@@ -37,7 +39,7 @@ const Sidebar = () => {
   const programId = pathname.split('/');
 
   return (
-    <>
+    <div className="relative h-screen">
       <div className=" m-4 md:m-0 ">
         <Image
           onClick={() => setShowMenu((prev) => !prev)}
@@ -156,7 +158,17 @@ const Sidebar = () => {
           alt="Toggle icon"
         />
       </div>
-    </>
+
+      <Button
+        className="absolute bottom-5 w-fit bg-transparent"
+        onClick={() => {
+          removeUserCookies();
+          push('/login');
+        }}
+      >
+        logout
+      </Button>
+    </div>
   );
 };
 

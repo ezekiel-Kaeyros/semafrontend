@@ -84,7 +84,7 @@ const Button: FC<ButtonProps> = ({
     );
   }
   return (
-    <AnimateClick>
+    // <AnimateClick>
       <button {...props} className={cn(buttonVariants({ variant, className }))}>
         {leftIcon && (
           <Image
@@ -105,7 +105,7 @@ const Button: FC<ButtonProps> = ({
           />
         )}
       </button>
-    </AnimateClick>
+    //</AnimateClick> 
   );
 };
 
@@ -143,7 +143,7 @@ const ButtonI: FC<ButtonProps> = ({
     );
   }
   return (
-    <AnimateClick>
+    // <AnimateClick>
       <button {...props} className={cn(buttonVariants({ variant, className }))}>
         <span className="flex items-center justify-center">
           {leftIcon ? (
@@ -176,7 +176,7 @@ const ButtonI: FC<ButtonProps> = ({
           )}
         </span>
       </button>
-    </AnimateClick>
+    // </AnimateClick> 
   );
 };
 

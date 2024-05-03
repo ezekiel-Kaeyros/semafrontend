@@ -3,6 +3,9 @@ import Image from 'next/image';
 import React from 'react';
 
 import emptyIcon from '../../../../../../../public/message_container_icons/empty.png';
+import { Button } from '@/app/common/ui/button/Button';
+import messageIcon from '../../../../../../../public/icons/chatbot/messagesIcon.svg';
+import Link from 'next/link';
 
 const EmptyChatUI = () => {
   return (
@@ -11,26 +14,24 @@ const EmptyChatUI = () => {
         <Image src={emptyIcon} width={150} alt="Notification icon" />
       </div>
       <div className="flex flex-col justify-center justify-items-center w-[200px]">
-        <h1
-          className=""
-          style={{
-            fontSize: 'bold',
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}
-        >
-          Welcome to Chatbot
-        </h1>
+        <p className="text-center">
+          Welcome to <span className="font-bold">Chatbot</span>
+        </p>
         <p
           style={{
             textAlign: 'center',
             fontSize: '12px',
           }}
         >
-          Get Started by selecting a client to display a message
+          Get Started by selecting a client or create new message
         </p>
       </div>
-      <div className="flex flex-col justify-center gap-[1rem] justify-items-center w-[200px]"></div>
+      {/* <div className="flex flex-col justify-center gap-[1rem] justify-items-center w-[200px]"></div> */}
+      <div className="my-6">
+        <Link href={`/dashboard/chatbot/scenarios/create`}>
+          <Button rightIcon={messageIcon}>Create scenario</Button>
+        </Link>
+      </div>
     </div>
   );
 };

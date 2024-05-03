@@ -7,7 +7,7 @@ const columns = [
   { name: 'Read', uid: 'read', sortable: true },
   { name: 'Recipients', uid: 'recipients', sortable: true },
   { name: 'Failed', uid: 'failed' },
-  { name: 'Status', uid: 'status', sortable: true },
+  // { name: 'Status', uid: 'status', sortable: true },
   { name: 'ACTIONS', uid: 'actions' },
 ];
 

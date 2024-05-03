@@ -1,7 +1,7 @@
 import cookies from 'js-cookie';
 import { USER_DATA } from './cookies.d';
 
-export const setUserCookies = (data: {token:string}) => {
+export const setUserCookies = (data: { token: string }) => {
   cookies.set(USER_DATA, JSON.stringify(data));
 };
 
@@ -12,4 +12,17 @@ export const getUserCookies = () => {
 
 export const removeUserCookies = () => {
   cookies.remove(USER_DATA);
+};
+
+export const getModalStateCookie = () => {
+  const stateCookie = cookies.get('modalStateCookie');
+  return stateCookie ? JSON.parse(stateCookie) : false;
+};
+
+// Function to set the state in cookies
+export const setModalStateInCookie = (state: any) => {
+  cookies.set('modalStateCookie', JSON.stringify(state), {
+    expires: 7,
+    path: '/',
+  });
 };

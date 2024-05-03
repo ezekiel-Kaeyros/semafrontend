@@ -20,7 +20,7 @@ export type ChatMessageType = {
   is_bot: boolean;
   is_admin: boolean;
   date?: string;
-  is_read?:boolean;
+  is_read?: boolean;
 };
 
 export type ChatConversationType = {
@@ -47,10 +47,34 @@ export interface MessageType {
   name: string;
 }
 
+interface ChildLabel {
+  parent: string;
+  child?: ChildLabel[];
+  uuid: string;
+  selected: boolean;
+}
+
+export interface ParentLabel {
+  parent: string;
+  child: ChildLabel[];
+  uuid: string;
+  selected: boolean;
+}
+
+export interface Props {
+  interactive_labels: ParentLabel[];
+}
+
 export interface ModalSliceType {
   openModalToggle: boolean;
   closeModalToggle: boolean;
   modalTogle: boolean;
+  interactive_labels: {
+    parent: string;
+    child: ChildLabel[];
+    uuid: string;
+    selected: boolean;
+  }[];
 }
 
 export type TypeItemTableSaveTemplete = {
@@ -64,7 +88,7 @@ export type TypeItemTableSaveTemplete = {
   Tagline?: string;
   name?: string;
   status?: string;
-  id?:string
+  id?: string;
 };
 
 export interface ChatBotType {
@@ -87,10 +111,10 @@ export interface BulkMessageTabSilceType {
   savedTemplateToggle: boolean;
   historyToggle: boolean;
   bulkMessageTabs?: BulkMessageTabTypeI[];
- 
+
   tableTemplete: TypeItemTableSaveTemplete[];
   itemTableTemplete: TypeItemTableSaveTemplete;
-  isRefresh:boolean
+  isRefresh: boolean;
 }
 
 export interface TombolaServiceTabSilceType {
@@ -132,4 +156,16 @@ export interface BulkMessageTabSilceType {
 
 export interface ForSingleElementForm {
   message: string;
+}
+
+export interface FilterActionsProps {
+  scenario: string;
+  id: number;
+  scenarioCases: [
+    {
+      label: string;
+      id: number;
+      data: [{ label: string; id: number }];
+    },
+  ];
 }

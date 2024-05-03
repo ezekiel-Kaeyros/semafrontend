@@ -1,3 +1,5 @@
+'use client';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/app/common/ui/button/Button';
 import React from 'react';
 import BackIcon from '../../../../../../../public/icons/chatbot/leftIcon.svg';
@@ -6,22 +8,34 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const ScenarioHeader = () => {
+  const pathName = usePathname();
   return (
     <>
-      <div className="flex gap-x-6 ml-2 m-8 pr-4 w-full justify-between items-center">
-        {/* <Link
-          href="/dashboard/chatbot"
-          className="bg-mainDarkLight flex p-2 rounded-lg"
-        >
-          <Image src={BackIcon} alt="Back icon" />{' '}
-          <h1 className="ml-2">Back</h1>
-        </Link> */}
-
-        <div>
-          <Button href="/dashboard/chatbot/scenarios/create" icon={PlusIcon}>
-            Create a scenario
-          </Button>
+      <div className="flex gap-x-6 ml-2 m-8 pr-4 w-full justify-between items-center h-10">
+        <div className=" flex gap-5 text-md">
+          <Link href={'/dashboard/chatbot/scenarios'}>
+            <div
+              className={` ${pathName.endsWith('/scenarios') && "before:content-[''] relative before:absolute before:h-[1px] before:bg-blueLine before:-bottom-[2px] before:left-0 before:w-full"} cursor-pointer transition-all duration-300 ease-in-out `}
+            >
+              Manage Scenario
+            </div>
+          </Link>
+          <Link href={'/dashboard/chatbot/scenarios/create'}>
+            <div
+              className={` ${pathName.endsWith('/scenarios/create') && "before:content-[''] relative before:absolute before:h-[1px] before:bg-blueLine before:-bottom-[2px] before:left-0 before:w-full"} cursor-pointer `}
+            >
+              Create a scenario
+            </div>
+          </Link>
         </div>
+
+        {!pathName.endsWith('/scenarios/create') && (
+          <div>
+            <Button href="/dashboard/chatbot/scenarios/create" icon={PlusIcon}>
+              Create a scenario
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );

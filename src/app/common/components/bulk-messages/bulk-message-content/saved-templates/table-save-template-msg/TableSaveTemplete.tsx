@@ -53,6 +53,7 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
   const [pageTable, setPageTable] = useState<number>(8);
   const [filterValue, setFilterValue] = useState('');
   const hasSearchFilter = Boolean(filterValue);
+console.log(props.data,'------------------------------');
 
   const text =
     ' All templates must adhere to WhatsApp’s Template Message Guidelines. Click here to read';

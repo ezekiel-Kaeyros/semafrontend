@@ -7,6 +7,8 @@ import ModalReducer from './features/modal-slice';
 import PricingReducer from './features/pricing';
 import { stepReducer } from './features/loyaltyProgram';
 import setObject from './features/qrCodeSlice';
+import setScenarioObject from './features/filter-actions';
+import selectDetailValue from './features/modal-slice';
 // import pointOfSaleViewReducer from './features/create-point-of-sale-slice';
 // import ChannelClusterReducer from './features/channel-cluster-slice';
 // import ActivityReducer from './features/activities-slice';
@@ -21,6 +23,8 @@ export const store = configureStore({
     TombolaServiceSlice,
     stepReducer,
     setObject,
+    setScenarioObject,
+    selectDetailValue,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

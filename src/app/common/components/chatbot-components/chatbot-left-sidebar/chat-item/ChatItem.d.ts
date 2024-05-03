@@ -7,4 +7,5 @@ export type ChatItemProps = {
   message?: string;
   date?: string | undefined;
   handleSelected: (item: any) => void;
+  color?: string;
 };

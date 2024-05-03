@@ -6,6 +6,9 @@ import MessageIcon from '../../../../../../../public/icons/chatbot/messagesIcon.
 import { Button } from '@/app/common/ui/button/Button';
 import StatusFitler from './status-filter/StatusFilter';
 import { options } from './status-filter/StatusFilter.d';
+import ChatFilter from './chat-filter/ChatFilter';
+import { Filteroptions } from './chat-filter/ChatFilter.d';
+import ScenarioFilter from './scenario-filter/ScenarioFilter';
 
 const ChatHeader = () => {
   const handleSelect = (id: string | number) => {
@@ -23,7 +26,13 @@ const ChatHeader = () => {
       </div>
       {/* Status filtering component */}
 
-      <StatusFitler options={options} handleSelect={handleSelect} />
+      <div className="flex items-center gap-x-5">
+        <div className="min-w-[44%]">
+          <StatusFitler options={options} handleSelect={handleSelect} />
+        </div>
+        <ChatFilter options={Filteroptions} handleSelect={handleSelect} />
+        <ScenarioFilter />
+      </div>
     </div>
   );
 };

@@ -5,22 +5,32 @@ import dropdownIcon from '../../../../../../../../public/left_side_bar_icons/dro
 import { StatusFitlerProps } from './StatusFilter.d';
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 
+interface SelectedChatProps {
+  id: number;
+  status: string;
+  numberOfChats: string;
+  color: string;
+}
+
 const StatusFitler: React.FC<StatusFitlerProps> = ({
   handleSelect,
   options,
 }) => {
   const [toggle, setToggle] = useState<boolean>(false);
-  const [selected, setSelected] = useState(options[0]);
+  const [selected, setSelected] = useState<SelectedChatProps | any>(
+    'Open Chat'
+  );
+  // const [selected, setSelected] = useState(options[0]);
 
   return (
     <div className="relative">
       <AnimateClick>
         <div
           onClick={() => setToggle((prev) => !prev)}
-          className="py-3 px-4 bg-mainDarkLight flex justify-between  rounded-md"
+          className="py-3 px-4 bg-mainDarkLight flex justify-between  rounded-md h-[50px]"
         >
           {/* Selected value */}
-          <h1 className="">{selected?.status}</h1>
+          <p className="">{!selected?.status ? selected : selected?.status}</p>
           <div className="flex items-center ml-2">
             <div
               style={{ backgroundColor: `${selected?.color}` }}
