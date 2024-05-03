@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import dropdownIcon from '../../../../../../../../public/left_side_bar_icons/dropdown.png';
 import { StatusFitlerProps } from './StatusFilter.d';
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
+import Cookies from 'js-cookie';
+import { getStatusInCookie, setStatusInCookie } from '@/cookies/cookies';
 
 interface SelectedChatProps {
   id: number;
@@ -15,12 +17,24 @@ interface SelectedChatProps {
 const StatusFitler: React.FC<StatusFitlerProps> = ({
   handleSelect,
   options,
+  selectedStatus,
+  onStatusChange,
 }) => {
   const [toggle, setToggle] = useState<boolean>(false);
   const [selected, setSelected] = useState<SelectedChatProps | any>(
-    'Open Chat'
+    getStatusInCookie(options[0].status)
+    // options[0].status
   );
-  // const [selected, setSelected] = useState(options[0]);
+
+  const handleStatusChange = (status: string | any) => {
+    setSelected(status);
+    onStatusChange(status);
+    // setSelected(getStatusInCookie(status));
+    // onStatusChange(getStatusInCookie(status));
+    setStatusInCookie(status);
+  };
+
+  console.log(selected, 'selected');
 
   return (
     <div className="relative">
@@ -57,7 +71,8 @@ const StatusFitler: React.FC<StatusFitlerProps> = ({
                 onClick={() => {
                   handleSelect && handleSelect(option?.status),
                     setSelected(option),
-                    setToggle((prev) => !prev);
+                    handleStatusChange(option.status);
+                  setToggle((prev) => !prev);
                 }}
               >
                 {option?.status}

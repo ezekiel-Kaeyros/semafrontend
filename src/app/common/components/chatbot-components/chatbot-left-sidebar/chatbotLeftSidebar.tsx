@@ -22,11 +22,28 @@ import { allConersationType, conversationType } from '@/utils/types';
 import { ChatsByCompanyReturnType } from '@/redux/features/types';
 import Image from 'next/image';
 import { ChatbotService, ChatConversationType } from '@/services';
-import { getUserCookies } from '@/cookies/cookies';
+import {
+  getStatusInCookie,
+  getUserCookies,
+  setStatusInCookie,
+} from '@/cookies/cookies';
 
 const ChatbotLeftSidebar = () => {
   const dispatch = useDispatch();
   const [check, setChecked] = useState('');
+
+  const [selectedStatus, setSelectedStatus] = useState(
+    getStatusInCookie('All')
+  );
+  const [filteredChats, setFilteredChats] = useState([]);
+
+  // Function to update selectedStatus when dropdown value changes
+  const handleStatusChange = (status: any) => {
+    // setSelectedStatus();
+    setStatusInCookie(status);
+    setSelectedStatus(getStatusInCookie(status));
+    //  getStatusInCookie(options[0].status);
+  };
 
   const handleSelected = (item: any) => {
     if (check != item.phone_number) {
@@ -80,11 +97,13 @@ const ChatbotLeftSidebar = () => {
   const colors = ['#182881', '#915103', '#B00020', '#157A3F'];
   const labels = ['New', 'Pending', 'Expired', 'Solved'];
 
+  let currentIndex = 0;
+
   // Function to get a random color and label
   function getRandomColorAndLabel() {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    const color = colors[randomIndex];
-    const label = labels[randomIndex];
+    const color = colors[currentIndex];
+    const label = labels[currentIndex];
+    currentIndex = (currentIndex + 1) % colors.length; // Move to the next index, looping back to 0 when reaching the end
     return { color, label };
   }
 
@@ -95,20 +114,25 @@ const ChatbotLeftSidebar = () => {
       color: color,
       label: label,
     };
-    console.log('new obj: ', newObj);
     return newObj;
-
-    // if (Object.isExtensible(obj)) {
-    //   const { color, label } = getRandomColorAndLabel();
-    //   obj.color = color;
-    //   obj.label = label;
-    // } else {
-    //   // console.error('Object is not extensible:', obj);
-    //   console.log(obj, 'isNotExtensible');
-    // }
   });
 
-  console.log(result, 'newDataCloned');
+  // useEffect(() => {
+  // const filtered = result?.filter(
+  //   (chat: ChatConversationType) => chat.label === selectedStatus
+  // );
+  // const selectedFilter = selectedStatus === 'All' ? result : filtered;
+  // // setFilteredChats(selectedFilter);
+  // setFilteredChats(selectedFilter);
+  // }, [filteredChats, selectedStatus]);
+
+  const filtered = result?.filter(
+    (chat: ChatConversationType) => chat.label === selectedStatus
+  );
+  const selectedFilter = selectedStatus === 'All' ? result : filtered;
+  // setFilteredChats(selectedFilter);
+
+  console.log(selectedStatus, 'selectedStatus');
 
   const sortedChatsByDate =
     typeof data !== 'undefined' &&
@@ -121,7 +145,10 @@ const ChatbotLeftSidebar = () => {
     <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600 w-[100%] dark:bg-mainDark border-r-[0.02px] h-[100%]">
       <div className="flex flex-col gap-[1.5rem] p-[1rem] w-full">
         <div className="flex flex-row justify-between p-[.5rem]">
-          <ChatHeader />
+          <ChatHeader
+            selectedStatus={selectedStatus}
+            onStatusChange={handleStatusChange}
+          />
         </div>
       </div>
 
@@ -146,7 +173,7 @@ const ChatbotLeftSidebar = () => {
           // data.data &&
           // Array.isArray(data.data.conversations) &&
           // data.data.conversations.length > 0 &&
-          result?.map((item: ChatConversationType, key: any) => {
+          selectedFilter?.map((item: ChatConversationType, key: any) => {
             return (
               <ChatItem
                 id={item.phone_number}

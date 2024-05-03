@@ -26,3 +26,12 @@ export const setModalStateInCookie = (state: any) => {
     path: '/',
   });
 };
+
+export const getStatusInCookie = (status: string | any) => {
+  const stateCookie = cookies.get('selectedStatus');
+  return stateCookie ? stateCookie : status;
+};
+
+export const setStatusInCookie = (state: string | any) => {
+  cookies.set('selectedStatus', state);
+};

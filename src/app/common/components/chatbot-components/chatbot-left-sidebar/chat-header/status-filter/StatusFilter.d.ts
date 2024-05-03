@@ -7,9 +7,17 @@ export type StatusFitlerProps = {
     color: string;
   }>;
   handleSelect?: (id: string | number) => void;
+  selectedStatus: string;
+  onStatusChange: (status: string) => void;
 };
 
 export const options = [
+  {
+    id: 0,
+    status: 'All',
+    numberOfChats: '',
+    color: '',
+  },
   {
     id: 1,
     status: 'New',
@@ -18,19 +26,19 @@ export const options = [
   },
   {
     id: 2,
-    status: 'pending',
+    status: 'Pending',
     numberOfChats: '2',
     color: '#915103',
   },
   {
     id: 3,
-    status: 'expired',
+    status: 'Expired',
     numberOfChats: '5',
     color: '#B00020',
   },
   {
     id: 4,
-    status: 'solved',
+    status: 'Solved',
     numberOfChats: '10',
     color: '#157A3F',
   },

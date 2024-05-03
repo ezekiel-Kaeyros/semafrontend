@@ -10,10 +10,16 @@ import ChatFilter from './chat-filter/ChatFilter';
 import { Filteroptions } from './chat-filter/ChatFilter.d';
 import ScenarioFilter from './scenario-filter/ScenarioFilter';
 
-const ChatHeader = () => {
+interface ChatFilterProps {
+  selectedStatus: string | any;
+  onStatusChange: (status: string) => void;
+}
+
+const ChatHeader = ({ selectedStatus, onStatusChange }: ChatFilterProps) => {
   const handleSelect = (id: string | number) => {
     console.log('id selected', id);
   };
+  onStatusChange;
   return (
     <div className="w-full">
       <div className="flex justify-between items-center">
@@ -28,7 +34,12 @@ const ChatHeader = () => {
 
       <div className="flex items-center gap-x-5">
         <div className="min-w-[44%]">
-          <StatusFitler options={options} handleSelect={handleSelect} />
+          <StatusFitler
+            options={options}
+            handleSelect={handleSelect}
+            selectedStatus={selectedStatus}
+            onStatusChange={onStatusChange}
+          />
         </div>
         <ChatFilter options={Filteroptions} handleSelect={handleSelect} />
         <ScenarioFilter />

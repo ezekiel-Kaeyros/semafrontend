@@ -79,7 +79,11 @@ const ChatbotTopSection: React.FC<ChatbotTopSectionProps> = ({
           </AnimateClick>
         </div>
         <div className="flex justify-center w-full">
-          <StatusFitler options={options} />
+          <StatusFitler
+            options={options}
+            selectedStatus={'selectedStatus'}
+            onStatusChange={() => <>hello</>}
+          />
         </div>
       </div>
     </div>
