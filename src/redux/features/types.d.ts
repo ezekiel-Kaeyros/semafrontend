@@ -1,3 +1,4 @@
+import { Edge, Node } from 'reactflow';
 export interface ConversationsType {
   _id: string;
   id: number;
@@ -157,6 +158,21 @@ export interface BulkMessageTabSilceType {
 export interface ForSingleElementForm {
   message: string;
 }
+export type NodeDataType = {
+  id: string;
+  value: any;
+  type?: 'response' | 'question';
+};
+export type SenarioType = {
+  nodesData: NodeDataType[];
+  edgesData: NodeDataType[];
+};
+export type senarioCreateAction = {
+  setAddNodesData?: (nds: NodeDataType) => void;
+  setNodesData?: (nds: NodeDataType[]) => void;
+  setEdgesData?: (nds: Edge[]) => void;
+  reset?: () => void;
+};
 
 export interface FilterActionsProps {
   scenario: string;

@@ -9,6 +9,8 @@ import Link from 'next/link';
 
 const ScenarioHeader = () => {
   const pathName = usePathname();
+  var regex = /\/scenarios\/(?!create$)[^\/]+$/;
+
   return (
     <>
       <div className="flex gap-x-6 ml-2 m-8 pr-4 w-full justify-between items-center h-10">
@@ -27,6 +29,16 @@ const ScenarioHeader = () => {
               Create a scenario
             </div>
           </Link>
+
+          {regex.test(pathName) && (
+            <Link href={'/dashboard/chatbot/scenarios/create'}>
+              <div
+                className={` ${regex.test(pathName) && "before:content-[''] relative before:absolute before:h-[1px] before:bg-blueLine before:-bottom-[2px] before:left-0 before:w-full"} cursor-pointer `}
+              >
+                Update a scenario
+              </div>
+            </Link>
+          )}
         </div>
 
         {!pathName.endsWith('/scenarios/create') && (

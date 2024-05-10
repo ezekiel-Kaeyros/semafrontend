@@ -1,32 +1,51 @@
 import React, { useState, useEffect } from 'react';
+import { ChatbotTopSectionProps } from './ChatbotTopSection.d';
 
-const CountdownTimer = () => {
-  const initialTime = 24 * 60 * 60; // 24 hours in seconds
-  const [timeRemaining, setTimeRemaining] = useState(initialTime);
-
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     // Decrease the time remaining by 1 second
-  //     setTimeRemaining((prevTime) => prevTime - 1);
-  //   }, 1000);
-
-  //   // Cleanup the interval when the component unmounts
-  //   return () => clearInterval(intervalId);
-  // }, []); // Empty dependency array to run the effect only once on mount
-
-  const formatTime = (seconds: any) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${hours}:${String(minutes).padStart(2, '0')}:${String(
-      remainingSeconds
-    ).padStart(2, '0')}`;
+interface ChatMessages {
+  selectedChat: {
+    chat_messages: {
+      text: string;
+      is_bot: boolean;
+      is_admin: boolean;
+      date?: string;
+      chat_status: string;
+    }[];
+    phone_number: string;
   };
+}
+
+const CountdownTimer = ({ selectedChat }: ChatMessages) => {
+  let startDate;
+  if (selectedChat?.chat_messages) {
+    let chats = [...selectedChat?.chat_messages];
+    chats = chats.reverse();
+    const index = chats.findIndex((chat) => !chat.is_bot);
+    startDate = new Date(chats[index].date!);
+  } else {
+    startDate = new Date();
+  }
+
+  const chatTimer = (startDate: Date, endDate: Date) => {
+    const diff = Math.abs(endDate.getTime() - startDate.getTime());
+    const wholeTime = Math.floor(diff / 1000 / 60);
+    let hours = 23 - Math.floor(wholeTime / 60);
+    let mins = 60 - (wholeTime % 60);
+
+    if (hours < 0) {
+      hours = 0;
+      mins = 0;
+    }
+    let result = `${hours}`.length < 2 ? `-0${hours}:` : `-${hours}:`;
+    result += `${mins}`.length < 2 ? `0${mins}` : `${mins}`;
+
+    return result;
+  };
+
+  const timer = chatTimer(startDate, new Date());
 
   return (
     <div>
-      <p>{formatTime(timeRemaining)}</p>
+      <h1 className="text-xl">{timer}</h1>
     </div>
   );
 };

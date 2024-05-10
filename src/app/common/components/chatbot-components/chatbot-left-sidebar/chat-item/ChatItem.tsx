@@ -15,10 +15,32 @@ const ChatItem: React.FC<ChatItemProps> = ({
   number,
   status,
   color,
+  unread_msg,
 }) => {
   const pathname = usePathname();
 
-  // console.log(color, 'this is my color');
+  let backgroundCol = '';
+  switch (status) {
+    case 'open':
+      backgroundCol = '#182881';
+      break;
+    case 'pending':
+      backgroundCol = '#915103';
+      break;
+    case 'expired':
+      backgroundCol = '#B00020';
+      break;
+    case 'solved':
+      backgroundCol = '#157A3F';
+      break;
+
+    default:
+      backgroundCol = '#182881';
+      break;
+  }
+
+  console.log(backgroundCol, 'color');
+  console.log(status, 'color');
 
   return (
     <AnimateClick>
@@ -32,7 +54,13 @@ const ChatItem: React.FC<ChatItemProps> = ({
             ) : (
               <div className=" relative w-12 h-12 rounded-full flex justify-center items-center bg-[#A9B3EF] font-bold text-primary">
                 I
-                <div className="bg-[#157A3F] absolute bottom-0 right-0 w-3 h-3 rounded-full"></div>
+                <div className="absolute -bottom-3 -right-1">
+                  <h2 className="bg-[#157A3F] w-8 h-8 rounded-[50%] flex items-center justify-center">
+                    <p className="text-sm text-center grid place-items-center h-5">
+                      {unread_msg}
+                    </p>
+                  </h2>
+                </div>
               </div>
             )}
             <div>
@@ -48,7 +76,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
             <h1 className="text-xs opacity-60">{date || 'Dec 10 09:04'}</h1>
             <div
               className={`mt-2 text-xs font-bold py-1 px-3 rounded-full`}
-              style={{ background: `${color}` }}
+              style={{ background: `${backgroundCol}` }}
               // style={{ background: `${color}` }}
             >
               {(status && status) || 'open'}

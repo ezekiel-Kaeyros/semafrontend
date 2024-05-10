@@ -56,7 +56,7 @@ const LoginForm = () => {
               name="email"
               register={register('email', {
                 required: true,
-                pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                pattern: /^[\w\.-]+@([\w-]+\.)+[\w-]{2,4}$/,
               })}
               type="email"
               placeholder="E-mail address"

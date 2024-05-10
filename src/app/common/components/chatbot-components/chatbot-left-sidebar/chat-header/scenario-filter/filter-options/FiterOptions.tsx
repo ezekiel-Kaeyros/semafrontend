@@ -73,6 +73,8 @@ function FiterOptions({
   const mappedScenario =
     filteredScenarios.length > 0 ? filteredScenarios : scenarios;
 
+  console.log(scenarios, 'scenarios');
+
   return (
     <div>
       <div>
@@ -101,7 +103,7 @@ function FiterOptions({
 
             console.log(trimmedTitle, 'trimmedTitle');
             return (
-              <AnimateClick>
+              <AnimateClick key={scenario._id}>
                 <div
                   className={`py-4 flex justify-center rounded-md ${scenario?._id === selectedScenario?._id ? 'bg-[#454a4e] text-[#ffffff]' : 'bg-mainDarkLight text-[#aaabad]'}`}
                   onClick={() => {

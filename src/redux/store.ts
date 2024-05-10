@@ -7,6 +7,7 @@ import ModalReducer from './features/modal-slice';
 import PricingReducer from './features/pricing';
 import { stepReducer } from './features/loyaltyProgram';
 import setObject from './features/qrCodeSlice';
+import senarioCreateReducer from './features/senarioCreate-slice';
 import setScenarioObject from './features/filter-actions';
 import selectDetailValue from './features/modal-slice';
 // import pointOfSaleViewReducer from './features/create-point-of-sale-slice';
@@ -23,6 +24,7 @@ export const store = configureStore({
     TombolaServiceSlice,
     stepReducer,
     setObject,
+    senarioCreateReducer,
     setScenarioObject,
     selectDetailValue,
   },

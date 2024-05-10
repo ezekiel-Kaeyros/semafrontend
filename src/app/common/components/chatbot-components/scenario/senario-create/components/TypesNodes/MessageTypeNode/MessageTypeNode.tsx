@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import { ContentNodeType, MessageTypeNodeType } from '../types';
 import { LayoutTypesNode } from '../LayoutTypesNode';
@@ -19,26 +19,29 @@ import { useStoreApi } from 'reactflow';
 import { NodeDataType, useSenarioCreate } from '@/zustand_store';
 
 function MessageTypeNode({ data, isConnectable }: MessageTypeNodeType) {
-  const [content, setContent] = useState<ContentNodeType[]>(data.content);
-  const { nodesData, setNodesData, setAddNodesData } = useSenarioCreate();
-
+  // const [content, setContent] = useState<ContentNodeType[]>(data.content);
+  const { setNodesData, setAddNodesData } = useSenarioCreate();
+  const nodesData = useSenarioCreate((state) => state.nodesData);
+  const [content, setContent] = useState<NodeDataType[]>(
+    nodesData.filter((item) => item.id === data.id)
+  );
+  console.log('lidcontent', content);
   function deleteItemById(
-    items: ContentNodeType[],
+    items: NodeDataType[],
     idToDelete: string
-  ): ContentNodeType[] {
+  ): NodeDataType[] {
     const updatedItems = items.filter((item) => item.id !== idToDelete);
     return updatedItems;
   }
-
+  // TODO: add delete on store for create and delete
   function deleteItemContent(id: string) {
-    console.log('lid', id);
-
     const tampon = deleteItemById(content, id);
+    setNodesData!(nodesData.filter((item) => item.id != id));
     setContent(tampon);
   }
   function updateValueContent(id: string, value: string) {
     setContent((cont) => {
-      let newTable: ContentNodeType[] = [];
+      let newTable: NodeDataType[] = [];
       let content = cont.forEach((cnt) => {
         if (cnt.id === id) {
           return newTable.push({ ...cnt, value: value });
@@ -49,131 +52,118 @@ function MessageTypeNode({ data, isConnectable }: MessageTypeNodeType) {
 
       return newTable;
     });
-    if (nodesData.find((item) => item.id === id)) {
-      let tamponNodeData: NodeDataType[] = nodesData.map((cnt) => {
-        if (cnt.id === id) {
-          return { ...cnt, value: value };
-        } else {
-          return cnt;
-        }
-      });
-      setNodesData!(tamponNodeData);
-    } else {
-      setAddNodesData!({ id, value, type: 'response' });
-    }
   }
-  function addTextNode() {
-    const id = generateId();
+  function addTextNode(defaultValue?: string) {
+    // const id = generateId();
     setContent([
       ...content,
       {
-        id: id,
-        component: (
-          <TextNode
-            id={id}
-            deletefc={deleteItemContent}
-            setContent={updateValueContent}
-          />
-        ),
+        id: data?.id,
         value: '',
+        type: 'response',
       },
     ]);
+    setAddNodesData!({
+      id: data?.id,
+      value: '',
+      type: 'response',
+    });
   }
   /**
    *
    */
   function addImageNode() {
-    const id = generateId();
-    setContent([
-      ...content,
-      {
-        id: id,
-        component: (
-          <ImageNode
-            id={id}
-            deletefc={deleteItemContent}
-            setContent={updateValueContent}
-          />
-        ),
-      },
-    ]);
+    // const id = generateId();
+    // setContent([
+    //   ...content,
+    //   {
+    //     id: id,
+    //     component: (
+    //       <ImageNode
+    //         id={id}
+    //         deletefc={deleteItemContent}
+    //         setContent={updateValueContent}
+    //       />
+    //     ),
+    //   },
+    // ]);
   }
   /**
    *
    */
   function addAudioNode() {
     const id = generateId();
-    setContent([
-      ...content,
-      {
-        id: id,
-        component: (
-          <AudioNode
-            id={id}
-            deletefc={deleteItemContent}
-            setContent={updateValueContent}
-          />
-        ),
-      },
-    ]);
+    // setContent([
+    //   ...content,
+    //   {
+    //     id: id,
+    //     component: (
+    //       <AudioNode
+    //         id={id}
+    //         deletefc={deleteItemContent}
+    //         setContent={updateValueContent}
+    //       />
+    //     ),
+    //   },
+    // ]);
   }
   /**
    *
    */
   function addVideoNode() {
     const id = generateId();
-    setContent([
-      ...content,
-      {
-        id: id,
-        component: (
-          <VideoNode
-            id={id}
-            deletefc={deleteItemContent}
-            setContent={updateValueContent}
-          />
-        ),
-      },
-    ]);
+    // setContent([
+    //   ...content,
+    //   {
+    //     id: id,
+    //     component: (
+    //       <VideoNode
+    //         id={id}
+    //         deletefc={deleteItemContent}
+    //         setContent={updateValueContent}
+    //       />
+    //     ),
+    //   },
+    // ]);
   }
   /**
    *
    */
   function addDocumentNode() {
     const id = generateId();
-    setContent([
-      ...content,
-      {
-        id: id,
-        component: (
-          <DocumentNode
-            id={id}
-            deletefc={deleteItemContent}
-            setContent={updateValueContent}
-          />
-        ),
-      },
-    ]);
+    // setContent([
+    //   ...content,
+    //   {
+    //     id: id,
+    //     component: (
+    //       <DocumentNode
+    //         id={id}
+    //         deletefc={deleteItemContent}
+    //         setContent={updateValueContent}
+    //       />
+    //     ),
+    //   },
+    // ]);
   }
   /**
    *
    */
   function addGiftNode() {
-    const id = generateId();
-    setContent([
-      ...content,
-      {
-        id: id,
-        // TODO:enable setContent for all media becaus is only for text which is available
-        component: (
-          <GiftNode
-            id={id}
-            deletefc={deleteItemContent}
-            setContent={updateValueContent}
-          />
-        ),
-      },
-    ]);
+    // const id = generateId();
+    // setContent([
+    //   ...content,
+    //   {
+    //     id: id,
+    //     // TODO:enable setContent for all media becaus is only for text which is available
+    //     component: (
+    //       <GiftNode
+    //         id={id}
+    //         deletefc={deleteItemContent}
+    //         setContent={updateValueContent}
+    //       />
+    //     ),
+    //   },
+    // ]);
   }
   const store = useStoreApi();
   const { getNodes, setNodes } = store.getState();
@@ -208,6 +198,28 @@ function MessageTypeNode({ data, isConnectable }: MessageTypeNodeType) {
     data?.setNodes([...nodeToduplicate]);
   }
 
+  useEffect(() => {
+    if (content.length > 0) {
+      if (nodesData.some((item) => item.id === content[0]?.id)) {
+        let tamponNodeData: NodeDataType[] = nodesData.map((cnt) => {
+          if (cnt.id === content[0].id) {
+            return { ...cnt, value: content[0].value };
+          } else {
+            return cnt;
+          }
+        });
+
+        setNodesData!(tamponNodeData);
+      } else {
+        setAddNodesData!({
+          id: content[0]?.id,
+          value: content[0]?.value,
+          type: 'response',
+        });
+      }
+    }
+  }, [content]);
+
   return (
     <div className="">
       <Handle
@@ -225,10 +237,29 @@ function MessageTypeNode({ data, isConnectable }: MessageTypeNodeType) {
       >
         <div className=" bg-mainDark w-full p-2 ">
           <div className=" flex flex-col gap-1 mb-2">
-            {content.map((item) => item.component)}
+            {nodesData.map((item, index) => {
+              if (item.id === data.id) {
+                if (item.type === 'response') {
+                  return (
+                    <TextNode
+                      key={index}
+                      id={data.id}
+                      deletefc={deleteItemContent}
+                      setContent={updateValueContent}
+                      defaultValue={item.value}
+                    />
+                  );
+                } else if (item.type === 'question') {
+                  return <div key={index}></div>;
+                }
+              }
+            })}
           </div>
           <div className=" w-full flex flex-wrap  gap-x-1 gap-y-2">
-            <ButtonNode title="Text" fc={addTextNode} />
+            {nodesData.filter((item) => item.id === data.id).length === 0 && (
+              <ButtonNode title="Text" fc={addTextNode} />
+            )}
+
             <ButtonNode title="Image" fc={addImageNode} />
             <ButtonNode title="Audio" fc={addAudioNode} />
             <ButtonNode title="video" fc={addVideoNode} />

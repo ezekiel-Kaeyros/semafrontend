@@ -196,7 +196,7 @@ function FilterDetails({ scenarioData, scenarioLabel }: FilterActionsProps) {
                                   {secondEmbededData.child.map(
                                     (thirdEmbededData) => {
                                       return (
-                                        <div>
+                                        <div key={thirdEmbededData.uuid}>
                                           <div className="flex gap-x-2 items-center">
                                             <input
                                               type="checkbox"

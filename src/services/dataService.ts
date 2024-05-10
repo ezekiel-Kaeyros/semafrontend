@@ -4,8 +4,8 @@ import axios from 'axios';
 const API_URL =
   'https://6r10kf27nk.execute-api.eu-central-1.amazonaws.com/prod/product/100609346426084';
 // const API_URL = 'https://k8wmg6ma27.execute-api.eu-central-1.amazonaws.com'
-const user = getUserCookies()
-console.log('user',user);
+const user = getUserCookies();
+console.log('user', user);
 
 export default class DataService {
   client: any;

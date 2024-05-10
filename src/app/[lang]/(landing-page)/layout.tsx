@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ReactNode } from 'react';
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata = {
   title: 'DBA App',
@@ -10,7 +11,21 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className=" px-4 md:px-11 lg:px-[70px]">{children}</body>
+      <body className=" px-4 md:px-11 lg:px-[70px]">
+        {' '}
+        <NextTopLoader
+          color="#2299DD"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={true}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+        />
+        {children}
+      </body>
     </html>
   );
 }

@@ -13,16 +13,23 @@ import timerClocking from '../../../../../../../../public/icons/chatbot/timerIco
 import StatusFitler from '../../../chatbot-left-sidebar/chat-header/status-filter/StatusFilter';
 import { options } from '../../../chatbot-left-sidebar/chat-header/status-filter/StatusFilter.d';
 import { ChatbotTopSectionProps } from './ChatbotTopSection.d';
+import { ChatConversationType } from './ChatbotTopSection.d';
 
-const ChatbotTopSection: React.FC<ChatbotTopSectionProps> = ({
-  selectedChat,
-}) => {
-  const {
-    displayClientInfoInChatToggle,
+interface ChatMessages {
+  selectedChat: {
+    chat_messages: {
+      text: string;
+      is_bot: boolean;
+      is_admin: boolean;
+      date?: string;
+      chat_status: string;
+    }[];
+    phone_number: string;
+  };
+}
 
-    dispatch,
-    message,
-  } = useChatBot();
+const ChatbotTopSection: React.FC<any> = ({ selectedChat }: ChatMessages) => {
+  const { displayClientInfoInChatToggle, dispatch, message } = useChatBot();
 
   return (
     <div className="px-[1rem] py-3 flex flex-row justify-between items-center border-slate-600 w-full dark:bg-mainDark border-b-[0.02px]">
@@ -30,7 +37,7 @@ const ChatbotTopSection: React.FC<ChatbotTopSectionProps> = ({
         <div className="flex items-center">
           <div className="mr-5 bg-[#2B45D8] py-3 px-4 rounded-full flex items-center gap-x-2">
             <div className="min-w-[65px] items-center justify-center flex">
-              <CountdownTimer />
+              <CountdownTimer selectedChat={selectedChat} />
             </div>
             <Image
               src={timerClocking}

@@ -7,7 +7,7 @@ import {
 import { AppDispatch, RootState } from '@/redux/store';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-
+import { ChatbotTopSectionProps } from '../common/components/chatbot-components/chatbot-inner-content/chat-ui/chatbot-top-section/ChatbotTopSection';
 export const useChatBot = () => {
   const conversations: ConversationsType[] = useSelector(
     (state: RootState) => state.ChatBotSlice.conversations

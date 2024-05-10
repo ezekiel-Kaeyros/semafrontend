@@ -11,6 +11,7 @@ export type dataNodeType = {
   id: string;
   setNodes: (nds: Node[]) => void;
   content: ContentNodeType[];
+  defaultValue?: string;
 };
 export type MessageTypeNodeType = {
   data: dataNodeType;

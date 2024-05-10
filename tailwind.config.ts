@@ -32,6 +32,8 @@ const config: Config = {
         'blue-message-primary': '#576CE0',
         'error-default-light': '#FF385D',
         'green-emerald': '#1CA655',
+        'blue-secondary': '#2196F3',
+        dangerDelete: '#B00020',
       },
     },
   },

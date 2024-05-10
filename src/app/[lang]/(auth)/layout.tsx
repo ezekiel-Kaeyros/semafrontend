@@ -10,6 +10,7 @@ import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 import Image from 'next/image';
 import { ThemeSwitcher } from '@/app/common/dark-mode/theme-switcher/ThemeSwitcher';
 import Link from 'next/link';
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -36,11 +37,20 @@ export default function RootLayout({
                 </div>
               </AnimateClick>
               </div> */}
-          
-               
-                {/* <Sidebar /> <div className="w-full ">{children}</div> */}
-                {children}
-           
+
+              {/* <Sidebar /> <div className="w-full ">{children}</div> */}
+              {children}
+              <NextTopLoader
+                color="#2299DD"
+                initialPosition={0.08}
+                crawlSpeed={200}
+                height={3}
+                crawl={true}
+                showSpinner={true}
+                easing="ease"
+                speed={200}
+                shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+              />
             </Providers>
           </ThemeProvider>
         </ReduxProvider>

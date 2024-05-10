@@ -3,6 +3,7 @@ export type ChatMessageType = {
   is_bot: boolean;
   is_admin: boolean;
   date?: string;
+  chat_status: string;
 };
 
 export type ChatConversationType = {
@@ -17,12 +18,16 @@ export type ChatsByCompanyReturnType = {
   status: number;
   data: {
     message: string;
-    data: {
-      _id: string;
-      phone_number_id: string;
-      company?: string;
-      conversations: ChatConversationType[];
-    };
+    // data: {
+    //   _id: string;
+    //   phone_number_id: string;
+    //   company?: string;
+    //   conversations: ChatConversationType[];
+    // };
+    _id: string;
+    phone_number_id: string;
+    company?: string;
+    conversations: ChatConversationType[];
   };
 };
 

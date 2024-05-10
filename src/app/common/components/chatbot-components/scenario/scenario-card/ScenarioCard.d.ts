@@ -1,8 +1,8 @@
 export type ScenarioCardProps = {
-  id: string | number;
+  id: string;
   name: string;
   isActive?: boolean;
-  numberOfQuestions: string | number;
+  numberOfQuestions: number;
   // eslint-disable-next-line no-unused-vars
   handleSelect?: (id: string | number) => void;
 };

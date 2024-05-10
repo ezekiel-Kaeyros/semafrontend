@@ -34,8 +34,6 @@ const StatusFitler: React.FC<StatusFitlerProps> = ({
     setStatusInCookie(status);
   };
 
-  console.log(selected, 'selected');
-
   return (
     <div className="relative">
       <AnimateClick>

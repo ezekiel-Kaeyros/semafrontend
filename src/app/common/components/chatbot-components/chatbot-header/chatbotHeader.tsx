@@ -12,11 +12,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useNumberConversationsData } from '@/zustand_store/numberConversation-store';
 
 const ChatbotHeader = () => {
   const sideBarToggle = useSelector(
     (state: RootState) => state.ChatBotSlice.sideBarToggle
   );
+  const numberConversations = useNumberConversationsData((state) => state.nb);
   const pathname = usePathname();
 
   return (
@@ -55,7 +57,7 @@ const ChatbotHeader = () => {
               >
                 <span>Conversations</span>
                 <span className="rounded-full text-[12px] w-[20px] h-[20px] flex justify-center dark:bg-slate-500">
-                  1
+                  {numberConversations}
                 </span>
               </Link>
             </AnimateClick>

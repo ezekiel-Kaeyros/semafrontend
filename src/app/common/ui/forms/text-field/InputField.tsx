@@ -19,6 +19,8 @@ type InputFieldProps = {
   classes?: string;
   labelTextStyle?: string;
   action?: any;
+  handleChange?: (e: any) => void;
+  pattern?: any;
 };
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -36,6 +38,8 @@ const InputField: React.FC<InputFieldProps> = ({
   reference,
   action,
   style,
+  handleChange,
+  pattern,
 }) => {
   return (
     <>
@@ -58,6 +62,8 @@ const InputField: React.FC<InputFieldProps> = ({
           ref={(el) => {
             reference.current = el;
           }}
+          onChange={handleChange}
+          pattern={pattern}
           // style={{
           //   fontFamily: 'visby-regular',
           // }}

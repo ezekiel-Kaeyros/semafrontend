@@ -69,7 +69,6 @@ function ScenarioModal({ onClose, isOpen }: ScenarioModalProps) {
   });
 
   // console.log(chatsCompany, 'this is my chats company');
-  // console.log(data, 'this is my data');
 
   function handleActiveScenarioChange(
     scenarioId: string,
