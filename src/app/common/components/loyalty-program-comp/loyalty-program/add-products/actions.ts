@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 export const postData = async (newItem: any) => {
-  'use server';
+  ('use server');
   let response;
 
   // let response = NextResponse.next();
@@ -28,10 +28,10 @@ export const postData = async (newItem: any) => {
         return result.data;
       });
   } catch (error) {
-    console.log('ff', error);
+    // ;
   }
 
-  console.log('response', response);
+  // ;
   revalidatePath('/dashboard/loyalty-program');
 
   return response;

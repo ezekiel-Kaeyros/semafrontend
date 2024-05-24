@@ -43,7 +43,7 @@ const CreateTombolaProgram = () => {
   // const [description, setDescription] = useState('');
   // const files = acceptedFiles.map((file: any, index: any) => {
   //   // FileTypes
-  //   console.log(file, '>>>>>>>>>>>>>>>>');
+  //   // ;
   //   // return (
   //   //   <li key={file?.path}>
   //   //     {file?.path} - {file.size} bytes
@@ -63,12 +63,12 @@ const CreateTombolaProgram = () => {
   useEffect(() => {
     if (acceptedFiles.length > 0) {
       setImgPreview(URL.createObjectURL(acceptedFiles[0]));
-      // console.log(acceptedFiles[0],'ok');
+      // // ;
     }
   }, [acceptedFiles]);
 
   const onSubmit: SubmitHandler<CreateTombolaType> = async (data) => {
-    // console.log(data, 'save');
+    // // ;
     let dummyTable: ItemObject[] = listProduct;
     const dataItemToSave = {
       name: data.productName,
@@ -199,7 +199,7 @@ const CreateTombolaProgram = () => {
                   disabled={listProduct.length < 1 ? true : false}
                   iconSize={30}
                   onClick={() => {
-                    console.log(listProduct, 'list-product');
+                    // ;
                   }}
                 >
                   Proceede

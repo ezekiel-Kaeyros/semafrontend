@@ -24,12 +24,12 @@ const ChatHeader = ({
 }: ChatFilterProps) => {
   const inputRef = useRef<HTMLInputElement>();
   const handleSelect = (id: string | number) => {
-    console.log('id selected', id);
+    // console.log('id selected', id);
   };
   onStatusChange;
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-3">
       {/* <div className="flex justify-between items-center">
         <h1 className="font-bold text-xl">Inbox</h1>
         <Image src={SearchIcon} alt="Search icon" />
@@ -46,13 +46,13 @@ const ChatHeader = ({
         />
       </div>
       {/* Launch bulk message button */}
-      <div className="my-6">
+      <div>
         <Button rightIcon={MessageIcon}>Launch Bulk Message</Button>
       </div>
       {/* Status filtering component */}
 
       <div className="flex items-center gap-x-5">
-        <div className="min-w-[44%]">
+        <div className="">
           <StatusFitler
             options={options}
             handleSelect={handleSelect}

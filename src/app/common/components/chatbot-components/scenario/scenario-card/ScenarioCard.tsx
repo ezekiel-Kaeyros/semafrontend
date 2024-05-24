@@ -66,7 +66,7 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
       {/* Actions section */}
       <div className="ml-auto flex gap-x-2 w-fit">
         <AnimateClick>
-          <a href={'/dashboard/chatbot/scenarios/' + id}>
+          <a href={'/dashboard/scenarios/' + id}>
             <Image src={EditIcon} alt="Edit icon" />
           </a>
         </AnimateClick>

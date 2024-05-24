@@ -59,7 +59,7 @@ const ProgramInfo: React.FC<{ lang?: any }> = ({ lang }) => {
     queryFn: fetchData,
   });
 
-  console.log(data, '0000000000000000');
+  // ;
   const { TableTemplete } = useBolkMessage();
 
   const [pageTable, setPageTable] = useState<number>(8);
@@ -137,18 +137,18 @@ const ProgramInfo: React.FC<{ lang?: any }> = ({ lang }) => {
     const selectedItem = data.find(
       (item: any) => item.id.toString() === id.toString()
     );
-    console.log(selectedItem, 'selected item');
+    // ;
     selectedItem && setSelectedQrCode(selectedItem);
     setToggleModal(true);
   };
 
   const handleOpen = (openFunction: () => void) => {
     // Do something with the openFunction if needed
-    console.log('Modal opened!');
+    // ;
     openFunction();
   };
 
-  console.log(selectedQrCode, 'this is my selected data');
+  // ;
 
   return (
     <div>

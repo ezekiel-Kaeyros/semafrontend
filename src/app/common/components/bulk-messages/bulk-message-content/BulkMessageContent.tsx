@@ -17,25 +17,21 @@ const BulkMessageContent = () => {
           return tab;
         }
       });
-    
-    
   };
-  console.log(selectedTab, 'tabbbbb');
-  useEffect (() => {
-    findSelectedItems ();
-  }, [bulkMessageTabs])
-  console.log('selectedTab?.id', selectedTab?.id);
-  
+  // ;
+  useEffect(() => {
+    findSelectedItems();
+  }, [bulkMessageTabs]);
+  // ;
+
   return (
-    <>
+    <div className='h-full'>
       {selectedTab?.id === 1 ? <SendMessage /> : ''}
-      
 
       {selectedTab?.id === 3 ? <SavedTemplates /> : ''}
 
-      {selectedTab?.id === 2 && <History /> }
-      
-    </>
+      {selectedTab?.id === 2 && <History />}
+    </div>
   );
 };
 

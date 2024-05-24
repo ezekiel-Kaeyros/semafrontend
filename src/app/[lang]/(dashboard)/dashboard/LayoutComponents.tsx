@@ -1,4 +1,5 @@
 'use client';
+import DashBoadHeader from '@/app/common/components/chatbot-components/DashBoadHeader/DashBoadHeader';
 import Sidebar from '@/app/modules/sidebar/Sidebar';
 import { RootState } from '@/redux/store';
 import React from 'react';
@@ -14,13 +15,10 @@ const LayoutComponents = ({
     (state: RootState) => state.ChatBotSlice.sideBarToggle
   );
   return (
-    <div className="flex">
-      <div className={`${sideBarToggle ? 'w-fit' : 'w-[14%]'} fixed`}>
-        <Sidebar />
-      </div>
-      <div
-        className={`${sideBarToggle ? 'w-[95.8%]' : ' w-[86%]'} h-screen  ml-auto overflow-y-scroll scrollbar-hide `}
-      >
+    <div className="flex h-screen w-full ">
+      <Sidebar />
+      <div className={` flex-grow  relative h-full pt-20`}>
+        <DashBoadHeader />
         {children}
       </div>
     </div>

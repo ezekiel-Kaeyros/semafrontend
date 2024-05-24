@@ -37,7 +37,7 @@ const getCurrentDateTime = (): string => {
 };
 
 const currentDateTime = getCurrentDateTime();
-console.log(currentDateTime, '00000000000000');
+// ;
 
 const PreviousProdct: React.FC<ItemProps> = ({
   itemTranslation,

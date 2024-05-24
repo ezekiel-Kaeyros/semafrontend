@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCurrentStep } from '@/redux/features/loyaltyProgram';
 import { RootState } from '@/redux/store';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {LoyaltyProgramService} from '@/services';
+import { LoyaltyProgramService } from '@/services';
 import axios from 'axios';
 import { postData } from './actions';
 import { useFormState } from 'react-dom';
@@ -101,11 +101,9 @@ const AddProducts = () => {
     setCurrentIndex(0);
     reset();
 
-    console.log(allItems, 'this is my allItems');
     const response = await postData(items);
-    response && dispatch(setObject(response)),
-      setLoading(false),
-      console.log('from client', response);
+    response && dispatch(setObject(response));
+    setLoading(false);
   };
 
   const handleNextStep = async () => {

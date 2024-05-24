@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { ChatBubbleProps } from './ChatBubble.d';
@@ -9,8 +11,19 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   isBot,
   message,
   name,
-  isAdmin
+  isAdmin,
 }) => {
+  console.log(message, 'message');
+  const [imageUrl, setImageUrl] = useState('');
+  const urlPattern =
+    /^http:\/\/back\.chatbot\.sem-a\.com\/uploads\/file-\d{13}-\d{9}\.(jpg|jpeg|png)$/;
+
+  useEffect(() => {
+    if (urlPattern.test(message)) {
+      setImageUrl(message);
+    }
+  }, []);
+
   return (
     <div
       className={`max-w-lg py-4 h-full  ${((isBot || isAdmin) && ' self-start') || 'self-end'}`}
@@ -24,7 +37,9 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
             {((isBot || isAdmin) && <h1>B</h1>) || <h1>U</h1>}
           </div>
         </div>
-        {(isBot || isAdmin) && <Image className="ml-4" src={BotIcon} alt="Bot image" />}
+        {(isBot || isAdmin) && (
+          <Image className="ml-4" src={BotIcon} alt="Bot image" />
+        )}
       </div>
       <div
         className={`rounded-xl  px-3 pt-3 pb-1 ${((isBot || isAdmin) && 'bg-mainDarkLight') || 'bg-[#576CE0]'}`}
@@ -34,6 +49,19 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
  mb-2"
         >
           {message && <>{message}</>}
+
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt="Uploaded Image"
+              width={100}
+              height={100}
+              className=" w-auto h-auto"
+              // layout="responsive"
+            />
+          ) : (
+            <p>{message}</p>
+          )}
         </div>
         <div
           className="text-xs w-full flex justify-end opacity-70

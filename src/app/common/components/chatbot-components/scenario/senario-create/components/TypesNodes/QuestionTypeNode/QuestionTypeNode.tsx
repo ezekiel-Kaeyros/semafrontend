@@ -7,7 +7,7 @@ import messageQuestion from '../../../../../../../../../../public/icons/chatbot/
 import Image from 'next/image';
 import { ButtonNode } from '../ButtonNode';
 import { generateId } from '@/utils/generateId';
-import { AddTextNode, StockAnswerNode } from './componentsNodes';
+import { AddTextNode, ImageNode } from './componentsNodes';
 import { useStoreApi } from 'reactflow';
 import { NodeDataType, useSenarioCreate } from '@/zustand_store';
 
@@ -17,9 +17,8 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
   const [content, setContent] = useState<NodeDataType[]>(
     nodesData.filter((item) => item.id === data.id)
   );
+  const [imageDel, setImageDel] = useState<boolean>(false);
   const { setNodesData, setAddNodesData } = useSenarioCreate();
-  console.log(nodesData);
-
   function deleteItemById(
     items: NodeDataType[],
     idToDelete: string
@@ -32,20 +31,12 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
     setNodesData!(nodesData.filter((item) => item.id != id));
     setContent(tampon);
   }
+  function deleteItemContentLink(id: string) {
+    const tampon = deleteItemById(content, id);
+    setNodesData!(nodesData.filter((item) => item.id != id));
+    setContent(tampon);
+  }
   function addTextNode() {
-    // setContent([
-    //   ...content,
-    //   {
-    //     id: data.id,
-    //     component: (
-    //       <AddTextNode
-    //         id={data.id}
-    //         deletefc={deleteItemContent}
-    //         setContent={updateValueContent}
-    //       />
-    //     ),
-    //   },
-    // ]);
     setContent([
       ...content,
       {
@@ -60,21 +51,24 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
       type: 'question',
     });
   }
-  function addStockAnswerNode() {
-    // const id = generateId();
-    // console.log(id);
-    // setContent([
-    //   ...content,
-    //   {
-    //     id: id,
-    //     component: <StockAnswerNode id={id} deletefc={deleteItemContent} />,
-    //   },
-    // ]);
+  function addImage() {
+    setContent((cont) => {
+      let newTable: NodeDataType[] = [];
+      let content = cont.forEach((cnt) => {
+        if (cnt.id === data?.id) {
+          return newTable.push({ ...cnt, link: ' ' });
+        } else {
+          return newTable.push(cnt);
+        }
+      });
+
+      return newTable;
+    });
   }
+  console.log(content[0]);
+
   const store = useStoreApi();
   const { getNodes, setNodes, edges } = store.getState();
-  console.log(edges);
-
   function duplicateNode() {
     const nodes = getNodes();
     let nodeToduplicate = nodes.find((item) => item.id === data?.id);
@@ -116,13 +110,39 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
       return newTable;
     });
   }
+  function updateValueContentLink(id: string, value?: string) {
+    setContent((cont) => {
+      let newTable: NodeDataType[] = [];
+      let content = cont.forEach((cnt) => {
+        if (cnt.id === id) {
+          if (value === undefined) {
+            return newTable.push({
+              id: cnt.id,
+              value: cnt.value,
+              type: cnt.type,
+            });
+          }
+          return newTable.push({ ...cnt, link: value });
+        } else {
+          return newTable.push(cnt);
+        }
+      });
+
+      return newTable;
+    });
+    !value && setImageDel(!imageDel);
+  }
 
   useEffect(() => {
     if (content.length > 0) {
       if (nodesData.some((item) => item.id === content[0]?.id)) {
         let tamponNodeData: NodeDataType[] = nodesData.map((cnt) => {
           if (cnt.id === content[0].id) {
-            return { ...cnt, value: content[0].value };
+            let nodeContent = { ...cnt, value: content[0].value };
+            content[0].link
+              ? (nodeContent = { ...nodeContent, link: content[0].link })
+              : (nodeContent = { ...nodeContent });
+            return nodeContent;
           } else {
             return cnt;
           }
@@ -136,7 +156,7 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
         });
       }
     }
-  }, [content]);
+  }, [content, imageDel]);
   return (
     <div className="">
       <Handle
@@ -159,31 +179,51 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
               if (item.id === data.id) {
                 if (item.type === 'question') {
                   return (
-                    <AddTextNode
-                      id={data.id}
-                      deletefc={deleteItemContent}
-                      setContent={updateValueContent}
-                      defaultValue={item.value}
-                      key={index}
-                    />
+                    <div key={index} className=" flex flex-col gap-2">
+                      <AddTextNode
+                        id={data.id}
+                        deletefc={deleteItemContent}
+                        setContent={updateValueContent}
+                        defaultValue={item.value}
+                      />
+                      {item.link !== undefined && (
+                        <ImageNode
+                          id={data.id}
+                          deletefc={deleteItemContent}
+                          setContent={updateValueContentLink}
+                          defaultValue={item.link}
+                        />
+                      )}
+                    </div>
                   );
                 } else if (item.type === 'response') {
                   return <div key={index}></div>;
                 }
               }
             })}
+            {/* <ImageNode
+              id={data.id}
+              deletefc={deleteItemContent}
+              setContent={updateValueContentLink}
+              defaultValue={'df'}
+            /> */}
           </div>
           <div className=" w-full flex flex-wrap  gap-x-1 gap-y-2">
             {content.length === 0 && (
               <ButtonNode title="Add text" fc={addTextNode} />
             )}
-            {content.length !== 2 && (
-              <ButtonNode
-                disabled={content.length !== 1}
-                title="Stock answer var"
-                fc={addStockAnswerNode}
-              />
+            {content[0]?.link === undefined && (
+              // <ButtonNode
+              //   disabled={content.length !== 1}
+              //   title="Stock answer var"
+              //   fc={addStockAnswerNode}
+              // />
+              <ButtonNode title="Image" fc={addImage} />
             )}
+            {/* <ButtonNode title="Audio" fc={addAudioNode} />
+            <ButtonNode title="video" fc={addVideoNode} />
+            <ButtonNode title="Document" fc={addDocumentNode} />
+            <ButtonNode title="Gift" fc={addGiftNode} /> */}
           </div>
         </div>
       </LayoutTypesNode>
@@ -194,7 +234,6 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
         position={Position.Right}
         id="b"
         isConnectable={isConnectable}
-        onConnect={(connection) => console.log(nodesData)}
       ></Handle>
     </div>
   );

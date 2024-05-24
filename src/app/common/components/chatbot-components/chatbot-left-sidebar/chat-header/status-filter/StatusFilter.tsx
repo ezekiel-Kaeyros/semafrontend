@@ -6,6 +6,9 @@ import { StatusFitlerProps } from './StatusFilter.d';
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 import Cookies from 'js-cookie';
 import { getStatusInCookie, setStatusInCookie } from '@/cookies/cookies';
+import { UseDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { setFilteredStatus } from '@/redux/features/chat-bot-slice';
 
 interface SelectedChatProps {
   id: number;
@@ -25,10 +28,13 @@ const StatusFitler: React.FC<StatusFitlerProps> = ({
     getStatusInCookie(options[0].status)
     // options[0].status
   );
+  const [selectedColor, setSeletedColor] = useState('');
+  const dispatch = useDispatch();
 
   const handleStatusChange = (status: string | any) => {
     setSelected(status);
     onStatusChange(status);
+    dispatch(setFilteredStatus(status));
     // setSelected(getStatusInCookie(status));
     // onStatusChange(getStatusInCookie(status));
     setStatusInCookie(status);
@@ -42,7 +48,15 @@ const StatusFitler: React.FC<StatusFitlerProps> = ({
           className="py-3 px-4 bg-mainDarkLight flex justify-between  rounded-md h-[50px]"
         >
           {/* Selected value */}
-          <p className="">{!selected?.status ? selected : selected?.status}</p>
+          <div className="flex justify-center items-center gap-x-2">
+            <p className="">
+              {!selected?.status ? selected : selected?.status}
+            </p>
+            <div
+              style={{ backgroundColor: `${selectedColor}` }}
+              className="w-3 h-3 p-1 text-xs rounded-full flex justify-center items-center font bold"
+            ></div>
+          </div>
           <div className="flex items-center ml-2">
             <div
               style={{ backgroundColor: `${selected?.color}` }}
@@ -69,7 +83,8 @@ const StatusFitler: React.FC<StatusFitlerProps> = ({
                 onClick={() => {
                   handleSelect && handleSelect(option?.status),
                     setSelected(option),
-                    handleStatusChange(option.status);
+                    setSeletedColor(option.color);
+                  handleStatusChange(option.status);
                   setToggle((prev) => !prev);
                 }}
               >
@@ -79,7 +94,7 @@ const StatusFitler: React.FC<StatusFitlerProps> = ({
                   style={{ backgroundColor: `${option?.color}` }}
                   className="w-5 h-5 p-1 text-xs rounded-full flex justify-center items-center font bold"
                 >
-                  {option?.numberOfChats}
+                  {/* {option?.numberOfChats} */}
                 </div>
               </div>
             </AnimateClick>

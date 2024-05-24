@@ -79,17 +79,18 @@ export interface ModalSliceType {
 }
 
 export type TypeItemTableSaveTemplete = {
-  nametemplete?: string;
-  categorytemplete?: string;
-  statutTemplete?: string;
-  languageTemplete?: string;
-  imgTemplete?: string;
-  textTemplete?: string;
-  titleTemplete?: string;
-  Tagline?: string;
-  name?: string;
-  status?: string;
-  id?: string;
+  body_text: string;
+  category: string;
+  company_name: string;
+  footer_text: string;
+  id: string;
+  image_handle: string;
+  image_url: string;
+  language: string;
+  name: string;
+  phone_number_id: string;
+  status: string;
+  template_id: string;
 };
 
 export interface ChatBotType {
@@ -105,6 +106,7 @@ export interface ChatBotType {
   companychats: ChatsByCompanyReturnType;
   chatsConversation: ChatConversationType[];
   message: ChatConversationType;
+  filterStatus: string;
 }
 
 export interface BulkMessageTabSilceType {

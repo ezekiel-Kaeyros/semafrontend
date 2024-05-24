@@ -4,3 +4,6 @@ export type AddTextNodeType = {
   setContent?: (d: string, value: string) => void;
   defaultValue?: string;
 };
+export type ImageNodeType = AddTextNodeType & {
+  setContent?: (d: string, value?: string) => void;
+};

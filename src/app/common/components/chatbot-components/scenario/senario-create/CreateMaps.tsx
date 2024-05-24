@@ -44,6 +44,7 @@ type NodeDataType = {
   id: string;
   value: any;
   type?: 'response' | 'question';
+  link?: string;
 };
 function CreateMaps(props: CreateMapsProps) {
   const edgeUpdateSuccessful = useRef(true);
@@ -53,7 +54,7 @@ function CreateMaps(props: CreateMapsProps) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
-  const { setNameSenario } = useSenarioCreate();
+  const { setNameSenario, setKeywordsSenario } = useSenarioCreate();
   const { setNodesData, setAddNodesData } = useSenarioCreate();
   const nameSenario = useSenarioCreate((state) => state.nameSenario);
   // for update
@@ -63,8 +64,6 @@ function CreateMaps(props: CreateMapsProps) {
   const onConnect = useCallback(
     (params: any) =>
       setEdges((eds) => {
-        console.log('params', params);
-        console.log('eds', eds);
         return addEdge(
           {
             ...params,
@@ -143,7 +142,6 @@ function CreateMaps(props: CreateMapsProps) {
     setLoading(true);
     const response = await new SenarioService().getSenarioById(id);
     if (response.status === 200) {
-      console.log('updateNodes', nodes);
       setLoading(false);
       return response;
     } else {
@@ -166,6 +164,7 @@ function CreateMaps(props: CreateMapsProps) {
         id: parentNode?.id ? parentNode?.id : generateId(),
         value: parentNode.label,
         type: isQuestion ? 'question' : 'response',
+        link: parentNode.link ? parentNode.link : undefined,
       };
       nodesData.add(parentNodeData);
       if (parentNode?.questions) {
@@ -314,12 +313,9 @@ function CreateMaps(props: CreateMapsProps) {
       if (reponse) {
         setScenarioGetted(reponse.data);
         let nodesDataAndEdges = loadScenario(reponse.data?.description);
-        console.log(reponse.data.title);
-
         setNameSenario(reponse.data.title);
+        setKeywordsSenario?.(reponse.data.keywords ?? []);
         setNodesData!(nodesDataAndEdges?.nodeData);
-        console.log(nodesDataAndEdges.edges);
-
         setNodes(
           displayNodeOnCanvas(
             nodesDataAndEdges.nodeData,

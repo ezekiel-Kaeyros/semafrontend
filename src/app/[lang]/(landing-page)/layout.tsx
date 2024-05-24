@@ -11,8 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className=" px-4 md:px-11 lg:px-[70px]">
-        {' '}
+      <body className="  bg-mainDark ">
         <NextTopLoader
           color="#2299DD"
           initialPosition={0.08}
@@ -24,7 +23,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           speed={200}
           shadow="0 0 10px #2299DD,0 0 5px #2299DD"
         />
-        {children}
+        <div className="overflow-hidden px-4 md:px-11 lg:px-[70px]">
+          {children}
+        </div>
       </body>
     </html>
   );

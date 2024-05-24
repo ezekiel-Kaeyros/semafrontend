@@ -78,7 +78,7 @@ const VerificationCodeModule = () => {
   });
 
   const onSubmit: SubmitHandler<VerificationCodeModuleType> = (data) => {
-    console.log('signed in, data', data);
+    // ;
   };
 
   return (

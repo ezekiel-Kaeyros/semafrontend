@@ -8,16 +8,18 @@ import { useChatBot } from '@/app/hooks/useChatBot';
 const ChatUI = ({ id }: { id: string | number }) => {
   const { chatsConversation } = useChatBot();
 
+  // ;
+
   const selectedChat = chatsConversation?.find(
     (chat) => chat.phone_number.toString() === id.toString()
   );
   return (
-    <div className=" flex flex-col">
+    <div className=" flex flex-col relative w-full ">
       <ChatbotTopSection selectedChat={selectedChat} />
-      <div className="no-scrollbar ">
+      <div className="no-scrollbar  w-full">
         <ChatbotMainSection selectedChat={selectedChat} />
       </div>
-      <div className="fixed  max-w-4xl rounded-full bottom-4 left-[42%] right-8">
+      <div className=" w-full rounded-full bottom-4 absolute flex justify-center px-20 ">
         <ChatbotBottomSection
           number={selectedChat?.phone_number}
           numberId={id.toString()}

@@ -22,8 +22,18 @@ interface SideBarProps {
 }
 function SideBar(props: SideBarProps) {
   const [close, setClose] = useState(false);
-  const { setNameSenario } = useSenarioCreate();
+  const { setNameSenario, setKeywordsSenario } = useSenarioCreate();
   const nameSenario = useSenarioCreate((state) => state.nameSenario);
+  const keywordsSenario = useSenarioCreate((state) => state.keywords);
+
+  function splitStringAndRemoveSpaces(input: string) {
+    const parts = input.split(',');
+    const result = parts.map((part) => part.trim());
+    return result;
+  }
+  function joinArrayToString(arr: string[]) {
+    return arr.join(', ');
+  }
   return (
     <>
       <div
@@ -42,6 +52,19 @@ function SideBar(props: SideBarProps) {
           defaultValue={nameSenario}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setNameSenario(e.target.value)
+          }
+        />{' '}
+      </div>
+      <div
+        className={` absolute bottom-5 z-20 flex gap-2 place-items-center ${close ? ' left-0  ' : 'left-80 '} transition-all ease-in-out duration-800 `}
+      >
+        <h1>Enter the keywords :</h1>
+        <input
+          type="text"
+          className=" text-md text-white bg-transparent  appearance-none focus:outline-none font-[visby-medium'] font-semibold"
+          defaultValue={joinArrayToString(keywordsSenario ?? [])}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setKeywordsSenario!(splitStringAndRemoveSpaces(e.target.value))
           }
         />{' '}
       </div>

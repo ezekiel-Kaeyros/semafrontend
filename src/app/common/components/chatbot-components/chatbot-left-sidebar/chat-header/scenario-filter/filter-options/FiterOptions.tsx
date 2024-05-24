@@ -73,8 +73,6 @@ function FiterOptions({
   const mappedScenario =
     filteredScenarios.length > 0 ? filteredScenarios : scenarios;
 
-  console.log(scenarios, 'scenarios');
-
   return (
     <div>
       <div>
@@ -101,7 +99,6 @@ function FiterOptions({
                     .join(' ') + '...'
                 : scenario.title;
 
-            console.log(trimmedTitle, 'trimmedTitle');
             return (
               <AnimateClick key={scenario._id}>
                 <div

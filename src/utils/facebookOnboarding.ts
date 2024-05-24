@@ -7,7 +7,7 @@
   });
 };
 
-const sessionInfoListener = (event:any) => {
+const sessionInfoListener = (event: any) => {
   if (event.origin !== 'https://www.facebook.com') return;
   try {
     const data = JSON.parse(event.data);
@@ -23,7 +23,7 @@ const sessionInfoListener = (event:any) => {
     }
   } catch {
     // Don’t parse info that’s not a JSON
-    console.log('Non JSON Response', event.data);
+    // ;
   }
 };
 
@@ -48,12 +48,12 @@ function launchWhatsAppSignup() {
 
   // Launch Facebook login
   FB.login(
-    function (response:any) {
+    function (response: any) {
       if (response.authResponse) {
         const accessToken = response.authResponse.accessToken;
         //Use this token to call the debug_token API and get the shared WABA's ID
       } else {
-        console.log('User cancelled login or did not fully authorize.');
+        // ;
       }
     },
     {
@@ -61,36 +61,36 @@ function launchWhatsAppSignup() {
       response_type: 'code', // must be set to 'code' for System User access token
       override_default_response_type: true,
       scope: 'whatsapp_business_management, whatsapp_business_messaging',
-      
-    //   extras: {
-    //     feature: 'whatsapp_embedded_signup',
-    //     version: 2,
-    //     sessionInfoVersion: 2,
-    //     setup: {
-    //       business: {
-    //         name: 'Acme Inc.',
-    //         email: 'johndoe@acme.com',
-    //         phone: {
-    //           code: 1,
-    //           number: '6505551234',
-    //         },
-    //         website: 'https://www.acme.com',
-    //         address: {
-    //           streetAddress1: '1 Acme Way',
-    //           city: 'Acme Town',
-    //           state: 'CA',
-    //           zipPostal: '94000',
-    //           country: 'US',
-    //         },
-    //         timezone: 'UTC-08:00',
-    //       },
-    //       phone: {
-    //         displayName: 'Acme Inc',
-    //         category: 'ENTERTAIN',
-    //         description: 'Acme Inc. is a leading entertainment company.',
-    //       },
-    //     },
-    //   },
+
+      //   extras: {
+      //     feature: 'whatsapp_embedded_signup',
+      //     version: 2,
+      //     sessionInfoVersion: 2,
+      //     setup: {
+      //       business: {
+      //         name: 'Acme Inc.',
+      //         email: 'johndoe@acme.com',
+      //         phone: {
+      //           code: 1,
+      //           number: '6505551234',
+      //         },
+      //         website: 'https://www.acme.com',
+      //         address: {
+      //           streetAddress1: '1 Acme Way',
+      //           city: 'Acme Town',
+      //           state: 'CA',
+      //           zipPostal: '94000',
+      //           country: 'US',
+      //         },
+      //         timezone: 'UTC-08:00',
+      //       },
+      //       phone: {
+      //         displayName: 'Acme Inc',
+      //         category: 'ENTERTAIN',
+      //         description: 'Acme Inc. is a leading entertainment company.',
+      //       },
+      //     },
+      //   },
     }
   );
 }

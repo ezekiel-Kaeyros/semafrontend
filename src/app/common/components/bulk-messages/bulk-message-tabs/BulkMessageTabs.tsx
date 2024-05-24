@@ -30,7 +30,7 @@ const BulkMessageTabs = () => {
     useBolkMessage();
 
   return (
-    <>
+    <div className="flex gap-4">
       {bulkMessageTabs &&
         bulkMessageTabs?.map((tab: BulkMessageTabType) => (
           <BulkMessageTab
@@ -41,7 +41,7 @@ const BulkMessageTabs = () => {
             selected={tab?.selected}
           />
         ))}
-    </>
+    </div>
   );
 };
 

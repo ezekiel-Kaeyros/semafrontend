@@ -177,7 +177,6 @@ function FilterDetails({ scenarioData, scenarioLabel }: FilterActionsProps) {
                   <div className="ml-10 gap-4 border-l-2 pl-4">
                     <div className="grid grid-cols-2 w-fit gap-4 py-3">
                       {data.child.map((secondEmbededData) => {
-                        console.log(secondEmbededData, 'secondEmbededData');
                         return (
                           <div key={secondEmbededData.uuid} className="">
                             <AnimateClick>

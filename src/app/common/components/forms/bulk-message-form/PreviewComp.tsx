@@ -19,7 +19,7 @@ const PreviewComp:React.FC<{textTemplate?:string,ImgTemplate?:any,tagline?:strin
 
 
   return (
-    <div className="w-[350px] bg-slate-100 text-black">
+    <div className="w-full bg-slate-100 text-black">
       <div className="h-[50px] bg-slate-300 flex flex-row justify-between items-center">
         <div className="text-[15px] pl-[1rem]">09 : 41</div>
         <div className="flex flex-row items-center gap-2 pr-[1rem]">
@@ -34,24 +34,32 @@ const PreviewComp:React.FC<{textTemplate?:string,ImgTemplate?:any,tagline?:strin
           </div>
         </div>
       </div>
-      <div className="h-[450px] bg-brokenWhite p-[1rem] pt-[3rem] flex flex-col gap-2">
+      <div className="h-[450px] bg-brokenWhite p-[1rem] pt-[3rem] flex flex-col gap-2 overflow-y-auto no-scrollbar">
         <div className="flex flex-col gap-4 bg-white max-w-[60%] min-w-[10%] p-[.5rem] rounded-lg">
           <div className="rounded-lg bg-white flex justify-center box-border ">
             {props.ImgTemplate && props.ImgTemplate != '' && (
-              <Image src={props.ImgTemplate} alt="" width={200} height={150} />
+              <Image src={props.ImgTemplate} alt="" width={250} height={150} />
             )}
           </div>
           <div>
             <div className="text-[10px]">
-              {/* Hi, James <br /> */}
               {props.textTemplate && (
+                // <textarea
+                //   name=""
+                //   id=""
+                //   cols={30}
+                //   rows={Math.round(props.textTemplate.length / 30)}
+                //   className="bg-white no-scrollbar"
+                // >
+                //   {props.textTemplate.toString()}
+                // </textarea>
                 // <textarea name="" id="" cols={30} rows={10} className='text-white'>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(props.textTemplate.toString()),
-                    }}
-                    className="text-[10px]"
-                  />
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(props.textTemplate.toString()),
+                  }}
+                  className="text-[10px]"
+                />
                 // </textarea>
               )}
             </div>

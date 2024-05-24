@@ -99,7 +99,7 @@ export class SenarioService extends DataService {
     email: string;
     data: any;
     id: string;
-  }): Promise<{ data: GetSenario[]; status: number }> => {
+  }): Promise<{ data: any; status: number }> => {
     try {
       const response = await this.client.put(
         BASE_URL + '/edit/' + params.id,

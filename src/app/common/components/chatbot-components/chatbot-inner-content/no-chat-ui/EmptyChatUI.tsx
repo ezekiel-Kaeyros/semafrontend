@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 const EmptyChatUI = () => {
   return (
-    <div className="w-[100%] py-64 bg-mainDark h-full grid justify-items-center gap-[1.5rem] content-center">
+    <div className="w-[100%] py-64 bg-mainDark h-screen-minus-80 grid justify-items-center gap-[1.5rem] content-center">
       <div className="p-1 flex items-center justify-center">
         <Image src={emptyIcon} width={150} alt="Notification icon" />
       </div>
@@ -28,7 +28,7 @@ const EmptyChatUI = () => {
       </div>
       {/* <div className="flex flex-col justify-center gap-[1rem] justify-items-center w-[200px]"></div> */}
       <div className="my-6">
-        <Link href={`/dashboard/chatbot/scenarios/create`}>
+        <Link href={`/dashboard/scenarios/create`}>
           <Button rightIcon={messageIcon}>Create scenario</Button>
         </Link>
       </div>

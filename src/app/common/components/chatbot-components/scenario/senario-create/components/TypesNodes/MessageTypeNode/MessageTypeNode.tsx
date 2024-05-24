@@ -13,7 +13,6 @@ import {
   DocumentNode,
   VideoNode,
   AudioNode,
-  ImageNode,
 } from './componentsNodes';
 import { useStoreApi } from 'reactflow';
 import { NodeDataType, useSenarioCreate } from '@/zustand_store';
@@ -25,7 +24,6 @@ function MessageTypeNode({ data, isConnectable }: MessageTypeNodeType) {
   const [content, setContent] = useState<NodeDataType[]>(
     nodesData.filter((item) => item.id === data.id)
   );
-  console.log('lidcontent', content);
   function deleteItemById(
     items: NodeDataType[],
     idToDelete: string
@@ -260,11 +258,11 @@ function MessageTypeNode({ data, isConnectable }: MessageTypeNodeType) {
               <ButtonNode title="Text" fc={addTextNode} />
             )}
 
-            <ButtonNode title="Image" fc={addImageNode} />
+            {/* <ButtonNode title="Image" fc={addImageNode} />
             <ButtonNode title="Audio" fc={addAudioNode} />
             <ButtonNode title="video" fc={addVideoNode} />
             <ButtonNode title="Document" fc={addDocumentNode} />
-            <ButtonNode title="Gift" fc={addGiftNode} />
+            <ButtonNode title="Gift" fc={addGiftNode} /> */}
           </div>
         </div>
       </LayoutTypesNode>

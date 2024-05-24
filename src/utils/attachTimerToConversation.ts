@@ -24,15 +24,15 @@ export const attachCountdownTimer = (object: ConversationsType) => {
           object.seconds! = fiftyNineSeconds;
         } else {
           clearInterval(object?.timer);
-          console.log(
-            `Timer for object with ID ${object?.id} has reached 00:00:00`
-          );
+          //console.log(
+          //   `Timer for object with ID ${object?.id} has reached 00:00:00`
+          // );
         }
       }
     }
 
     const formattedTime = `${formatTime(object.hours)}:${formatTime(object.minutes)}:${formatTime(object.seconds)}`;
-    console.log(`Object with ID ${object.id}: ${formattedTime}`);
+    // ;
   }, 1000);
 
   return object;
@@ -81,7 +81,7 @@ export function updateTimer(conversation: ConversationsType) {
   const timeDiff: any =
     new Date(conversation?.deadline).getTime() - currentTime;
 
-  console.log('=======', timeDiff);
+  // ;
   if (timeDiff <= 0 || timeDiff >= 24 * 60 * 60 * 1000) {
     conversation = {
       ...conversation,
@@ -115,4 +115,4 @@ function padStart(value: any) {
 //   const currentDateTime = '2024-01-28T18:30:00';
 
 //   const timeLeft = getTimeLeft(endDateTime, currentDateTime);
-//   console.log(timeLeft);
+//   // ;

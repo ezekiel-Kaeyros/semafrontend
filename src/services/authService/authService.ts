@@ -1,29 +1,24 @@
+import { DataServiceUserService } from '../dataServiceUserService';
 
-import {DataServiceUserService} from '../dataServiceUserService';
-
-export  class AuthService extends DataServiceUserService {
+export class AuthService extends DataServiceUserService {
   login = async (data: { email: string; password: string }) => {
- try {
-     const response = await this.post(
-       'https://tmil8s59c9.execute-api.eu-central-1.amazonaws.com/login',
-       data
-     );
-     console.log(response.data.data, 'credentials');
-   alert('login');
-    return response.data;
- } catch (error) {
-
-   console.log(data, 'credentials');
+    try {
+      const response = await this.post(
+        'https://tmil8s59c9.execute-api.eu-central-1.amazonaws.com/login',
+        data
+      );
+      // ;
+      alert('login');
+      return response.data;
+    } catch (error) {
+      // ;
       alert('dinge');
- }
-
-   
+    }
   };
   login2 = (data: {
     email: string;
 
     password: string;
-   
   }): Promise<{ data: any; status: any }> => {
     return this.post('/login', data);
   };
@@ -50,7 +45,7 @@ export  class AuthService extends DataServiceUserService {
       data
     );
 
-    console.log(response?.data?.data);
+    // ;
 
     alert('stoppa');
 

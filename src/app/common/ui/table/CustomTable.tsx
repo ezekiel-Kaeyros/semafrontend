@@ -80,6 +80,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
   const [isShowModal, setIsShowModal] = useState(false);
 
   const [idSession, setIdSession] = useState('');
+  const [dateSession, setDateSession] = useState('');
   const [visibleColumns, setVisibleColumns] = useState<any>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
@@ -89,13 +90,15 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
     column: 'age',
     direction: 'ascending',
   });
-  console.log('tableSession', tableSession);
+  // ;
 
   const [page, setPage] = useState<number>(1);
 
   // const pages = Math.ceil(users.length / rowsPerPage);
 
   // Filtering
+  console.log('reverse',tableSession.reverse());
+  
   const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = React.useMemo<any>(() => {
@@ -178,28 +181,28 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
     }
 
     const titleKeys = Object.keys(final_value[0]);
-    // console.log("titleKeys: ", titleKeys)
+    // //
 
     const refinedData = [];
     refinedData.push(titleKeys);
 
     users.forEach((item) => {
       refinedData.push(Object.values(item));
-      // console.log("refinedData: ", refinedData)
+      // //
     });
 
     let csvContent = '';
 
     refinedData.forEach((row) => {
       csvContent += row.join(',') + '\n';
-      // console.log("refinedData: ", csvContent)
+      // //
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' });
-    // console.log("blob: ", blob)
+    // //
 
     objUrl = URL.createObjectURL(blob);
-    // console.log("objUrl: ", objUrl)
+    // //
   }
   const showHandler = () => {
     setIsShowModal((isShowModal) => !isShowModal);
@@ -216,8 +219,19 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
               <p
                 className="text-bold text-small capitalize font-normal cursor-pointer"
                 onClick={() => {
-                  console.log('user', user?.id);
+                  // ;
                   setIdSession(user?.id);
+                  setDateSession(
+                    user.created_at.split('T')[0].split('-')[2] +
+                      '-' +
+                      user.created_at.split('T')[0].split('-')[1] +
+                      '-' +
+                      user.created_at.split('T')[0].split('-')[0] +
+                      ' ' +
+                      user.created_at.split('T')[1].split(':')[0] +
+                      ':' +
+                      user.created_at.split('T')[1].split(':')[1]
+                  );
                   setIsShowModal((isShowModal) => !isShowModal);
                 }}
               >
@@ -298,7 +312,6 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
           return (
             <div className="flex flex-row ">
               <CircularProgress
-             
                 size="lg"
                 value={
                   user?.broadcasts
@@ -323,7 +336,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                 src={InformationIcon}
                 alt="Icon info"
                 onClick={() => {
-                  console.log('user', user?.id);
+                  // ;
                   setIdSession(user?.id);
                   setIsShowModal((isShowModal) => !isShowModal);
                 }}
@@ -528,9 +541,9 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
-  console.log(dateStart);
-  console.log('test ####################################');
-  console.log(dateEnd);
+  // ;
+  // ;
+  // ;
   // Fonction de filtrage des données en fonction de l'intervalle de temps
   const filtrerIntervalleTemps = () => {
     if (dateStart && dateEnd) {
@@ -539,7 +552,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
         return item.time >= dateStart && item.time <= dateEnd;
       });
       // Utilisez le nouveau tableau filtré comme vous le souhaitez
-      console.log(tableauFiltre);
+      // ;
     }
   };
   return (
@@ -550,12 +563,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
         bottomContentPlacement="outside"
         classNames={{
           wrapper: 'px-0 max-h-[382px] dark:bg-[#2B2E31] mt-5',
-          th: [
-            'dark:bg-transparent',
-            'text-white',
-            'font-normal',
-            'w-1/8 ',
-          ],
+          th: ['dark:bg-transparent', 'text-white', 'font-normal', 'w-1/8 '],
           td: [
             'px-3  border-t border-divider text-default-700',
             'dark:bg-[#2B2E31]',
@@ -586,7 +594,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
               key={item.id}
               className=""
               onClick={() => {
-                console.log('item', item);
+                // ;
               }}
             >
               {(columnKey) => (
@@ -600,9 +608,11 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
         isShow={isShowModal}
         showHandler={showHandler}
         id={idSession}
+        date={dateSession}
+        
       />
     </>
   );
 };
 
-export default App
+export default App;

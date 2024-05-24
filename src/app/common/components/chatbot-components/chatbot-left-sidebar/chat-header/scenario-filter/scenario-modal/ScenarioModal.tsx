@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import { BACKEND_CHATBOT_API_URL, SCENERIOS_URL } from '@/utils/backendUrls';
 import { useChatBot } from '@/app/hooks/useChatBot';
 import ScenarioModalFilter from './scenarioModal/Modal';
+import { useGlobalContext } from '@/app/common/contex-provider';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 interface ScenarioModalProps {
   onClose: () => void;
@@ -41,7 +43,20 @@ interface ChildLabel {
   selected: boolean;
 }
 
+interface IFormInput {
+  selectedScenarioName: string;
+}
+
 function ScenarioModal({ onClose, isOpen }: ScenarioModalProps) {
+  const {
+    watch,
+    formState: { errors, isSubmitting, isDirty, isValid },
+    handleSubmit,
+    reset,
+    register,
+    setValue,
+  } = useForm<IFormInput>({ mode: 'onChange' || 'onBlur' || 'onSubmit' });
+
   const [selectedScenario, setSelectedScenario] = useState<any>(null); // State to hold the selected scenario
   const [activeScenarioLabel, setActiveScenarioLabel] = useState<string>();
   const router = useRouter();
@@ -50,6 +65,12 @@ function ScenarioModal({ onClose, isOpen }: ScenarioModalProps) {
     // setSelectedScenarioState(scenario);
     // router.push(`/dashboard/chatbot/${scenario.id}`);
   };
+
+  const { setGlobalState } = useGlobalContext();
+
+  useEffect(() => {
+    setValue('selectedScenarioName', activeScenarioLabel!);
+  }, [activeScenarioLabel]);
 
   const loadScenarios = async ({ token }: { token: string }) => {
     const response = await axios.get(SCENERIOS_URL);
@@ -68,20 +89,28 @@ function ScenarioModal({ onClose, isOpen }: ScenarioModalProps) {
     queryFn: () => loadScenarios({ token: scenarioToken }),
   });
 
-  // console.log(chatsCompany, 'this is my chats company');
+  //  ;
 
   function handleActiveScenarioChange(
     scenarioId: string,
-    scenario_label: string
+    scenario_label: string | any
   ) {
     // Handle the active scenario change logic here
     setActiveScenarioLabel(scenario_label);
   }
 
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    setGlobalState((prevState: any) => ({
+      ...prevState,
+      selectedScenarioLabel: data.selectedScenarioName,
+    }));
+  };
+
   return (
+    // <form onSubmit={handleSubmit(onSubmit)} action={publish}>
     <div>
-      <div>
-        <ScenarioModalFilter onClose={onClose} isOpen={isOpen}>
+      <ScenarioModalFilter onClose={onClose} isOpen={isOpen}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-x-10 mt-10 overflow-y-auto h-[40rem]">
             <div className="w-[40%] ml-2">
               <Filteroptions
@@ -101,12 +130,24 @@ function ScenarioModal({ onClose, isOpen }: ScenarioModalProps) {
 
           <div className="flex justify-end">
             <div className="flex w-fit gap-x-2">
-              <Button className="bg-transparent w-full">Cancel</Button>
-              <Button className="w-full min-w-[150px]">Apply Filter</Button>
+              <Button
+                className="bg-transparent w-full"
+                type="button"
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="w-full min-w-[150px]"
+                onClick={onClose}
+              >
+                Apply Filter
+              </Button>
             </div>
           </div>
-        </ScenarioModalFilter>
-      </div>
+        </form>
+      </ScenarioModalFilter>
     </div>
   );
 }

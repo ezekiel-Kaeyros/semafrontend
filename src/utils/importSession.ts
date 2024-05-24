@@ -11,26 +11,27 @@ export const sessionImport = async (
   fileType: string,
   accessToken: string
 ) => {
-  'use server';
+  ('use server');
   const firstResponse = await axios.post(
     `https://graph.facebook.com/${apiVersion}/${appId}/uploads?file_length=${fileLength}&file_type=${fileType}&access_token=${accessToken}`
   );
 
-  console.log('first response', firstResponse);
+  // ;
 
   let uploadSessionId = firstResponse.data.id;
 
   // Default file path
   //var filePath = path.join('./', 'bulk-messages/cat.png');
-  let filePath = 'https://res.cloudinary.com/dyekwrvwe/image/upload/v1700917326/samples/cloudinary-group.jpg';
-  console.log(filePath);
+  let filePath =
+    'https://res.cloudinary.com/dyekwrvwe/image/upload/v1700917326/samples/cloudinary-group.jpg';
+  // ;
 
-  const imageBuffer = await fetch(filePath).then(response => response.blob());
+  const imageBuffer = await fetch(filePath).then((response) => response.blob());
 
-  console.log('The image buffer', imageBuffer); 
+  // ;
 
   // const imageBuffer = fs.readFileSync(filePath);
-  // console.log('The image buffer', imageBuffer); 
+  // // ;
 
   // Request headers
   const headers = {
@@ -46,13 +47,11 @@ export const sessionImport = async (
   );
 
   //Second response data
-  console.log('secondResponse', secondResponse);
+  // ;
 
   let imageHandle = secondResponse.data.h;
 
-  console.log('Image Handle', imageHandle);
+  // ;
 
   return imageHandle;
 };
-
-

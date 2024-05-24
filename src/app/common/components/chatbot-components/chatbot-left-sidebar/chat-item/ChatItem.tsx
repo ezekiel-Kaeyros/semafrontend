@@ -39,9 +39,6 @@ const ChatItem: React.FC<ChatItemProps> = ({
       break;
   }
 
-  console.log(backgroundCol, 'color');
-  console.log(status, 'color');
-
   return (
     <AnimateClick>
       <Link href={`/dashboard/chatbot/${id}`}>
@@ -54,10 +51,10 @@ const ChatItem: React.FC<ChatItemProps> = ({
             ) : (
               <div className=" relative w-12 h-12 rounded-full flex justify-center items-center bg-[#A9B3EF] font-bold text-primary">
                 I
-                <div className="absolute -bottom-3 -right-1">
-                  <h2 className="bg-[#157A3F] w-8 h-8 rounded-[50%] flex items-center justify-center">
+                <div className="absolute -bottom-1 right-0">
+                  <h2 className="bg-[#157A3F] w-4 h-4 rounded-[50%] flex items-center justify-center">
                     <p className="text-sm text-center grid place-items-center h-5">
-                      {unread_msg}
+                      {/* {unread_msg} */}
                     </p>
                   </h2>
                 </div>

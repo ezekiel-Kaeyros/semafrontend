@@ -23,7 +23,7 @@ const OnboardingModal = () => {
   const [number, setNumber] = useState('');
   // let window:any
   window.fbAsyncInit = function () {
-    console.log('step1 {');
+    // ;
     FB.init({
       appId: '2448667798617426',
       autoLogAppEvents: true,
@@ -36,15 +36,15 @@ const OnboardingModal = () => {
       Authorization:
         'Bearer EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
     };
-    console.log(
-      'https://graph.facebook.com/v19.0/' + waba_id + '/phone_numbers'
-    );
-    console.log('numberId', number_id);
-    console.log('waba_id', waba_id);
+    //console.log(
+    //   'https://graph.facebook.com/v19.0/' + waba_id + '/phone_numbers'
+    // );
+    // ;
+    // ;
     try {
       setLoad(true);
-      console.log('numberId', number_id);
-      console.log('waba_id', waba_id);
+      // ;
+      // ;
       const response = await axios({
         method: 'GET',
         url: `https://graph.facebook.com/v19.0/${waba_id}/phone_numbers`,
@@ -53,7 +53,7 @@ const OnboardingModal = () => {
             'Bearer EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
         },
       });
-      console.log('response', response);
+      // ;
 
       if (response.status == 200 || response.status == 201) {
         setNumber(response.data.data[0].display_phone_number);
@@ -67,7 +67,7 @@ const OnboardingModal = () => {
           bodyRegisterNumber,
           { headers }
         );
-        console.log('response2', response2);
+        // ;
 
         if (
           (response2.status == 200 || response2.status == 201) &&
@@ -101,17 +101,17 @@ const OnboardingModal = () => {
   };
 
   const sessionInfoListener = async (event) => {
-    console.log('11111b11111111');
+    // ;
 
     if (event.origin !== 'https://www.facebook.com') return;
     try {
-      console.log('222222222222');
-      console.log('event', event);
+      // ;
+      // ;
       const data = JSON.parse(event.data);
-      console.log('data', data);
+      // ;
       if (data.type === 'WA_EMBEDDED_SIGNUP') {
         // if user finishes the Embedded Signup flow
-        console.log('ok11111');
+        // ;
 
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data;
@@ -123,17 +123,16 @@ const OnboardingModal = () => {
         }
         // if user cancels the Embedded Signup flow
         else {
-          console.log('333333333333333333');
+          // ;
 
           const { current_step } = data.data;
         }
       }
     } catch (error) {
-      console.log('444444444444444');
-      console.log(error);
-
+      // ;
+      // ;
       // Don’t parse info that’s not a JSON
-      console.log('Non JSON Response', event.data);
+      // ;
     }
   };
 
@@ -142,7 +141,7 @@ const OnboardingModal = () => {
 
   // Load the JavaScript SDK asynchronously
   (function (d, s, id) {
-    console.log('step2 {{');
+    // ;
 
     var js,
       fjs = d.getElementsByTagName(s)[0];
@@ -155,7 +154,7 @@ const OnboardingModal = () => {
 
   // Facebook Login with JavaScript SDK
   function launchWhatsAppSignup() {
-    console.log('step3{{{{{');
+    // ;
 
     // Conversion tracking code
     //fbq && fbq('trackCustom', 'WhatsAppOnboardingStart', {appId: '2448667798617426', feature: 'whatsapp_embedded_signup'});
@@ -165,10 +164,10 @@ const OnboardingModal = () => {
       function (response) {
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
-          console.log('accessToken', accessToken);
+          // ;
           //Use this token to call the debug_token API and get the shared WABA's ID
         } else {
-          console.log('User cancelled login or did not fully authorize.');
+          // ;
         }
       },
       {
@@ -214,11 +213,11 @@ const OnboardingModal = () => {
     if (
       step == 3 &&
       numberId.length > 0 &&
-      wabaId.length > 0 
-   //   name.length == 0 &&
-   //   number.length == 0
+      wabaId.length > 0
+      //   name.length == 0 &&
+      //   number.length == 0
     ) {
-      console.log('testing');
+      // ;
       registerHandler(numberId, wabaId);
     }
   }, [step, numberId, wabaId, error, name, number]);

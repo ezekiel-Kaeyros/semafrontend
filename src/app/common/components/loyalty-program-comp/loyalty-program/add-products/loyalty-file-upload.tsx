@@ -12,7 +12,7 @@ type ImageProps = {
 export const LoyaltyFileUpload: FC<ImageProps> = ({ picture }) => {
   const [preview, setPreview] = useState<string | any | null>(null);
 
-  console.log(preview, 'this is my preview');
+  // ;
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];

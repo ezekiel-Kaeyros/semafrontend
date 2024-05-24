@@ -14,6 +14,7 @@ import StatusFitler from '../../../chatbot-left-sidebar/chat-header/status-filte
 import { options } from '../../../chatbot-left-sidebar/chat-header/status-filter/StatusFilter.d';
 import { ChatbotTopSectionProps } from './ChatbotTopSection.d';
 import { ChatConversationType } from './ChatbotTopSection.d';
+import ConversationFilter from './conversationFilter';
 
 interface ChatMessages {
   selectedChat: {
@@ -32,7 +33,7 @@ const ChatbotTopSection: React.FC<any> = ({ selectedChat }: ChatMessages) => {
   const { displayClientInfoInChatToggle, dispatch, message } = useChatBot();
 
   return (
-    <div className="px-[1rem] py-3 flex flex-row justify-between items-center border-slate-600 w-full dark:bg-mainDark border-b-[0.02px]">
+    <div className="px-[1rem] py-3 flex flex-row justify-between items-center border-slate-600 dark:bg-mainDark border-b-[0.02px]">
       <div className="flex flex-row justify-between items-center">
         <div className="flex items-center">
           <div className="mr-5 bg-[#2B45D8] py-3 px-4 rounded-full flex items-center gap-x-2">
@@ -86,7 +87,7 @@ const ChatbotTopSection: React.FC<any> = ({ selectedChat }: ChatMessages) => {
           </AnimateClick>
         </div>
         <div className="flex justify-center w-full">
-          <StatusFitler
+          <ConversationFilter
             options={options}
             selectedStatus={'selectedStatus'}
             onStatusChange={() => <>hello</>}

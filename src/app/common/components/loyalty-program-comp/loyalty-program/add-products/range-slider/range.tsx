@@ -71,7 +71,7 @@ export const Slider: React.FC<SliderProps> = ({
 //   const [currentIndex, setCurrentIndex] = useState(0);
 //   const step = 1;
 
-//   console.log(currentIndex, 'this is my current index');
+//   // ;
 
 //   return (
 //     <div>

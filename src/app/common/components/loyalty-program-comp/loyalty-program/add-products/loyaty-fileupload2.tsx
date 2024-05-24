@@ -56,7 +56,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleDeleteClick = () => {
     // Handle delete action, e.g., confirm deletion
-    console.log('Delete image clicked');
+    // ;
     // Optionally, you can reset the image preview and selected image
     setImagePreview(null);
     setSelectedImage(null);

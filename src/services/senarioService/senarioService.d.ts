@@ -8,7 +8,7 @@ export type MainModel = {
   label: string;
   responses?: MainModel[];
   questions?: MainModel[];
-  responseType?: 'text' | 'button' | 'list' | 'catalog' | 'template';
+  responseType?: 'text' | 'button' | 'list' | 'catalog' | 'template' | 'image';
   id?: string;
 };
 

@@ -38,7 +38,7 @@ function LoyaltyProgram() {
   // redux store actions
   const { currentStep } = useSelector((state: RootState) => state.stepReducer);
 
-  console.log(currentStep, 'this is my current step');
+  // ;
 
   return (
     <div>

@@ -14,19 +14,6 @@ export const removeUserCookies = () => {
   cookies.remove(USER_DATA);
 };
 
-export const getModalStateCookie = () => {
-  const stateCookie = cookies.get('modalStateCookie');
-  return stateCookie ? JSON.parse(stateCookie) : false;
-};
-
-// Function to set the state in cookies
-export const setModalStateInCookie = (state: any) => {
-  cookies.set('modalStateCookie', JSON.stringify(state), {
-    expires: 7,
-    path: '/',
-  });
-};
-
 export const getStatusInCookie = (status: string | any) => {
   const stateCookie = cookies.get('selectedStatus');
   return stateCookie ? stateCookie : status;

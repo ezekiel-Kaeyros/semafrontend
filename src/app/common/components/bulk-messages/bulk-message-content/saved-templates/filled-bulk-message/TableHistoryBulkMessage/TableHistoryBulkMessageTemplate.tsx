@@ -313,6 +313,7 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
         isShow={isShowModal}
         showHandler={showHandler}
         id={idSession}
+        date=''
       />
     </div>
   );

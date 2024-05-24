@@ -56,16 +56,18 @@ const ChatbotBottomSection: React.FC<{ number?: string; numberId: string }> = ({
       })
       .then((result) => {
         if (result.status == 200) {
-          console.log('=============', result.data);
+          // ;
           setload(false);
           reset();
           toast.success('envoyé');
         }
       })
       .catch((error) => {
-        console.log('error', error.response.data);
+        // ;
         setload(false);
-        toast.error("échec d'envoie de messages surement la session est terminée");
+        toast.error(
+          "échec d'envoie de messages surement la session est terminée"
+        );
       });
     // setGeneratedID((generatedID) => generatedID + 1);
 
@@ -93,7 +95,7 @@ const ChatbotBottomSection: React.FC<{ number?: string; numberId: string }> = ({
     //   };
     // }
 
-    // console.log(data);
+    // // ;
     // reset();
 
     // dispatch(addChat(data));
@@ -102,7 +104,7 @@ const ChatbotBottomSection: React.FC<{ number?: string; numberId: string }> = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="px-[1rem] flex flex-row  right-0 first-letter:  justify-between  border-slate-600  w-full rounded-full dark:bg-mainDarkLight border-t-[0.02px]  "
+      className=" px-5 flex flex-row  right-0 first-letter:  justify-between  border-slate-600  w-full rounded-full dark:bg-mainDarkLight border-t-[0.02px]  "
     >
       <Toaster position="top-center" reverseOrder={false} />
 

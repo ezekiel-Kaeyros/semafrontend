@@ -3,11 +3,7 @@ import React from 'react';
 import LayoutChatComponent from '../LayoutChatComponent';
 
 const page = ({ params }: { params: { id: string } }) => {
-  return (
-    <LayoutChatComponent>
-      <ChatUI id={params?.id} />
-    </LayoutChatComponent>
-  );
+  return <ChatUI id={params?.id} />;
 };
 
 export default page;

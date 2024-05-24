@@ -2,6 +2,7 @@ import DataService from '../dataService';
 import {
   ChatsByCompanyReturnType,
   ChatsByNumberReturnType,
+  ImageReturnType,
 } from './chatbotService.d';
 import axios from 'axios';
 interface ClientNumber {
@@ -35,7 +36,7 @@ export class ChatbotService extends DataService {
     phone_number: string;
     phone_number_id: string;
   }): Promise<{ data: any; status: number }> => {
-    console.log(data);
+    //  ;
     const response = await this.post(
       'https://back.chatbot.sem-a.com/chats',
       data
@@ -82,6 +83,26 @@ export class ChatbotService extends DataService {
     );
     if (response.status === 200) {
       return response;
+    } else {
+      throw new Error('Failed to fetch data');
+    }
+  };
+
+  uploadImage = async (params: { file: File }): Promise<ImageReturnType> => {
+    const formData = new FormData();
+    formData.append('file', params.file);
+    formData.append('phone_number_id', 'phoneNumberId');
+    const response = await axios.post(
+      'https://back.chatbot.sem-a.com/scenarios/upload-file',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    if (response.status === 200) {
+      return response.data;
     } else {
       throw new Error('Failed to fetch data');
     }

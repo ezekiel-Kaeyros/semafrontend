@@ -14,7 +14,7 @@ import {
 import BulkMessageForm from '@/app/common/components/forms/bulk-message-form/BulkMessageForm';
 import ChoosePricing from '@/app/common/components/bulk-messages/payment-mode/choose-pricing/ChoosePricing';
 import { useQuery } from '@tanstack/react-query';
-import {AuthService} from '@/services';
+import { AuthService } from '@/services';
 
 const BulkMessage = () => {
   // const { user }=useAuth()
@@ -26,10 +26,10 @@ const BulkMessage = () => {
   const handleOnClickOpenModal = () => {
     dispatch(toggleOpenModal(true));
   };
-//   useEffect(() => {
-//   user && console.log('user',user);
-  
-// },[user])
+  //   useEffect(() => {
+  //   user && // ;
+
+  // },[user])
   const {
     data: posts,
     error,
@@ -39,17 +39,17 @@ const BulkMessage = () => {
     queryFn: new AuthService().retrievePosts,
   });
 
-  console.log('data', posts);
-  console.log('is loading', isLoading);
-  console.log('error', error);
+  // ;
+  // ;
+  // ;
 
   const handleOnClickCloseModal = () => {
     dispatch(toggleCloseModal(false));
   };
 
   return (
-    <>
-      <div className="px-[1rem] py-[2rem]">
+    <div className='h-full'>
+      <div className="px-[1rem] py-[2rem] h-full">
         <div>
           <h1
             style={{
@@ -60,8 +60,8 @@ const BulkMessage = () => {
             Bulk Message
           </h1>
         </div>
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-row gap-[1rem]">
+        <div className="flex place-items-center justify-between">
+          <div className="">
             <BulkMessageTabs />
           </div>
           <div>
@@ -74,18 +74,8 @@ const BulkMessage = () => {
             </Button>
           </div>
         </div>
-        <div className="p-[1rem]">
+        <div className="p-[1rem] h-full">
           <BulkMessageContent />
-          {/* <Button
-            variant={'mainColor'}
-            icon={bulk_messageIcon}
-            leftIcon={bulk_messageIcon}
-            iconSize={30}
-            className="w-auto mt-6"
-            onClick={viewPricingHandler}
-          >
-            view Pricing
-          </Button> */}
         </div>
       </div>
 
@@ -102,7 +92,7 @@ const BulkMessage = () => {
       >
         <BulkMessageForm modalHandler={handleOnClickCloseModal} />
       </CustomModal>
-    </>
+    </div>
   );
 };
 

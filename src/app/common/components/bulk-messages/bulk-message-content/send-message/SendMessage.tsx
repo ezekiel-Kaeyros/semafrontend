@@ -1,25 +1,27 @@
-
 // import Scenario from '../../../chatbot/scenario/Scenario';
 import React, { useEffect, useState } from 'react';
 import folderImg from '../../../../../../../public/icons/note-text.svg';
 import call from '../../../../../../../public/icons/call.svg';
 import add from '../../../../../../../public/icons/add-circle.svg';
+import search from '../../../../../../../public/icons/search-filter.svg';
 // import RessourcesAccordion from './Ressources-accordion/RessourcesAccordion';
 // import ScenarioForm from './Scenario-form/ScenarioForm';
 import Image from 'next/image';
 import { Button } from '@/app/common/ui/button/Button';
 import * as XLSX from 'xlsx';
 import toast, { Toaster } from 'react-hot-toast';
-import { useDropzone } from 'react-dropzone';
-import { useQuery,useMutation,useQueryClient } from '@tanstack/react-query';
-import {BulkMessagesService} from '@/services';
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { BulkMessagesService } from '@/services';
 import { postBulkMessage } from './actionSendMessage';
 import InputField from '@/app/common/ui/forms/text-field/InputField';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import Item from 'antd/es/list/Item';
+
 import { useBolkMessage } from '@/app/hooks/useBulkMessage';
 import { refesh } from '@/redux/features/bulk-message-slice';
 import { Select, SelectItem } from '@nextui-org/react';
+import { countries } from './Country/dataCounties';
+
 type bulkmessageDataType = {
   name: string;
   id: string;
@@ -28,43 +30,50 @@ type bulkmessageDataType = {
 type TableNumberFile = {
   number: string;
 };
-type TypeResponseBulkMsg = {
-  message: string;
-  data: any[];
-  status?: number;
-};
+
 const SendMessage = () => {
   const { isRefresh, dispatch } = useBolkMessage();
   const clientQuery = useQueryClient();
 
-  const { data: posts, error } = useQuery({
+  const { data: posts } = useQuery({
     queryKey: ['getTemplete'],
     queryFn: new BulkMessagesService().getTemplateByClient,
   });
+  // ;
+
   const [step, setStep] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // const [c] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  const [showCountries, setShowCountries] = useState(false);
+  const [countriess,setcountriess]=useState(countries)
   const [templeteValues, setTempleteValues] = useState({ id: '', name: '' });
   const [inputValue, setInputValue] = useState<FileList>();
   const [data, setData] = useState<string[]>([]);
   const [dataInput, setDataInput] = useState<string[]>([]);
   const [fileName, setFileName] = useState('');
+  const [regex, setRegex] = useState<RegExp>(countries[0].check!);
+  const [regexerror, setRegexerror] = useState(countries[0].errorTex);
+  const [country, setCountry] = useState({
+    icon: countries[0].icon,
+    name: countries[0].abbrev,
+    code:countries[0].code
+  });
   const sendBulkMessage = async (number: string[], name: string) => {
     const dataToSendForBulkmessage = {
       recipients_phone_numbers: number,
       template_name: name,
     };
-    console.log('dataToSendForBulkmessage', dataToSendForBulkmessage);
+    // ;
 
     try {
       setIsLoading(true);
       const respon = await postBulkMessage(dataToSendForBulkmessage);
-      console.log(respon, 'response');
+      // ;
 
       toast.success('message sent');
       setIsLoading(false);
-      console.log(dataToSendForBulkmessage, 'datas sending');
+      // ;
       setDataInput([]);
     } catch (error) {
       setIsLoading(false);
@@ -95,8 +104,16 @@ const SendMessage = () => {
             const dummyTableNumber = Object.values(item);
             tablenumber.push(dummyTableNumber[0]);
           });
-          if (tablenumber.length > 0) {
+          if (tablenumber.length > 0 && tablenumber.length<=1000) {
             setData(tablenumber);
+            
+            
+
+          } else {
+            toast.error(
+              'ce fichier est peut-être vide ou contient plus de 1000 numéros'
+            );
+            
           }
         }
       };
@@ -105,7 +122,7 @@ const SendMessage = () => {
   };
   const getIdHandler = (e: any) => {
     const value = e.target.value;
-    const tableValueTemplete = value.split('_');
+   
     setTempleteValues({
       id: '',
       name: value,
@@ -122,49 +139,42 @@ const SendMessage = () => {
     if (dummyTableNumber.length > 0) {
       const check = dummyTableNumber.filter((item) => item === numberToSend);
       if (check.length == 0) {
-        dummyTableNumber.push(numberToSend);
+        dummyTableNumber.push(country.code + numberToSend);
         setDataInput(dummyTableNumber);
       }
     } else {
-      dummyTableNumber.push(numberToSend);
+      dummyTableNumber.push( country.code+numberToSend);
       setDataInput(dummyTableNumber);
     }
   };
-  // const sendBulkMessage = async (data: {
-  //   recipients_phone_numbers: string[];
-  //   template_name: string;
-  // }) => {
-  //   const dataToSendForBulkmessage = {
-  //     recipients_phone_numbers: data,
-  //     template_name: templeteValues.name,
-  //   };
-  //   const response = new BulkMessagesService().sendBulkMessages(
-  //     data
-  //   );
-  // };
 
-  // const {mutateAsync:sendBulkMessageMutation } = useMutation({
-  //   mutationFn: sendBulkMessage,
-  //   onSuccess(data, variables, context) {
-  //     console.log(data,'datas');
-
-  //   },
-  // })
   const {
     setValue,
     register,
     handleSubmit,
     watch,
     reset,
-    formState: { isValid, errors },
-  } = useForm<{ numberToSend: string }>({
+    formState: { errors },
+  } = useForm<{ numberToSend: string; findCountry: string }>({
     mode: 'onChange' || 'onBlur' || 'onTouched',
   });
   let numberToSend = watch('numberToSend');
-  const onSubmit: SubmitHandler<{ numberToSend: string }> = async (data) => {
+  let findCountry = watch('findCountry');
+  const onSubmit: SubmitHandler<{ numberToSend: string,findCountry:string }> = async (data) => {
     reset();
   };
-
+  const changeCountyHandler = (item: any) => {
+    setShowCountries(false);
+    setRegex(item.check!);
+    setRegexerror(item.errorTex!);
+    // getIdHandler(e);
+    setValue('numberToSend', '');
+    setCountry({
+      icon: item.icon,
+      name: item.abbrev,
+      code: item.code.replaceAll('+', ''),
+    });
+  }
   useEffect(() => {
     if (isRefresh) {
       clientQuery.invalidateQueries({ queryKey: ['getTemplete'] });
@@ -178,21 +188,46 @@ const SendMessage = () => {
     if (dataInput.length == 5 || isLoading) {
       setValue('numberToSend', '');
     }
-  }, [isAdd, dataInput, refesh, numberToSend, isLoading]);
+
+    if (findCountry) {
+      const val = countries.filter(
+        (item) =>
+          item.country
+            .toLocaleLowerCase()
+            .includes(findCountry.toLocaleLowerCase()) ||
+          item.abbrev
+            .toLocaleLowerCase()
+            .includes(findCountry.toLocaleLowerCase())
+      );
+      setcountriess(val)
+    } else {
+      setcountriess(countries)
+    }
+
+  }, [isAdd, dataInput, refesh, numberToSend, isLoading,findCountry]);
   return (
-    <div>
+    <div
+      // onClick={}
+      onDoubleClick={() => showCountries && setShowCountries(false)}
+      className="h-full "
+    >
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex justify-center w-full items-center mb-5 mt-12">
         <Select
           // color="secondary"
-          size='lg'
+          size="lg"
           label="select template"
           placeholder="select template"
           selectionMode="single"
           className="max-w-sm "
+          classNames={{
+            trigger: 'border text-white',
+            value: 'text-white',
+            label: 'text-white ',
+          }}
           onChange={(e: any) => {
-            console.log(e,'------------------------------------------------------');
-            
+            // ;
+
             if (e.target.value !== '') {
               getIdHandler(e);
             }
@@ -204,9 +239,24 @@ const SendMessage = () => {
             </SelectItem>
           ))} */}
 
+          {/* {countries.map((item) => {
+            return (
+              <SelectItem
+                key={item.code}
+                value={item.country}
+                // key={item.country}
+              >
+                <span className="flex items-center">
+                  <Image src={item.icon} width={12} height={12} alt="" />
+                  <span className="ml-2">{item.country}</span>
+                </span>
+              </SelectItem>
+            );
+          })} */}
+
           {posts &&
-            posts?.data?.data &&
-            posts?.data?.data.map((item: bulkmessageDataType) => {
+            posts?.data &&
+            posts?.data.map((item: bulkmessageDataType) => {
               if (item.status == 'APPROVED') {
                 return (
                   <SelectItem
@@ -309,7 +359,7 @@ const SendMessage = () => {
               />
             </label>
           </div>
-          {inputValue !== undefined && (
+          {inputValue !== undefined && data.length > 0 && (
             <div className="grid grid-cols-1 mt-5 gap-3">
               {/* { filename && filename?.map(({ name }) => { */}
               {/* return ( */}
@@ -353,33 +403,35 @@ const SendMessage = () => {
                   : 'mainColor'
               }
               onClick={async () => {
-                const dataToSendForBulkmessage = {
-                  recipients_phone_numbers: data,
-                  template_name: templeteValues.name,
-                };
-                //  try {
-                //    await sendBulkMessageMutation(dataToSendForBulkmessage);
-                //    console.log(
-                //      dataToSendForBulkmessage.template_name,
-                //      'template'
-                //    );
-                //    alert('none');
-                //  } catch (error) {
-                //   alert('none')
-                //  }
+                sendBulkMessage(data, templeteValues.name);
 
-                try {
-                  setIsLoading(true);
-                  const respon = await postBulkMessage(
-                    dataToSendForBulkmessage
-                  );
-                  toast.success('message sent');
-                  setIsLoading(false);
-                  console.log(dataToSendForBulkmessage, 'datas sending');
-                  setInputValue(undefined);
-                } catch (error) {
-                  setIsLoading(false);
-                }
+                // const dataToSendForBulkmessage = {
+                //   recipients_phone_numbers: data,
+                //   template_name: templeteValues.name,
+                // };
+                // //  try {
+                // //    await sendBulkMessageMutation(dataToSendForBulkmessage);
+                // //    //console.log(
+                // //      dataToSendForBulkmessage.template_name,
+                // //      'template'
+                // //    );
+                // //    alert('none');
+                // //  } catch (error) {
+                // //   alert('none')
+                // //  }
+
+                // try {
+                //   setIsLoading(true);
+                //   const respon = await postBulkMessage(
+                //     dataToSendForBulkmessage
+                //   );
+                //   toast.success('message sent');
+                //   setIsLoading(false);
+                //   // ;
+                //   setInputValue(undefined);
+                // } catch (error) {
+                //   setIsLoading(false);
+                // }
               }}
             >
               {isLoading ? 'transfering...' : 'send '}
@@ -422,39 +474,104 @@ const SendMessage = () => {
               ))}
             </div>
           )}
-          <div className="w-6/12 m-auto">
+
+          <div className="lg:w-7/12 w-10/12 m-auto flex items-center justify-between">
             {' '}
-            <InputField
-              icon={call}
-              icon2={
-                numberToSend &&
-                numberToSend.length > 0 &&
-                dataInput.length < 5 &&
-                add
-              }
-              name="templateName"
-              // title="Enter your numbers  (5 numbers max)"
-              register={register('numberToSend', {
-                required: true,
-                 pattern: /^[0-9]{1,18}$/,
-              })}
-              placeholder="Enter the phone number"
-              style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2 font-[serif] hidden"
-              labelTextStyle="font-bold"
-              classes={'font-[serif]'}
-              action={() => {
-                if (dataInput.length < 5) {
-                  setIsAdd(true);
+            <div className="relative lg:w-2/12 w-3/12 border h-14 rounded-xl flex items-center cursor-pointer">
+              {country.icon.length > 0 && (
+                <div
+                  className="flex items-center justify-around w-full px-1"
+                  onClick={() => setShowCountries((state) => !state)}
+                >
+                  <Image
+                    src={country.icon}
+                    width={20}
+                    height={20}
+                    alt=""
+                    className="lg:h-5 lg:w-6 md:h-4 md:w-4 h-3 w-3"
+                  />
+                  <span className="md:ml-2 lg:text-base text-xs">
+                    {country.name}
+                  </span>
+                  <span className="md:ml-2 lg:text-base text-xs">
+                    {country.code}
+                  </span>
+                </div>
+              )}
+
+              <div
+                className={`w-[250%] absolute top-16 h-72   shadow-md bg-black rounded-lg z-[80]  ${showCountries ? 'block' : 'hidden'}`}
+              >
+                <div className="flex flex-col justify-between w-full h-full">
+                  <div className="h-14  w-full" onClick={() => {}}>
+                    <InputField
+                      register={register('findCountry', {
+                        required: true,
+                        pattern: regex,
+                      })}
+                      icon2={search}
+                    />
+                  </div>
+                  <div className="w-full min-h-32 h-[220px]  overflow-auto  no-scrollbar pt-[2px]">
+                    {countriess.map((item, index) => {
+                      return (
+                        <p
+                          key={index}
+                          onClick={() => {
+                            changeCountyHandler(item);
+                          }}
+                          className="cursor-pointer w-full mb-1 pl-2 "
+                        >
+                          <span className="flex items-center w-full">
+                            <Image
+                              src={item.icon}
+                              width={14}
+                              height={14}
+                              alt=""
+                            />
+                            <span className="ml-3 lg:text-sm text- xs">
+                              {item.country}
+                            </span>
+                          </span>
+                        </p>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="lg:w-[82%] w-9/12">
+              <InputField
+                icon={call}
+                icon2={
+                  regex &&
+                  numberToSend &&
+                  numberToSend.length > 0 &&
+                  !errors.numberToSend &&
+                  dataInput.length < 5 &&
+                  add
                 }
-              }}
-            />
+                name="templateName"
+                register={register('numberToSend', {
+                  required: true,
+                  pattern: regex,
+                })}
+                placeholder="Enter the phone number"
+                style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2 font-[serif] hidden"
+                labelTextStyle="font-bold"
+                classes={'font-[serif]'}
+                action={() => {
+                  if (dataInput.length < 5) {
+                    setIsAdd(true);
+                  }
+                }}
+              />
+            </div>
           </div>
           {errors.numberToSend && numberToSend && (
-            <p className="my-3 text-red-500 text-xs">
-              Number must be only the numbers with the length lesser than 19
-            </p>
+            <p className="my-3 text-red-500 text-xs">{regexerror}</p>
           )}
-          <div className="mt-5  w-6/12 m-auto">
+          <div className="mt-5  lg:w-7/12 w-10/12 m-auto">
             <div>
               <Button
                 className="w-full px-8"

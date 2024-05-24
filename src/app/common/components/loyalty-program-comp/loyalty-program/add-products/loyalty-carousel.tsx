@@ -14,7 +14,7 @@ const LoyaltyCarousel = () => {
     setCurrentSlide(index);
   };
 
-  console.log(currentSlide, 'this is my current slide');
+  // ;
 
   const settings = {
     dotsClass: 'custom-dots',
@@ -53,7 +53,7 @@ const LoyaltyCarousel = () => {
     { id: 26, label: '1' },
     { id: 27, label: '1' },
   ];
-  // console.log(CarouselItems, 'this is my carousel content');
+  // // ;
 
   return (
     <div className="m-auto mt-8 w-[30%]">

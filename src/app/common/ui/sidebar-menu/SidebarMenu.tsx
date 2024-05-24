@@ -29,43 +29,34 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
           <Link
             href={`${url}`}
             onClick={() => setToggle((prev) => !prev)}
-            className={`${'dark:hover:bg-slate-800 dark:hover:text-slate-400 w-full'} ${
-              pathname.includes(
-                url?.split('/')[url?.split('/').length - 1] as string
-              ) &&
-              url?.split('/')[url?.split('/').length - 1] !==
-                url?.split('/')[0] &&
-              'dark:bg-slate-400 text-black'
-            }  py-2 px-4 rounded-md cursor-pointer items-center flex w-full transition-all duration-300 ease-in-out delay-150`}
+            className={`
+            ${'dark:hover:bg-slate-800 dark:hover:text-slate-400 w-full'}
+            ${url && pathname.includes(url) && ' text-black'} 
+            ${sidebarToggle && url && pathname.includes(url) ? 'lg:dark:bg-blue-400' : ''}
+             py-2 px-4 rounded-md cursor-pointer place-items-center flex justify-center w-full transition-all duration-300 ease-in-out delay-150`}
           >
             {/* Changing icon's color when selected */}
-            {icon &&
-              (pathname.includes(
-                url?.split('/')[url?.split('/').length - 1] as string
-              ) &&
-              url?.split('/')[url?.split('/').length - 1] !==
-                url?.split('/')[0] ? (
-                <Image className="w-8 h-8" src={selectedIcon} alt="icon" />
-              ) : (
-                <Image
-                  className="md:w-8 md:h-8 h-5 w-5 fill-blue-500 [&+path]:fill-[#0094D9]"
-                  src={icon}
-                  alt="icon"
-                />
-              ))}
+            {icon && url && pathname.includes(url) ? (
+              <Image className="w-8 h-8" src={selectedIcon} alt="icon" />
+            ) : (
+              <Image
+                className="md:w-8 md:h-8 h-5 w-5 fill-blue-500 [&+path]:fill-[#0094D9]"
+                src={icon}
+                alt="icon"
+              />
+            )}
 
             {/* Title navigation link */}
 
-            <h1
-              className={`ml-3 w-full ${
+            <p
+              className={`ml-3 w-full hidden pt-2 text-lg font-medium ${
                 submenus && 'dark:text-primaryDark text-primaryDark'
               } ${
-                sidebarToggle &&
-                'hidden transition-all duration-300 ease-in-out delay-150'
+                !sidebarToggle ? ' lg:hidden ' : 'lg:block'
               } transition-all duration-300 ease-in-out delay-150`}
             >
               {title}
-            </h1>
+            </p>
 
             {/* Down icon rotating when selected */}
             {submenus && (

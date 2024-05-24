@@ -1,16 +1,14 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-type BulkMessage= {
-    recipients_phone_numbers: string[];
-    template_name: string;
-}
-type TypeResponseBulkMsg = {
-
+type BulkMessage = {
+  recipients_phone_numbers: string[];
+  template_name: string;
 };
+type TypeResponseBulkMsg = {};
 export const postBulkMessage = async (bulkMessage: BulkMessage) => {
   'use server';
-  let response
+  let response;
 
   try {
     await fetch(
@@ -22,16 +20,17 @@ export const postBulkMessage = async (bulkMessage: BulkMessage) => {
         },
         body: JSON.stringify(bulkMessage),
       }
-    ).then((result) => {
-      console.log('post succeeded', result);
-      response = result.json();
-      return result.json();
-    }).catch((error) => {
-        console.log('fail', error);
-        
-    });
+    )
+      .then((result) => {
+        // ;
+        response = result.json();
+        return result.json();
+      })
+      .catch((error) => {
+        // ;
+      });
   } catch (error) {
-    console.log('There was and error creating the template', error);
+    // ;
   }
 
   revalidatePath('/dashboard/bulk-messages');

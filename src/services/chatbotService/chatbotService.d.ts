@@ -4,6 +4,7 @@ export type ChatMessageType = {
   is_admin: boolean;
   date?: string;
   chat_status: string;
+  scenario_name?: string;
 };
 
 export type ChatConversationType = {
@@ -34,11 +35,17 @@ export type ChatsByCompanyReturnType = {
 export type ChatsByNumberReturnType = {
   status: number;
   data: {
-    message: string;
-    data: {
-      _id: string;
-      phone_number_id: string;
-      conversations: ChatConversationType[];
-    };
+    // message: string;
+    // data: {
+    _id: string;
+    phone_number_id: string;
+    conversations: ChatConversationType[];
+    // };
   };
+};
+
+export type ImageReturnType = {
+  message: string;
+  fileUrl: string;
+  phoneNumberID: string;
 };

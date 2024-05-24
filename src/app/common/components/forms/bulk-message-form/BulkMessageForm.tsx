@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useDropzone } from 'react-dropzone';
-
 import photographIcon from '../../../../../../public/photograph.png';
 import Image from 'next/image';
 import AnimateClick from '../../../ui/animate-click/AnimateClick';
@@ -10,16 +9,21 @@ import { Editor } from '@tinymce/tinymce-react';
 import { APIKey } from '@/utils/constants';
 import PreviewComp from './PreviewComp';
 import InputField from '@/app/common/ui/forms/text-field/InputField';
-import { toast, Toaster } from "react-hot-toast";
+import { toast, Toaster } from 'react-hot-toast';
 import { useBolkMessage } from '@/app/hooks/useBulkMessage';
 import { usePathname } from 'next/navigation';
 import { useDebounce } from 'usehooks-ts';
-import { addItemTableTemplete, refesh } from '@/redux/features/bulk-message-slice';
+import {
+  addItemTableTemplete,
+  refesh,
+} from '@/redux/features/bulk-message-slice';
 import { sessionImport } from '@/utils/importSession';
 import { uploadToCloudinary } from '@/utils/cloudinary';
 import { postBulkMessageTemplate } from './action';
 import { newSessionImport } from '@/utils/newImportSession';
 import { newUploadToCloudinary } from '@/utils/newCloudinary';
+import { getFileHandler } from '@/utils/getfile';
+// import path from 'path';
 // import toast, { Toaster } from 'react-hot-toast';
 
 type ActivityFormValues = {
@@ -34,11 +38,12 @@ const Arraytype = ['jpg', 'jpeg', 'png'];
 const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
   const [valueText, setValueText] = useState<string>('');
   const [errorFile, setErrorFile] = useState(false);
-  const [templateImage, setTemplateImage] = useState<File>();
+  const [templateImage, setTemplateImage] = useState<File | any>();
   const debouncedValue = useDebounce<string>(valueText, 500);
 
   const pathname = usePathname();
   const urlSplit = pathname.split('/');
+  const test = async () => {};
 
   const {
     register,
@@ -57,12 +62,13 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
   let tagline: string = watch('footer_text');
   const debouncedValueFooter = useDebounce<string>(tagline, 500);
   const chatContainerRef = useRef<any>(null);
+  // ;
 
   useEffect(() => {
     if (editorRef.current) {
-    editorRef.current.scrollIntoView({ behavior: 'smooth' });
-
+      editorRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+    // getFileHandler('../../../../../../public');
   }, []);
   useEffect(() => {
     if (
@@ -93,14 +99,14 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
 
     if (debouncedValue) {
       setBtnState(true);
-      // console.log(
+      // //console.log(
       //   'debounce',
       //   debouncedValue
       //     .toLocaleLowerCase()
       //     .replaceAll(/[ .*+?^${}()|[\]\\#@êâôûöïüäëÿ%·`òàùỳèç£&é"'èà/,;:!?./§><-]/g, '_')
       // );
 
-      // console.log(debouncedValue,'debounce');
+      // // ;
     } else {
       setBtnState(false);
     }
@@ -108,58 +114,58 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
 
   const onSubmit: SubmitHandler<ActivityFormValues> = async (data) => {
     setIsLoad(true);
-    // console.log('bulk message page');
-    // console.log('data', data);
+    // // ;
+    // // ;
 
-  try {
-    const sessionImportKey = await newSessionImport(
-      acceptedFiles[0].size.toString(),
-      acceptedFiles[0],
-      'https://bulkmessage.sem-a.com'
-    );
+    try {
+      const sessionImportKey = await newSessionImport(
+        acceptedFiles[0].size.toString(),
+        acceptedFiles[0],
+        'https://bulkmessage.sem-a.com'
+      );
 
-    // console.log('sessionImportKey', sessionImportKey);
+      // // ;
 
-    const imageTemplateUrl = await newUploadToCloudinary(
-      acceptedFiles[0],
-      'https://bulkmessage.sem-a.com'
-    );
-    // console.log('imageTemplateUrl', imageTemplateUrl.status);
+      const imageTemplateUrl = await newUploadToCloudinary(
+        acceptedFiles[0],
+        'https://bulkmessage.sem-a.com'
+      );
+      // // ;
 
-    const textBodyToSend = debouncedValue.replace(/(<([^>]+)>)/gi, '');
-    // console.log(textBodyToSend, 'text-format');
-    //  console.log(debouncedValue, 'text-normal');
+      const textBodyToSend = debouncedValue.replace(/(<([^>]+)>)/gi, '');
+      // // ;
+      //  // ;
 
-    const payload = {
-      name: data.name
-        .trim()
-        .toLocaleLowerCase()
-        .replaceAll(
-          /[ .*+?^${}()|[\]\\#@êâôûöïüäëÿ%·`òàùỳèç£&é"'èà/,;:!?./§><-]/gi,
-          '_'
-        ),
-      // language: urlSplit[1].toLocaleLowerCase() == 'en' ? 'en' : 'fr',
-      language: 'fr',
-      body_text: textBodyToSend,
-      footer_text: data.footer_text,
-      image_handle: sessionImportKey,
-      image_url: imageTemplateUrl?.data?.secure_url,
-    };
+      const payload = {
+        name: data.name
+          .trim()
+          .toLocaleLowerCase()
+          .replaceAll(
+            /[ .*+?^${}()|[\]\\#@êâôûöïüäëÿ%·`òàùỳèç£&é"'èà/,;:!?./§><-]/gi,
+            '_'
+          ),
+        // language: urlSplit[1].toLocaleLowerCase() == 'en' ? 'en' : 'fr',
+        language: 'fr',
+        body_text: textBodyToSend,
+        footer_text: data.footer_text,
+        image_handle: sessionImportKey,
+        image_url: imageTemplateUrl?.data?.secure_url,
+      };
 
-    const response = await postBulkMessageTemplate(payload);
-    // console.log('The response', response);
-    dispatch(refesh(true));
-    reset();
-    setIsLoad(false);
-    toast.success('template enregistré');
-    setTimeout(() => {
-      props.modalHandler();
-    }, 1000);
-  } catch (error) {
-    console.log('error', error);
-    setIsLoad(false);
-    toast.error('une erreur est survenue revenez plus tard');
-  }
+      const response = await postBulkMessageTemplate(payload);
+      // // ;
+      dispatch(refesh(true));
+      reset();
+      setIsLoad(false);
+      toast.success('template enregistré');
+      setTimeout(() => {
+        props.modalHandler();
+      }, 1000);
+    } catch (error) {
+      // ;
+      setIsLoad(false);
+      toast.error('une erreur est survenue revenez plus tard');
+    }
   };
   const getText = (e: any) => {
     setValueText(e.target.value);
@@ -195,9 +201,9 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
             />
           </div>
 
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col  w-full">
             <h1 className="text-[18px] font-bold">Media</h1>
-            <p>Use images or videos to stand out</p>
+            <p>Use images to stand out</p>
 
             <div className="flex justify-between items-ceter">
               <AnimateClick>
@@ -286,7 +292,10 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
             <InputField
               name="Signature"
               title="Signature"
-              register={register('footer_text', { required: true })}
+              register={register('footer_text', {
+                required: true,
+                maxLength: 60,
+              })}
               placeholder="your satisfaction, our priority"
               style="rounded-lg px-12 pr-16 py-4 dark:bg-botMessageBg2"
               labelTextStyle="font-bold"
@@ -295,12 +304,13 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
           </div>
         </div>
 
-        <div className="flex flex-col w-[30%]">
+        <div className="flex flex-col w-[38%] ">
           <h1 className="text-[20px] font-bold">Preview</h1>
           <PreviewComp
             ImgTemplate={
               templateImage ? URL.createObjectURL(templateImage) : ''
             }
+            // ImgTemplate={photographIcon}
             textTemplate={debouncedValue}
             tagline={debouncedValueFooter}
           />
@@ -315,7 +325,7 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
             : 'disabled'
         }
         iconSize={30}
-        onClick={() => console.log('hi')}
+        // onClick={() => // }
         className="w-[15%] mt-8"
         disabled={
           isValid && btnState && !isLoad && templateImage ? false : true

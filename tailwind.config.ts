@@ -1,3 +1,4 @@
+import { transform } from 'framer-motion';
 import type { Config } from 'tailwindcss';
 const { nextui } = require('@nextui-org/react');
 
@@ -34,6 +35,32 @@ const config: Config = {
         'green-emerald': '#1CA655',
         'blue-secondary': '#2196F3',
         dangerDelete: '#B00020',
+        textLigthGray: '#CFD4D8',
+      },
+      animation: {
+        pulse: 'bounce 20s infinite',
+      },
+      keyframes: {
+        bounce: {
+          '0%': {
+            transform: 'scale(1)',
+          },
+          '20%': {
+            transform: 'scale(1.2)',
+          },
+          '40%': {
+            transform: 'scale(1.4)',
+          },
+          '60%': {
+            transform: 'scale(1.2)',
+          },
+          '100%': {
+            transform: 'scale(1)',
+          },
+        },
+      },
+      height: {
+        'screen-minus-80': 'calc(100vh - 80px)',
       },
     },
   },

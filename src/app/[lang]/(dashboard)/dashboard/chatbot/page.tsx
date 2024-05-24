@@ -4,9 +4,9 @@ import LayoutChatComponent from './LayoutChatComponent';
 
 const ChatBotPage = async () => {
   return (
-    <LayoutChatComponent>
+    <>
       <ChatBot />
-    </LayoutChatComponent>
+    </>
   );
 };
 

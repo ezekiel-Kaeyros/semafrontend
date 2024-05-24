@@ -9,12 +9,13 @@ import {
   setConversationChats,
   toggleDisplayChatUI,
 } from '@/redux/features/chat-bot-slice';
+import { io } from 'socket.io-client';
 
 import ChatHeader from './chat-header/ChatHeader';
 import ChatItem from './chat-item/ChatItem';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { formatDate, sortDataByDate } from '@/utils/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BACKEND_CHATBOT_API_URL } from '@/utils/backendUrls';
 import Skeleton from './Skeleton';
@@ -33,6 +34,7 @@ import {
 } from '@/cookies/cookies';
 import { input } from '@nextui-org/react';
 import { useNumberConversationsData } from '@/zustand_store/numberConversation-store';
+import { useGlobalContext } from '@/app/common/contex-provider';
 
 const ChatbotLeftSidebar = () => {
   const { setNb } = useNumberConversationsData();
@@ -43,6 +45,8 @@ const ChatbotLeftSidebar = () => {
   const [selectedStatus, setSelectedStatus] = useState(
     getStatusInCookie('All')
   );
+
+  const { selectedScenarioLabel } = useGlobalContext();
 
   // Function to update selectedStatus when dropdown value changes
   const handleStatusChange = (status: any) => {
@@ -63,17 +67,17 @@ const ChatbotLeftSidebar = () => {
       dispatch(setChats([]));
     }
   };
-
   let token = '100609346426084';
+  // ;
 
   // Fetching all chats
   const loadChatsByCompany = async () => {
     const hisEmail = getUserCookies().email;
+
     const response = await new ChatbotService().loadChatsByCompany({
       email: hisEmail,
     });
     if (response) {
-      console.log('response.data', response);
       dispatch(setConversationChats(response.data.conversations));
       dispatch(setCompanyChats(response.data));
       setNb(response.data.conversations.length);
@@ -86,10 +90,10 @@ const ChatbotLeftSidebar = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['chatsByCompany', token],
     queryFn: () => loadChatsByCompany(),
-    refetchInterval: 5000,
+    // refetchInterval: 5000,
   });
 
-  // console.log(data, 'data');
+  //  ;
 
   let newData: ChatConversationType[] | any =
     !(data instanceof Error) &&
@@ -102,18 +106,15 @@ const ChatbotLeftSidebar = () => {
   if (newData) {
     newDataCloned = newData?.slice();
   }
-  // let newDataCloned = [...newData];
-
-  // const colors = ['#182881', '#915103', '#B00020', '#157A3F'];
-  // const labels = ['New', 'Pending', 'Expired', 'Solved'];
 
   const [filteredChats, setFilteredChats] =
     useState<ChatConversationType[]>(newDataCloned);
 
-  // console.log(newDataCloned, 'newData');
+  //  ;
 
   const filtered = newDataCloned?.filter(
-    (chat: ChatConversationType) => chat.label === selectedStatus
+    (item: ChatConversationType) =>
+      [...item.chat_messages].reverse()[0].chat_status === selectedStatus
   );
 
   const filteredSelected = selectedStatus === 'All' ? newDataCloned : filtered;
@@ -131,9 +132,10 @@ const ChatbotLeftSidebar = () => {
     setFilteredChats(filteredNumbers);
   };
 
-  const InputFiltered = !inputValue ? filteredSelected : filteredChats;
+  // const [filteredChatsConversation, setFilteredChatsConversation] =
+  //   useState<ChatConversationType[]>([]);
 
-  console.log(InputFiltered, 'inputfiltered');
+  const InputFiltered = !inputValue ? filteredSelected : filteredChats;
 
   const sortedChatsByDate =
     typeof data !== 'undefined' &&
@@ -141,10 +143,45 @@ const ChatbotLeftSidebar = () => {
     data?.conversations
       ? sortDataByDate(data.conversations)
       : [];
+  const filteredConversations = InputFiltered?.filter(
+    (item: ChatConversationType) =>
+      item.chat_messages.some(
+        (item: ChatMessageType) => item.scenario_name === selectedScenarioLabel
+      )
+  );
 
+  const mappedConversations =
+    filteredConversations?.length !== 0 ? filteredConversations : InputFiltered;
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      return Promise.resolve();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chatsByCompany'] });
+    },
+  });
+  useEffect(() => {
+    const socket = io('https://back.chatbot.sem-a.com');
+
+    function filterKeys() {
+      socket.onAny((eventName, ...args) => {
+        if (eventName.startsWith('message')) {
+          mutation.mutate();
+        }
+      });
+    }
+    filterKeys();
+    return () => {
+      socket.offAny();
+      socket.close();
+    };
+  }, []);
   return (
-    <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600 w-[100%] dark:bg-mainDark border-r-[0.02px] h-[100%]">
-      <div className="flex flex-col gap-[1.5rem] p-[1rem] w-full">
+    <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600  dark:bg-mainDark border-r-[0.02px] h-full">
+      <div className="flex flex-col gap-[1.5rem] p-[1rem] h-1/4 ">
         <div className="flex flex-row justify-between p-[.5rem]">
           <ChatHeader
             selectedStatus={selectedStatus}
@@ -154,62 +191,42 @@ const ChatbotLeftSidebar = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-bgBlackForBtn gap-[1.5rem]  w-full ">
-        <div className="overflow-y-scroll no-scrollbar h-[67vh] space-y-2">
-          {!data && (
-            <div>
-              <div className="flex flex-col items-center h-[67vh] justify-center">
-                <Image src={EmptyChatboxMessageImg} alt="empty chatbot"></Image>
-                <p className="">No Active message</p>
-              </div>
-            </div>
-          )}
-
-          {data && isLoading && (
-            <div className="mx-6">
-              <Skeleton />
-            </div>
-          )}
-          {InputFiltered?.map((item: ChatConversationType, key: any) => {
-            console.log(
-              formatDate(item?.chat_messages.slice(-1)[0]?.date?.toString()),
-              'date'
-            );
-            return (
-              <ChatItem
-                id={item.phone_number}
-                handleSelected={() => handleSelected(item)}
-                key={key}
-                number={item?.phone_number}
-                status={[...item.chat_messages].reverse()[0].chat_status}
-                color={item.color}
-                unread_msg={item.unread_msg}
-                // message={item?.chat_messages
-                //   .slice(-1)[0]
-                //   ?.text?.substring(0, 10)}
-                date={formatDate(
-                  item?.chat_messages.slice(-1)[0]?.date?.toString()
-                )}
-              />
-            );
-          })}
+      {/* <div className="flex flex-col bg-bgBlackForBtn gap-[1.5rem]  w-full "> */}
+      {!data && (
+        <div className="flex flex-col items-center h-3/4 justify-center">
+          <Image src={EmptyChatboxMessageImg} alt="empty chatbot"></Image>
+          <p className="">No Active message</p>
         </div>
+      )}
+      <div className="overflow-y-scroll no-scrollbar h-3/4 space-y-2">
+        {data && isLoading && (
+          <div className="mx-6">
+            <Skeleton />
+          </div>
+        )}
+        {mappedConversations?.map((item: ChatConversationType, key: any) => {
+          return (
+            <ChatItem
+              id={item.phone_number}
+              handleSelected={() => handleSelected(item)}
+              key={key}
+              number={item?.phone_number}
+              status={[...item.chat_messages].reverse()[0].chat_status}
+              color={item.color}
+              unread_msg={item.unread_msg}
+              // message={item?.chat_messages
+              //   .slice(-1)[0]
+              //   ?.text?.substring(0, 10)}
+              date={formatDate(
+                item?.chat_messages.slice(-1)[0]?.date?.toString()
+              )}
+            />
+          );
+        })}
       </div>
+      {/* </div> */}
     </div>
   );
 };
 
 export default ChatbotLeftSidebar;
-
-// sorted array according to date.
-// .sort(
-//             (a: ChatConversationType, b: ChatConversationType) => {
-//               const lastMessageDateA: any = new Date(
-//                 a.chat_messages[a.chat_messages.length - 1].date!
-//               );
-//               const lastMessageDateB: any = new Date(
-//                 b.chat_messages[b.chat_messages.length - 1].date!
-//               );
-//               return lastMessageDateB - lastMessageDateA;
-//             }
-//           )

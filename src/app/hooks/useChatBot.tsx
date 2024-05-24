@@ -41,6 +41,10 @@ export const useChatBot = () => {
   const chatsConversation: ChatConversationType[] = useSelector(
     (state: RootState) => state.ChatBotSlice.chatsConversation
   );
+
+  const filterStatus: string = useSelector(
+    (state: RootState) => state.ChatBotSlice.filterStatus
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   return {
@@ -54,5 +58,6 @@ export const useChatBot = () => {
     chatsCompany,
     chatsConversation,
     message,
+    filterStatus,
   };
 };

@@ -5,10 +5,13 @@ export const useSenarioCreate = create<SenarioType>((set) => ({
   nameSenario: 'Scenario name',
   nodesData: [],
   edgesData: [],
+  keywords: [],
   setAddNodesData: (nds) =>
     set((state) => ({ ...state, nodesData: [...state.nodesData, nds] })),
   setNodesData: (nds) => set((state) => ({ ...state, nodesData: nds })),
   setNameSenario: (nameSena) =>
     set((state) => ({ ...state, nameSenario: nameSena })),
+  setKeywordsSenario: (keysSena) =>
+    set((state) => ({ ...state, keywords: keysSena })),
   reset: () => set((state) => ({ ...state, nodesData: [], edgesData: [] })),
 }));

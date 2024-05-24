@@ -39,10 +39,10 @@ export function middleware(request: NextRequest) {
 
   const protectedPath = [
     `/${locale}`,
-
     `/${locale}/dashboard`,
     `/${locale}/dashboard/bulk-messages`,
     `/${locale}/dashboard/chatbot`,
+    `/${locale}/dashboard/scenarios`,
     `/${locale}/dashboard/loyalty-program`,
     `/${locale}/dashboard/setting`,
     `/${locale}/dashboard/tombola-program`,
@@ -62,7 +62,8 @@ export function middleware(request: NextRequest) {
     request.cookies.get('user_dba_data') &&
     !protectedPath.includes(pathname) &&
     !pathname.includes('/dashboard/chatbot') &&
-    !pathname.includes('/dashboard/bulk-messages')
+    !pathname.includes('/dashboard/bulk-messages') &&
+    !pathname.includes('/dashboard/scenarios')
   ) {
     return NextResponse.redirect(new URL(`/${locale}/dashboard/`, request.url));
   } else {

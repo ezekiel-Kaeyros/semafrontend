@@ -26,8 +26,6 @@ function ConditionalTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
   }
   function addAssignVariableNode() {
     const id = generateId();
-    console.log(id);
-
     setContent([
       ...content,
       {
@@ -72,7 +70,6 @@ function ConditionalTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
-        onConnect={(connection) => console.log(connection)}
       />
       <LayoutTypesNode
         icon={<Image src={messageTrickIcon} alt="" width={16} height={16} />}

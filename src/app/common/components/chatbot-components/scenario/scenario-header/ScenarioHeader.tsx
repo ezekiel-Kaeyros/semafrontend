@@ -15,14 +15,14 @@ const ScenarioHeader = () => {
     <>
       <div className="flex gap-x-6 ml-2 m-8 pr-4 w-full justify-between items-center h-10">
         <div className=" flex gap-5 text-md">
-          <Link href={'/dashboard/chatbot/scenarios'}>
+          <Link href={'/dashboard/scenarios'}>
             <div
               className={` ${pathName.endsWith('/scenarios') && "before:content-[''] relative before:absolute before:h-[1px] before:bg-blueLine before:-bottom-[2px] before:left-0 before:w-full"} cursor-pointer transition-all duration-300 ease-in-out `}
             >
               Manage Scenario
             </div>
           </Link>
-          <Link href={'/dashboard/chatbot/scenarios/create'}>
+          <Link href={'/dashboard/scenarios/create'}>
             <div
               className={` ${pathName.endsWith('/scenarios/create') && "before:content-[''] relative before:absolute before:h-[1px] before:bg-blueLine before:-bottom-[2px] before:left-0 before:w-full"} cursor-pointer `}
             >
@@ -31,7 +31,7 @@ const ScenarioHeader = () => {
           </Link>
 
           {regex.test(pathName) && (
-            <Link href={'/dashboard/chatbot/scenarios/create'}>
+            <Link href={'/dashboard/scenarios/create'}>
               <div
                 className={` ${regex.test(pathName) && "before:content-[''] relative before:absolute before:h-[1px] before:bg-blueLine before:-bottom-[2px] before:left-0 before:w-full"} cursor-pointer `}
               >
@@ -43,7 +43,7 @@ const ScenarioHeader = () => {
 
         {!pathName.endsWith('/scenarios/create') && (
           <div>
-            <Button href="/dashboard/chatbot/scenarios/create" icon={PlusIcon}>
+            <Button href="/dashboard/scenarios/create" icon={PlusIcon}>
               Create a scenario
             </Button>
           </div>

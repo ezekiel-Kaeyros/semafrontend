@@ -6,7 +6,7 @@ import AnimateClick from '../../animate-click/AnimateClick';
 const FileInput: React.FC<FileInputProps> = ({ name, register }) => {
   const [file, setFile] = useState<any>();
   function handleChange(e: { target: { files: (Blob | MediaSource)[] } }) {
-    console.log(e.target.files);
+    // ;
     setFile(URL.createObjectURL(e.target.files[0]));
   }
 

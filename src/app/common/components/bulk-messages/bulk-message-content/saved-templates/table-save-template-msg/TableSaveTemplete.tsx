@@ -6,7 +6,6 @@ import InformationIcon from '../../../../../../../../public/icons/information.sv
 import DeleteIcon from '../../../../../../../../public/icons/trash-animation.svg';
 import Image from 'next/image';
 
-
 import {
   Table,
   TableHeader,
@@ -14,7 +13,6 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
@@ -22,7 +20,9 @@ import {
   Button,
   Input,
   Pagination,
-  Modal, ModalBody, ModalContent
+  Modal,
+  ModalBody,
+  ModalContent,
 } from '@nextui-org/react';
 import { useCallback, useMemo, useState } from 'react';
 // import TransactionConfirm from '@/app/common/components/transactionSending/transaction-confirm/TransactionConfirm';
@@ -40,20 +40,30 @@ import { capitalize } from '@/app/common/ui/table/utils/utils';
 import { SearchIcon } from '@/app/common/ui/table/SearchIcon';
 
 import { deleteTemplete } from './actionDeleteTemplete';
-
+import ViewTemplateModal from './modal/ViewTemplateModal';
+import EditTemplateModal from './modal/EditTemplateModal';
 
 const columns = ['Template Name', 'Category', 'Status', 'Language', 'action'];
 
 const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(false);
+  const [isShowDetail, setIsShowDetail] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [isConfirm, setIsConfirm] = useState(false);
   const [nameTemplateState, setNameTemplateState] = useState('');
   const { TableTemplete } = useBolkMessage();
-
+  const [detail, setdetail] = useState({
+    img: '',
+    body: '',
+    footer: '',
+    id: '',
+    name: '',
+    url: '',
+  });
   const [pageTable, setPageTable] = useState<number>(8);
   const [filterValue, setFilterValue] = useState('');
   const hasSearchFilter = Boolean(filterValue);
-console.log(props.data,'------------------------------');
+  // ;
 
   const text =
     ' All templates must adhere to WhatsApp’s Template Message Guidelines. Click here to read';
@@ -114,14 +124,14 @@ console.log(props.data,'------------------------------');
   }, []);
 
   // const sendDatasHandler = () => {
-  //   console.log(dataSending);
+  //   // ;
   //   try {
   //     const transfert = new TransfetService().sendFile(dataSending);
   //     if (transfert?.status === 200) {
   //       const result: Result = transfert.datas;
   //     }
   //   } catch (error) {
-  //     console.log(`server error occured`, error);
+  //     // ;
   //   }
 
   //   setShowModalTransfer((showModalTransfer) => !showModalTransfer);
@@ -287,7 +297,7 @@ console.log(props.data,'------------------------------');
                             {row.name}
                           </TableCell>
                           <TableCell className="font-[700] text-left py-4">
-                            {row?.categorytemplete}
+                            {''}
                           </TableCell>
                           <TableCell className="text-left py-4">
                             <span
@@ -296,7 +306,7 @@ console.log(props.data,'------------------------------');
                                 'bg-respon text-[#04773B] px-3 py-3'
                               }
                         ${
-                          row.status === 'Pending' &&
+                          row.status.toLocaleLowerCase() === 'pending' &&
                           'bg-notificationYellow text-[#D1AC00] px-3 py-3'
                         }
                         ${
@@ -309,22 +319,56 @@ console.log(props.data,'------------------------------');
                             </span>
                           </TableCell>
                           <TableCell className="text-left py-4">
-                            {row?.languageTemplete}
+                            {row?.language}
                           </TableCell>
                           <TableCell className="relative flex  items-center gap-2">
                             {' '}
-                            <Image src={EditIcon} alt="Icon edit" />
-                            <Image src={InformationIcon} alt="Icon info" />
+                            <Image
+                              src={EditIcon}
+                              alt="Icon edit"
+                              className={`${row.status != 'PENDING' && 'cursor-pointer'} `}
+                              onClick={() => {
+                                if (row.status != 'PENDING') {
+                                  setdetail({
+                                    img: row.image_url,
+                                    body: row.body_text,
+                                    footer: row.footer_text,
+                                    id: row.template_id,
+                                    name: row.name,
+                                    url: row.image_url,
+                                  });
+                                  setIsEdit((isEdit) => !isEdit);
+                                }
+                              }}
+                            />
+                            <Image
+                              className="cursor-pointer"
+                              src={InformationIcon}
+                              alt="Icon info"
+                              onClick={() => {
+                                setdetail({
+                                  img: row.image_url,
+                                  body: row.body_text,
+                                  footer: row.footer_text,
+                                  id: row.template_id,
+                                  name: row.name,
+                                  url: row.image_url,
+                                });
+                                setIsShowDetail(
+                                  (isShowDetail) => !isShowDetail
+                                );
+                              }}
+                            />
                             <Image
                               src={DeleteIcon}
-                              className='cursor-pointer'
+                              className="cursor-pointer"
                               alt="Icon delete"
                               onClick={async () => {
                                 if (
                                   row.name?.toLocaleLowerCase() !==
                                   'hello_world'
                                 ) {
-                                  setNameTemplateState(row.name!);
+                                  setNameTemplateState(row.name);
                                   setIsShow((isShow) => !isShow);
                                 }
                               }}
@@ -342,6 +386,29 @@ console.log(props.data,'------------------------------');
       ) : (
         ''
       )}
+
+      <ViewTemplateModal
+        img={detail.img}
+        footer={detail.footer}
+        body={detail.body}
+        isShow={isShowDetail}
+        showHandler={() => {
+          setIsShowDetail((isShowDetail) => !isShowDetail);
+        }}
+      />
+      <EditTemplateModal
+        img={detail.img}
+        footer={detail.footer}
+        body={detail.body}
+        id={detail.id}
+        isShow={isEdit}
+        showHandler={() => {
+          setIsEdit((isEdit) => !isEdit);
+        }}
+        name={detail.name}
+        refresh={props.delete}
+        url={detail.url}
+      />
 
       <Modal
         isOpen={isShow}
@@ -391,14 +458,14 @@ console.log(props.data,'------------------------------');
                               const responseDelete =
                                 await deleteTemplete(nameTemplateState);
 
-                              console.log(responseDelete, 'response delete');
+                              // ;
 
                               props.delete();
                               setIsShow((isShow) => !isShow);
                               setNameTemplateState('');
                               setIsConfirm((isConfirm) => !isConfirm);
                               setTimeout(() => {
-                                toast.success('opération succeeded');
+                                toast.success('template deleted');
                               }, 1000);
                             } catch (error) {
                               toast.error('delete fail');

@@ -1,12 +1,5 @@
 'use client';
-import {
-
-  Modal,
-  ModalContent,
- 
-  ModalBody,
- 
-} from '@nextui-org/react';
+import { Modal, ModalContent, ModalBody } from '@nextui-org/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import PricingPackage from './pricing-package/PricingPackage';
 import Image from 'next/image';
@@ -66,9 +59,8 @@ const ChoosePricing: React.FC<TypePricing> = (props) => {
   const {
     register,
     watch,
-    formState: {  },
+    formState: {},
     handleSubmit,
-   
   } = useForm<{ price: string }>({
     mode: 'onChange' || 'onBlur' || 'onSubmit',
   });
@@ -76,8 +68,7 @@ const ChoosePricing: React.FC<TypePricing> = (props) => {
   let pricing: string = watch('price');
 
   const onSubmit: SubmitHandler<{ price: string }> = async (data) => {
-    console.log(data);
-    
+    // ;
   };
 
   return (

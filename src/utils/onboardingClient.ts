@@ -2,9 +2,9 @@
 // import axios from 'axios';
 
 export const registered = async (data: any) => {
-  'use server';
+  ('use server');
   //   const data =
-  console.log(data);
+  // ;
 
   try {
     const response = await fetch(
@@ -19,15 +19,15 @@ export const registered = async (data: any) => {
     );
 
     if (response.ok) {
-      console.log('response', response);
+      // ;
 
       return response.status;
     } else {
-      console.log('responseError', response);
+      // ;
       return response.status;
     }
   } catch (error) {
-    console.log('error', error);
+    // ;
     return error;
 
     // return error;

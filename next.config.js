@@ -10,6 +10,11 @@ module.exports = {
         hostname: '**',
         port: '',
       },
+      {
+        protocol: 'http',
+        hostname: 'back.chatbot.sem-a.com',
+        port: '',
+      },
     ],
   },
   // eslint: {

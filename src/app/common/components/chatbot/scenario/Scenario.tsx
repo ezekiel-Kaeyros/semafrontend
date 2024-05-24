@@ -197,7 +197,7 @@ const DynamicForm: React.FC = () => {
     const jsonStructure = questions.map((question) =>
       convertToJSONHelper(question)
     );
-    console.log(jsonStructure);
+    // ;
   };
 
   const convertToJSONHelper = (question: Question): any => {
@@ -214,7 +214,7 @@ const DynamicForm: React.FC = () => {
 
   const handleSubmit = () => {
     // Handle form submission, you can access the formData and questions here
-    console.log(formData, questions);
+    // ;
   };
 
   return (

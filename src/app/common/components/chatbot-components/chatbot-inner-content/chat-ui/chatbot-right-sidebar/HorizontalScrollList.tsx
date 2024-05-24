@@ -11,7 +11,7 @@ const HorizontalList: React.FC = () => {
 
   const handleSlideRight = () => {
     if (listRef.current) {
-      console.log("....")
+      //
       listRef.current.scrollBy({ left: 100, behavior: 'smooth' });
     }
   };

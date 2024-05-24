@@ -10,6 +10,8 @@ import setObject from './features/qrCodeSlice';
 import senarioCreateReducer from './features/senarioCreate-slice';
 import setScenarioObject from './features/filter-actions';
 import selectDetailValue from './features/modal-slice';
+import setChats from './features/chat-bot-slice';
+import setFilteredStatus from './features/chat-bot-slice';
 // import pointOfSaleViewReducer from './features/create-point-of-sale-slice';
 // import ChannelClusterReducer from './features/channel-cluster-slice';
 // import ActivityReducer from './features/activities-slice';
@@ -27,6 +29,8 @@ export const store = configureStore({
     senarioCreateReducer,
     setScenarioObject,
     selectDetailValue,
+    setChats,
+    setFilteredStatus,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

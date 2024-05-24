@@ -10,25 +10,30 @@ import bulkMessageSelectedIcon from '../../../../public/left_side_bar_icons/sele
 import serviceThreeIcon from '../../../../public/left_side_bar_icons/service_three.png';
 import serviceThreeSelectedIcon from '../../../../public/left_side_bar_icons/serviceThreeSelected.svg';
 
+import productIcon from '../../../../public/icons/sidebar/product.svg';
+import modulesIcon from '../../../../public/icons/sidebar/modules.svg';
+import helpIcon from '../../../../public/icons/sidebar/help.svg';
+import settingsIcon from '../../../../public/icons/sidebar/setting-2.svg';
+
 export const navigation = [
-  {
-    id: 1,
-    title: 'Home',
-    url: '/dashboard',
-    icon: homeIcon,
-    selectedIcon: homeSelectedIcon,
-  },
+  // {
+  //   id: 1,
+  //   title: 'Home',
+  //   url: 'dashboard',
+  //   icon: homeIcon,
+  //   selectedIcon: homeSelectedIcon,
+  // },
   {
     id: 2,
     title: 'ChatBot',
-    url: '/dashboard/chatbot',
+    url: 'dashboard/chatbot',
     icon: chatBotIcon,
     selectedIcon: chatBotSelectedIcon,
   },
   {
     id: 3,
     title: 'Bulk Messages',
-    url: '/dashboard/bulk-messages',
+    url: 'dashboard/bulk-messages',
     icon: bulkMessageIcon,
     selectedIcon: bulkMessageSelectedIcon,
   },
@@ -40,4 +45,36 @@ export const navigation = [
   //   icon: serviceThreeIcon,
   //   selectedIcon: serviceThreeSelectedIcon,
   // },
+];
+
+export const navigationBottom = [
+  {
+    id: 1,
+    title: 'Product',
+    url: '#',
+    icon: productIcon,
+    selectedIcon: productIcon,
+  },
+  {
+    id: 2,
+    title: 'Modules',
+    url: '#',
+    icon: modulesIcon,
+    selectedIcon: modulesIcon,
+  },
+  {
+    id: 3,
+    title: 'Help',
+    url: '#',
+    icon: helpIcon,
+    selectedIcon: helpIcon,
+  },
+  {
+    id: 4,
+    title: 'Settings',
+    // url: '/loyalty-program',
+    url: '#',
+    icon: settingsIcon,
+    selectedIcon: settingsIcon,
+  },
 ];

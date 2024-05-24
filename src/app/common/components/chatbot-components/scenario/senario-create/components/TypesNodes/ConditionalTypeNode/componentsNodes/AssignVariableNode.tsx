@@ -21,8 +21,6 @@ import { SelectModalNode } from '../../../SelectModalNode';
 function AssignVariableNode({ id, deletefc }: AssignVariableNodeType) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [nameVariable, setNameVariable] = useState<string>(' name of variable');
-  console.log(nameVariable);
-
   return (
     <div className="bg-mainDarkLight  w-full rounded-lg flex nodrag px-2  place-items-start py-2">
       <div className=" w-full">

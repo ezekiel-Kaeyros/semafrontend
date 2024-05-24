@@ -19,12 +19,12 @@ const BulkMessageTab: React.FC<BulkMessageTabType> = ({
   };
 
   return (
-    <span
+    <div
       onClick={() => dispatch(changeTab(data))}
-      className={`${selected ? 'border-b-[2px] border-mainColor' : ''} flex items-center cursor-pointer transition-all duration-300 ease-in-out delay-150`}
+      className={`${selected && "before:content-[''] relative before:absolute before:h-[1px] before:bg-blueLine before:-bottom-[2px] before:left-0 before:w-full"} flex items-center cursor-pointer transition-all duration-300 ease-in-out delay-150`}
     >
       {label}
-    </span>
+    </div>
   );
 };
 

@@ -48,7 +48,7 @@ const FourthStep: React.FC<{
               token:
                 'EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
             });
-            console.log(response);
+            // ;
             setLoading(false);
             if (response == 200) {
               window.location.href = 'dashboard/bulk-messages';

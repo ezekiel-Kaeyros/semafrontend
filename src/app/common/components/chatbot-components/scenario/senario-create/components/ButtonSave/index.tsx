@@ -18,10 +18,11 @@ interface ButtonSaveProps {
 }
 
 function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
-  const { setNameSenario, nameSenario } = useSenarioCreate();
+  const { setNameSenario, nameSenario, setKeywordsSenario } =
+    useSenarioCreate();
   const nodesData = useSenarioCreate((state) => state.nodesData);
+  const keywordsSenario = useSenarioCreate((state) => state.keywords);
   // const { push } = useRouter();
-  console.log(edges);
   function findStartNode(edges: Edge[]) {
     const targetNodes = new Set(edges.map((edge: Edge) => edge.target));
     for (const edge of edges) {
@@ -40,7 +41,14 @@ function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
         const question: MainModel = {
           label: nodesData.find((item) => item.id === nodeId)?.value || '',
           responses: [],
+          responseType: nodesData.find((item) => item.id === nodeId)?.link
+            ? 'image'
+            : undefined,
+          link: nodesData.find((item) => item.id === nodeId)?.link
+            ? nodesData.find((item) => item.id === nodeId)?.link
+            : undefined,
         };
+
         for (const edge of edgesFromNode) {
           question.responses?.push(traverseEdges(edge.target, false));
         }
@@ -49,6 +57,12 @@ function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
         const response: MainModel = {
           label: nodesData.find((item) => item.id === nodeId)?.value || '',
           questions: [],
+          responseType: nodesData.find((item) => item.id === nodeId)?.link
+            ? 'image'
+            : undefined,
+          link: nodesData.find((item) => item.id === nodeId)?.link
+            ? nodesData.find((item) => item.id === nodeId)?.link
+            : undefined,
         };
         for (const edge of edgesFromNode) {
           response.questions?.push(traverseEdges(edge.target, true));
@@ -67,22 +81,20 @@ function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
           ...cacheUpdate,
           title: nameSenario,
           description: [currentModel],
+          keywords: keywordsSenario,
         };
-        console.log(data);
-
-        debugger;
         const hisEmail = getUserCookies().email;
         const response = await new SenarioService().edit({
           email: hisEmail,
           data: data,
           id: cacheUpdate._id,
         });
-        if (response?.status === 201) {
+        if (response?.status === 200) {
           toast.success('Votre scénario a été Mis a jour avec succès.');
         } else {
+          const pons: any = response;
           console.log(response);
-
-          toast.error('une Erreur survenu lors de la sauvegarde');
+          toast.error(`${pons.response?.data?.error}`);
         }
       } else {
         const data: ScenarioInput = {
@@ -90,14 +102,16 @@ function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
           phone_number_id: '100609346426084',
           company: 'Kaeyros',
           description: [...desc, currentModel],
+          keywords: keywordsSenario,
         };
         const response = await new SenarioService().create(data);
         if (response?.status === 201) {
           toast.success('Votre scénario a été sauvegardé avec succès.');
         } else {
+          const pons: any = response;
           console.log(response);
 
-          toast.error('une Erreur survenu lors de la sauvegarde');
+          toast.error(`${pons.response?.data?.error}`);
         }
       }
     }

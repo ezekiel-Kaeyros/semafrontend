@@ -21,7 +21,7 @@ export const ModalInfo: FC<Item> = ({ items }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] =
     React.useState<ModalProps['scrollBehavior']>('inside');
-  console.log(items, 'this is my items');
+  // ;
   const handleClick = (id: any) => {
     const selectedData = items.find((item: any) => item.id === id);
   };
