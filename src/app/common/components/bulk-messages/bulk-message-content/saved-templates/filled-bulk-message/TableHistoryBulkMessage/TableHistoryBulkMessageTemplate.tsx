@@ -308,13 +308,13 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
       ) : (
         ''
       )}
-
+{/* 
       <ModaldetailBroadcast
         isShow={isShowModal}
         showHandler={showHandler}
         id={idSession}
         date=''
-      />
+      /> */}
     </div>
   );
 };

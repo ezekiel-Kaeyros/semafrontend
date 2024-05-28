@@ -39,9 +39,10 @@ const ModaldetailBroadcast: React.FC<{
   isShow: boolean;
   showHandler: any;
   id: string;
-  date:string
+  date: string
+  datas:any[]
 }> = (props) => {
-  const [dataBradcast, setDataBroadcast] = useState<DetailBroadcastTable[]>([]);
+  const [dataBradcast, setDataBroadcast] = useState<DetailBroadcastTable[]>(props.datas);
   const refDiv = useRef<any>(null);
 const imprimer=usePdf(refDiv)
   const [isError, setIsError] = useState(false);
@@ -51,6 +52,7 @@ const imprimer=usePdf(refDiv)
   const [pageTable, setPageTable] = useState<number>(8);
   const [filterValue, setFilterValue] = useState('');
   const hasSearchFilter = Boolean(filterValue);
+  
   //  const { data: posts, error } = useQuery({
   //    queryKey: ['getTempleteSession', props.id],
   //    queryFn: new BulkMessagesService().getDetailTemplateSession,
@@ -59,6 +61,8 @@ const imprimer=usePdf(refDiv)
   // const { data } = useQuery(['getTempleteSession', props.id], () =>
   //   new BulkMessagesService().getDetailTemplateSession(props.id)
   // );
+      // console.log('dataBradcast=========', dataBradcast);
+      // console.log('props=========', props.datas);
 
   const onGetExporProduct = async (title?: string, worksheetname?: string) => {
     try {
@@ -102,6 +106,12 @@ const imprimer=usePdf(refDiv)
     }
   };
   useEffect(() => {
+    if (props.datas && props.datas.length > 0) {
+      setView(true)
+     
+    }
+  },[])
+  useEffect(() => {
     if (props.id !== '') {
       try {
         setIsLoad(true);
@@ -132,7 +142,7 @@ const imprimer=usePdf(refDiv)
   }, [props.id]);
 
   const filteredItems = useMemo(() => {
-    let filterTableTemple: DetailBroadcastTable[] = [];
+    let filterTableTemple: DetailBroadcastTable[] = props.datas;
 
     if (dataBradcast && dataBradcast.length > 0) {
       filterTableTemple = dataBradcast;
@@ -149,7 +159,7 @@ const imprimer=usePdf(refDiv)
     }
 
     return filterTableTemple;
-  }, [filterValue, hasSearchFilter, dataBradcast]);
+  }, [filterValue, hasSearchFilter, dataBradcast, props.datas]);
 
   const [page, setPage] = useState(1);
   const pages = Math.ceil(filteredItems.length / pageTable);
@@ -191,6 +201,11 @@ const imprimer=usePdf(refDiv)
     if (view) {
       imprimer();
       setView(false)
+      if (props.datas && props.datas.length>0) {
+        props.showHandler()
+      }
+      // console.log('view==========',view);
+      
     }
   },[view])
   return (
@@ -205,21 +220,21 @@ const imprimer=usePdf(refDiv)
         className=" bg-white sm:px-4 px-0 sm:z-10 z-[5000]"
         radius="lg"
         placement="center"
-        closeButton={false}
+        // closeButton={false}
         classNames={{
           // body: "py-6",
           // backdrop: "bg-[#292f46]/50 backdrop-opacity-40",
           // base: "border-[#292f46] bg-[#19172c] dark:bg-[#19172c] text-[#a8b0d3]",
           // header: "border-b-[1px] border-[#292f46]",
           // footer: "border-t-[1px] border-[#292f46]",
-          closeButton: 'hidden',
+          // closeButton: 'hidden',
         }}
       >
         <ModalContent>
           <>
             <ModalBody className="text-black pb-0 mb-0">
               <div className="w-full h-full bg-white py-10">
-                {!isLoad && dataBradcast && dataBradcast.length > 0 && (
+                {!isLoad && ((dataBradcast && dataBradcast.length > 0) || (props.datas && props.datas.length>0)) && (
                   <div>
                     <div className="mt-6">
                       <div className="  ">
@@ -323,7 +338,7 @@ const imprimer=usePdf(refDiv)
                           cancel
                         </Button>
                       </div>
-                      <div>
+                      {/* <div>
                         <Button
                           onClick={() => {
                             onGetExporProduct('Report', 'ReportExport');
@@ -344,7 +359,7 @@ const imprimer=usePdf(refDiv)
                         >
                           pdf
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 )}

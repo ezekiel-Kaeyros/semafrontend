@@ -104,15 +104,15 @@ const ChatbotBottomSection: React.FC<{ number?: string; numberId: string }> = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className=" px-5 flex flex-row  right-0 first-letter:  justify-between  border-slate-600  w-full rounded-full dark:bg-mainDarkLight border-t-[0.02px]  "
+      className=" pl-5 pr-2 flex flex-row  right-0 first-letter:  justify-between  border-slate-600  w-full rounded-full dark:bg-mainDarkLight border-t-[0.02px]  "
     >
       <Toaster position="top-center" reverseOrder={false} />
 
       <div className="md:w-[85%] w-full flex justify-between items-center">
-        <div className="w-full bg-mainDark rounded-full mr-8">
-          <InputField
-            name="message"
-            register={register('message', { required: true })}
+        <div className="w-full rounded-full mr-8">
+          <input
+            className=" w-full h-12 bg-transparent pl-5 selection:appearance-none focus:outline-none "
+            {...register('message', { required: true })}
             placeholder="Type message here or start / with a fast reply"
           />
         </div>
@@ -167,7 +167,7 @@ const ChatbotBottomSection: React.FC<{ number?: string; numberId: string }> = ({
         </AnimateClick>
 
         <AnimateClick>
-          <div className="cursor-pointer relative w-12 h-12 p-1 flex items-center justify-center">
+          <div className="cursor-pointer relative w-12 h-12 p-1 flex items-center justify-between">
             <div
               ref={ref}
               className={`absolute ${
@@ -196,6 +196,7 @@ const ChatbotBottomSection: React.FC<{ number?: string; numberId: string }> = ({
         </AnimateClick>
         <Button
           variant={'mainColor'}
+          className=" "
           icon={sendIconIcon}
           rightIcon={true}
           iconSize={30}

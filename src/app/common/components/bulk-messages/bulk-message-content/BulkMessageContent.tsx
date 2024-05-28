@@ -25,7 +25,7 @@ const BulkMessageContent = () => {
   // ;
 
   return (
-    <div className='h-full'>
+    <div className='h-full '>
       {selectedTab?.id === 1 ? <SendMessage /> : ''}
 
       {selectedTab?.id === 3 ? <SavedTemplates /> : ''}

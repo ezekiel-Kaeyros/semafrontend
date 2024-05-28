@@ -329,7 +329,7 @@ const SendMessage = () => {
         <form
           className={`${
             step != 'file' ? '-translate-x-[200%] hidden' : 'translate-x-0'
-          } duration-300 ease-linear  w-8/12 m-auto `}
+          } duration-300 ease-linear  sm:w-8/12 w-11/12 m-auto `}
         >
           <div className="flex items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-64 border border-[#212529] rounded-lg cursor-pointer bg-[#212529] dark:hover:bg-bray-800  hover:bg-gray-100 dark:border-gray-100 dark:hover:border-gray-100 dark:hover:bg-gray-500">
@@ -442,17 +442,17 @@ const SendMessage = () => {
         <form
           className={` ${
             step == 'file' ? '-translate-x-[200%] hidden' : 'translate-x-0'
-          } duration-300 ease-linear m-auto w-8/12 text-center`}
+          } duration-300 ease-linear m-auto sm:w-8/12 w-[95%] text-center`}
           onSubmit={handleSubmit(onSubmit)}
         >
           <p className="mb-5">Enter your numbers (5 numbers max)</p>
           {dataInput && (
-            <div className="w-6/12 m-auto grid grid-cols-3 gap-3 my-10 text-sm">
+            <div className="md:w-6/12 w-11/12 m-auto grid md:grid-cols-3 grid-cols-2 sm:gap-3 gap-1 my-10 text-sm">
               {dataInput.map((Item, index) => (
-                <div key={index} className="grid grid-cols-1 mt-5 gap-3">
+                <div key={index} className="grid grid-cols-1 mt-5 gap-3 w-full">
                   {/* { filename && filename?.map(({ name }) => { */}
                   {/* return ( */}
-                  <div className="border border-[lightgray] rounded-3xl">
+                  <div className="border border-[lightgray] rounded-3xl w-full">
                     <div className="flex justify-between items-center px-3 py-2 ">
                       <div>
                         <h1>{Item}</h1>
@@ -461,7 +461,7 @@ const SendMessage = () => {
                         onClick={() => {
                           deleNumber(Item);
                         }}
-                        className="flex items-center justify-center text-xl cursor-pointer"
+                        className="flex items-center justify-center md:text-xl cursor-pointer"
                       >
                         {/* <Image src={crossIcom} alt="cross Icon" className='cursor-pointer' onClick={handleRemoveFile}/> */}
                         x
@@ -475,7 +475,7 @@ const SendMessage = () => {
             </div>
           )}
 
-          <div className="lg:w-7/12 w-10/12 m-auto flex items-center justify-between">
+          <div className="lg:w-7/12 md:w-10/12 w-full m-auto flex items-center justify-between">
             {' '}
             <div className="relative lg:w-2/12 w-3/12 border h-14 rounded-xl flex items-center cursor-pointer">
               {country.icon.length > 0 && (
@@ -490,7 +490,7 @@ const SendMessage = () => {
                     alt=""
                     className="lg:h-5 lg:w-6 md:h-4 md:w-4 h-3 w-3"
                   />
-                  <span className="md:ml-2 lg:text-base text-xs">
+                  <span className="md:ml-2 lg:text-base text-xs sm:block hidden">
                     {country.name}
                   </span>
                   <span className="md:ml-2 lg:text-base text-xs">
@@ -540,7 +540,7 @@ const SendMessage = () => {
                 </div>
               </div>
             </div>
-            <div className="lg:w-[82%] w-9/12">
+            <div className="lg:w-[82%] w-[73%]">
               <InputField
                 icon={call}
                 icon2={
@@ -571,7 +571,7 @@ const SendMessage = () => {
           {errors.numberToSend && numberToSend && (
             <p className="my-3 text-red-500 text-xs">{regexerror}</p>
           )}
-          <div className="mt-5  lg:w-7/12 w-10/12 m-auto">
+          <div className="mt-5  lg:w-7/12 md:w-10/12 w-full m-auto">
             <div>
               <Button
                 className="w-full px-8"

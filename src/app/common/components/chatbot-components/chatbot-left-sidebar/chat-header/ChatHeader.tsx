@@ -10,6 +10,8 @@ import ChatFilter from './chat-filter/ChatFilter';
 import { Filteroptions } from './chat-filter/ChatFilter.d';
 import ScenarioFilter from './scenario-filter/ScenarioFilter';
 import InputField from '@/app/common/ui/forms/text-field/InputField';
+import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
+import SecondStatusFilter from './status-filter/statusFiler2';
 
 interface ChatFilterProps {
   selectedStatus: string | any;
@@ -50,16 +52,24 @@ const ChatHeader = ({
         <Button rightIcon={MessageIcon}>Launch Bulk Message</Button>
       </div>
       {/* Status filtering component */}
+      <div>
+        <SecondStatusFilter
+          options={options}
+          handleSelect={handleSelect}
+          selectedStatus={selectedStatus}
+          onStatusChange={onStatusChange}
+        />
+      </div>
 
-      <div className="flex items-center gap-x-5">
-        <div className="">
+      <div className="flex items-center gap-x-5 justify-between">
+        {/* <div className="">
           <StatusFitler
             options={options}
             handleSelect={handleSelect}
             selectedStatus={selectedStatus}
             onStatusChange={onStatusChange}
           />
-        </div>
+        </div> */}
         <ChatFilter options={Filteroptions} handleSelect={handleSelect} />
         <ScenarioFilter />
       </div>

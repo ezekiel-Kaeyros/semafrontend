@@ -17,7 +17,7 @@ const LayoutComponents = ({
   return (
     <div className="flex h-screen w-full ">
       <Sidebar />
-      <div className={` flex-grow  relative h-full pt-20`}>
+      <div className={` flex-grow  relative h-full pt-20  overflow-auto `}>
         <DashBoadHeader />
         {children}
       </div>

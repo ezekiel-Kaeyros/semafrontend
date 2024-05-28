@@ -14,7 +14,11 @@ const BulkMessagePage = () => {
 
   // // ;
 
-  return <BulkMessage />;
+  return (
+    <div className=' w-full'>
+      <BulkMessage />
+    </div>
+  );
 };
 
 export default BulkMessagePage;

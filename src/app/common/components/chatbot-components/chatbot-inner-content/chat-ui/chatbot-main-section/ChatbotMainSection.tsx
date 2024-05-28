@@ -54,17 +54,16 @@ const ChatbotMainSection: React.FC<ChatbotMainSectionProps> = ({
         ref={chatContainerRef}
         className=" no-scrollbar  flex h-[80vh] scroll-smooth transition ease-linear duration-200 overflow-y-auto flex-col space-y-2 px-4 pt-4 pb-32"
       >
-        {selectedChat &&
-          mappedFilteredConversation.map((chat: any, key: any) => (
-            <ChatBubble
-              date={formatDate(chat?.date?.toString())}
-              isBot={chat?.is_bot}
-              isAdmin={chat?.is_admin}
-              message={chat?.text}
-              name={selectedChat?.phone_number}
-              key={key}
-            />
-          ))}
+        {selectedChat?.chat_messages.map((chat: any, key: any) => (
+          <ChatBubble
+            date={formatDate(chat?.date?.toString())}
+            isBot={chat?.is_bot}
+            isAdmin={chat?.is_admin}
+            message={chat?.text}
+            name={selectedChat?.phone_number}
+            key={key}
+          />
+        ))}
       </div>
     </div>
   );

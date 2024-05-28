@@ -20,17 +20,18 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
-  User,
+  // Chip,
+  // User,
   Pagination,
 } from '@nextui-org/react';
+import * as XLSX from 'xlsx';
 
 import Image from 'next/image';
 import dayjs from 'dayjs';
 import { SearchIcon } from './SearchIcon';
 import { columns, users, statusOptions } from './utils/data';
 import { capitalize } from './utils/utils';
-import Card from '../card/Card';
+// import Card from '../card/Card';
 import { ChevronDownIcon } from './ChevronDownIcon';
 import EditIcon from '../../../../../public/icons/edit.svg';
 import InformationIcon from '../../../../../public/icons/information.svg';
@@ -40,19 +41,19 @@ import importIcon from '../../../../../public/import.png';
 import exportIcon from '../../../../../public/export.png';
 import IconCalendar from '../../../../../public/icons/calendar.svg';
 import { CircularProgress } from '@nextui-org/react';
-import StatContent from '../../components/bulk-messages/startCart/StartCart';
-import { dateTimeNow } from '@/utils/constants';
-import Link from 'next/link';
-import { ButtonI } from '../button/Button';
+// import StatContent from '../../components/bulk-messages/startCart/StartCart';
+// import { dateTimeNow } from '@/utils/constants';
+// import Link from 'next/link';
+// import { ButtonI } from '../button/Button';
 import ModalDelete from './modal-delete/ModalDelete';
 import ModaldetailBroadcast from '../../components/bulk-messages/bulk-message-content/saved-templates/filled-bulk-message/TableHistoryBulkMessage/modalDetail/ModalDetail';
 
-const statusColorMap: any = {
-  completed: 'success',
-  paused: 'danger',
-  pending: 'warning',
-};
-const { RangePicker } = DatePicker;
+// const statusColorMap: any = {
+//   completed: 'success',
+//   paused: 'danger',
+//   pending: 'warning',
+// };
+// const { RangePicker } = DatePicker;
 const dateFormat = 'DD-MM-YYYY';
 const INITIAL_VISIBLE_COLUMNS = [
   'name',
@@ -67,6 +68,8 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
   const [filterValue, setFilterValue] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [valueArray, setValueArray] = useState();
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set([]));
   const [date, setDate] = useState<Date>(new Date());
 
@@ -97,8 +100,8 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
   // const pages = Math.ceil(users.length / rowsPerPage);
 
   // Filtering
-  console.log('reverse',tableSession.reverse());
-  
+  console.log('reverse', tableSession.reverse());
+
   const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = React.useMemo<any>(() => {
@@ -220,6 +223,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                 className="text-bold text-small capitalize font-normal cursor-pointer"
                 onClick={() => {
                   // ;
+                  setValueArray(undefined);
                   setIdSession(user?.id);
                   setDateSession(
                     user.created_at.split('T')[0].split('-')[2] +
@@ -260,7 +264,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
           return (
             <div className="flex flex-col">
               <p className="text-bold text-small capitalize font-normal">
-                {user?.broadcasts && user?.broadcasts.length}
+                {user?.broadcasts ? user?.broadcasts.length : 0}
               </p>
             </div>
           );
@@ -274,14 +278,17 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                   // value: 'text-[green]',
                 }}
                 value={
-                  user?.broadcasts.filter(
-                    (item: any) =>
-                      item.status == 'read' || item.status == 'delivered'
-                  ).length
+                  user?.broadcasts
+                    ? user?.broadcasts.filter(
+                        (item: any) =>
+                          item.status == 'read' || item.status == 'delivered'
+                      ).length
+                    : 0
                 }
                 // color="success"
                 showValueLabel={true}
                 maxValue={user?.broadcasts && user?.broadcasts.length}
+                formatOptions={{ style: 'decimal' }}
               />
             </div>
           );
@@ -305,6 +312,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                 // formatOptions={{ style: "unit", unit: "kilometer" }}
                 showValueLabel={true}
                 maxValue={user?.broadcasts && user?.broadcasts.length}
+                formatOptions={{ style: 'decimal' }}
               />
             </div>
           );
@@ -324,6 +332,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                 //  formatOptions={{ style: "unit", unit: "kilometer" }}
                 showValueLabel={true}
                 maxValue={user?.broadcasts && user?.broadcasts.length}
+                formatOptions={{ style: 'decimal' }}
               />
             </div>
           );
@@ -331,6 +340,96 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
         case 'actions':
           return (
             <div className="relative flex  items-center gap-2">
+              <Button
+                onClick={async () => {
+                  if (user.broadcasts && user?.broadcasts.length > 0) {
+                    try {
+                      // setLoading(true);
+                      // const response = await fetch('https://fakestoreapi.com/products');
+                      // Check if the action result contains data and if it's an array
+                      if (user.broadcasts && Array.isArray(user.broadcasts)) {
+                        const newArray = user.broadcasts.map((item: any) => {
+                          delete item.response_id;
+                          delete item.created_at;
+                          delete item.phone_number_id;
+                          delete item.session_id;
+                          delete item.template_id;
+                          delete item.id;
+                          return {
+                            ...item,
+                            date:
+                              user.created_at.split('T')[0].split('-')[2] +
+                              '-' +
+                              user.created_at.split('T')[0].split('-')[1] +
+                              '-' +
+                              user.created_at.split('T')[0].split('-')[0] +
+                              ' ' +
+                              user.created_at.split('T')[1].split(':')[0] +
+                              ':' +
+                              user.created_at.split('T')[1].split(':')[1],
+                          };
+                        });
+                        //   const dataToExport = products.map((pro: any) => ({
+                        //     title: pro.title,
+                        //     price: pro.lastname,
+                        //     category: pro.category,
+                        //     description: pro.description,
+                        //   }));
+                        // Create Excel workbook and worksheet
+                        const workbook = XLSX.utils.book_new();
+                        const worksheet = XLSX.utils?.json_to_sheet(newArray);
+                        XLSX.utils.book_append_sheet(
+                          workbook,
+                          worksheet,
+                          'ReportExport'
+                        );
+                        // Save the workbook as an Excel file
+                        XLSX.writeFile(workbook, `Report.xlsx`);
+                        console.log(`Exported data to Report.xlsx`);
+                        // setLoading(false);
+                      } else {
+                        // setLoading(false);
+                        // console.log('#==================Export Error');
+                      }
+                    } catch (error: any) {
+                      // setLoading(false);
+                      console.log(
+                        '#==================Export Error',
+                        error.message
+                      );
+                    }
+                  }
+                }}
+                className="flex items-center px-1 justify-center text-sm bg-[green] text-white gap-3"
+              >
+                <Image src={exportIcon} alt="" className="h-5 w-5" />
+                <span>Xlxs</span>
+              </Button>
+
+              <Button
+                className="flex items-center px-1 justify-center text-sm bg-[red] text-white gap-3"
+                onClick={() => {
+                  if (user.broadcasts && user?.broadcasts.length > 0) {
+                    // alert('ok')
+                    setValueArray(user?.broadcasts);
+                    setIsShowModal(true);
+                       setDateSession(
+                         user.created_at.split('T')[0].split('-')[2] +
+                           '-' +
+                           user.created_at.split('T')[0].split('-')[1] +
+                           '-' +
+                           user.created_at.split('T')[0].split('-')[0] +
+                           ' ' +
+                           user.created_at.split('T')[1].split(':')[0] +
+                           ':' +
+                           user.created_at.split('T')[1].split(':')[1]
+                       );
+                  }
+                }}
+              >
+                <Image src={exportIcon} alt="" className="h-5 w-5" />
+                <span>pdf</span>
+              </Button>
               {/* <Image src={EditIcon} alt="Icon edit" /> */}
               {/* <Image
                 src={InformationIcon}
@@ -369,12 +468,12 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full overflow-auto no-scrollbar">
           Sorted By
-          <div className="flex justify-between gap-3 items-end">
-            <div className="2xl:w-[55%] w-[65%] flex flex-row gap-3 h-10">
+          <div className="flex justify-between gap-3 items-end w-full">
+            <div className="2xl:w-[55%] w-fit flex flex-row gap-3 h-10">
               <Dropdown>
-                <DropdownTrigger className="hidden sm:flex w-full focus:bg-[#2B2E31] dark:bg-[#2B2E31] sm:max-w-[30%] justify-between h-full ">
+                <DropdownTrigger className="flex min-w-[150px] focus:bg-[#2B2E31] dark:bg-[#2B2E31] sm:max-w-[30%] justify-between h-full ">
                   <Button
                     className="text-sm font-thin text-[#CFD4D8]"
                     endContent={
@@ -402,7 +501,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
               <Input
                 isClearable
                 classNames={{
-                  base: 'w-full focus:bg-[#2B2E31] sm:max-w-[30%] text-sm h-full',
+                  base: ' min-w-[250px] focus:bg-[#2B2E31] sm:max-w-[30%] text-sm h-full',
                   inputWrapper: 'border-0 py-0 bg-[#2B2E31] text-sm h-full',
                 }}
                 startContent={<SearchIcon />}
@@ -414,7 +513,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                 onValueChange={onSearchChange}
               />
               <Space>
-                <div className="h-full flex gap-1">
+                <div className="h-full flex gap-1 min-w-[125px]">
                   <Image src={IconCalendar} alt="icon calendar" />
                   <span className="flex flex-col">
                     <span className="text-[14px] p-0 font-light text-[#CFD4D8]">
@@ -430,7 +529,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                   </span>
                 </div>
 
-                <div className="h-full flex gap-1">
+                <div className="h-full flex gap-1 min-w-[125px]">
                   <Image src={IconCalendar} alt="icon calendar" />
                   <span className="flex flex-col">
                     <span className="text-[14px] p-0 font-light text-[#CFD4D8]">
@@ -453,57 +552,12 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                 </div>
               </Space>
             </div>
-            <div className="flex gap-3 ">
-              <div className="">
-                <ButtonI
-                  variant={'bgDark'}
-                  icon={importIcon}
-                  // rightIcon={ true }
-                  leftIcon={true}
-                  iconSize={20}
-
-                  // className='text-[12px] h-[50px]'
-                >
-                  Import
-                </ButtonI>
-              </div>
-              <div className="">
-                <Link href={objUrl}>
-                  <ButtonI
-                    variant={'bgDark'}
-                    icon={exportIcon}
-                    // rightIcon={ true }
-                    leftIcon={true}
-                    iconSize={20}
-                    // className='text-[12px] h-[50px]'
-                  >
-                    Export
-                  </ButtonI>
-                </Link>
-              </div>
-            </div>
           </div>
-          {/*  <div className="flex justify-between items-center">
-            <span className="text-default-400 text-small">
-              Total {users.length} users
-            </span>
-            <label className="flex items-center text-default-400 text-small">
-              Rows per page:
-              <select
-                className="bg-transparent outline-none text-default-400 text-small"
-                onChange={onRowsPerPageChange}
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-            </label>
-          </div> */}
         </div>
 
-        <div className="flex flex-col gap-4">
+        {/* <div className="flex flex-col gap-4 w-full overflow-auto no-scrollbar">
           <StatContent initialStatistiques={initialStatistiques} />
-        </div>
+        </div> */}
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -562,13 +616,15 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: 'px-0 max-h-[382px] dark:bg-[#2B2E31] mt-5',
-          th: ['dark:bg-transparent', 'text-white', 'font-normal', 'w-1/8 '],
+          wrapper:
+            'px-0 max-h-[382px] dark:bg-[#2B2E31] mt-5 w-full overflow-y-auto no-scrollbar',
+          th: ['dark:bg-transparent', 'text-white', 'font-normal'],
           td: [
             'px-3  border-t border-divider text-default-700',
-            'dark:bg-[#2B2E31]',
-            'w-1/8 ',
+            // 'dark:bg-[#2B2E31]',
+            ,
           ],
+          // tr:'hover:bg-white'
         }}
         selectedKeys={selectedKeys}
         sortDescriptor={sortDescriptor}
@@ -592,7 +648,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
           {(item) => (
             <TableRow
               key={item.id}
-              className=""
+              className="hover:bg-[#3f3e3e]  hover:text-black"
               onClick={() => {
                 // ;
               }}
@@ -604,13 +660,15 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
           )}
         </TableBody>
       </Table>
-      <ModaldetailBroadcast
-        isShow={isShowModal}
-        showHandler={showHandler}
-        id={idSession}
-        date={dateSession}
-        
-      />
+      {isShowModal && (
+        <ModaldetailBroadcast
+          isShow={isShowModal}
+          showHandler={showHandler}
+          id={idSession}
+          date={dateSession}
+          datas={valueArray ? valueArray : []}
+        />
+      )}
     </>
   );
 };

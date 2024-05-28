@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import logo from '../../../../public/images/sema-logo-2.svg';
 import vector from '../../../../public/images/Vector-background.svg';
 import close from '../../../../public/icons/close.svg';
+import arrowIcon from '../../../../public/icons/chatbot/arrow-left.svg';
 import RadioButton from '@/app/common/ui/forms/radio/RadioButton';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { AuthService } from '@/services';
@@ -23,9 +24,11 @@ type SignUpType = {
   agreeCondition: boolean;
   company: string;
 };
+import OnboardingModal from '@/app/common/components/modal/OnboardingModal';
 
 const SignUpModule = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [step, setStep] = useState<boolean>(false);
   const pathName = usePathname();
   const { push } = useRouter();
   const urlSplit = pathName.split('/');
@@ -65,17 +68,27 @@ const SignUpModule = () => {
   };
 
   return (
-    <div className="w-full relative px-3 h-screen overflow-y-scroll flex justify-center pb-10 ">
-      <Link href={'/'}>
+    <div className="w-full relative px-3 h-screen overflow-y-scroll flex justify-center pb-10  ">
+      {!step ? (
+        <Link href={'/'}>
+          <Image
+            src={close}
+            className=" absolute top-10 left-10  cursor-pointer"
+            alt={'close'}
+          />
+        </Link>
+      ) : (
         <Image
-          src={close}
+          src={arrowIcon}
           className=" absolute top-10 left-10  cursor-pointer"
+          onClick={() => setStep(false)}
           alt={'close'}
         />
-      </Link>
+      )}
       <Toaster position="top-center" reverseOrder={false} />
+
       <form
-        className="w-[400px] flex flex-col py-5 z-20 "
+        className={`w-[400px]  flex-col py-5 z-20 ${!step ? 'flex' : 'hidden'} `}
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="flex justify-center items-center mb-1">
@@ -161,9 +174,7 @@ const SignUpModule = () => {
                 placeholder="Password"
               />
             </div>
-            <p className="mt-1 text-sm text-red-400">
-              {errors?.password && <> A minimum of 3 characters is required</>}
-            </p>
+            <div className="mt-1 text-sm text-red-400"></div>
           </div>
 
           <div>
@@ -206,32 +217,40 @@ const SignUpModule = () => {
             )}
           </p>
         </div>
-        <div className="w-full my-8">
-          <Button
-            disabled={!isValid || isLoading ? true : false}
-            variant={!isValid || isLoading ? 'disabled' : 'mainColor'}
-            className="w-full py-4"
+        <div className="w-full my-5">
+          <div
+            // disabled=
+            // variant={!isValid || isLoading ? 'disabled' : 'mainColor'}
+            className={`w-full py-4 rounded-3xl cursor-pointer flex justify-center ${!isValid || isLoading ? '  bg-blueLine ' : ' bg-primary'}`}
+            onClick={() => setStep(true)}
           >
-            {isLoading ? (
+            {/* {isLoading ? (
               <Spinner size="sm" color="white" />
-            ) : (
-              <>Create Account</>
-            )}
-          </Button>
+            ) : ( */}
+            <h1 className=" font-medium">Next step for registration </h1>
+            {/* )} */}
+          </div>
         </div>
         <div className="w-full ">
-          <p className="mb-[1rem] text-center mt-10 ">
+          <p className="mb-[1rem] text-center mt-3 ">
             Already have an account ?
           </p>
           <Button
             href="/login"
             variant="mainColorTwo"
-            className="w-full py-4 tex-white font-[visby-regular]"
+            className="w-full py-4 mb-3 tex-white font-[visby-regular]"
           >
             Sign In
           </Button>
         </div>
       </form>
+
+      <div
+        className={`w-[40%] m-auto h-full ${step ? 'flex' : 'hidden'} justify-center items-center z-20 `}
+      >
+        <OnboardingModal />
+      </div>
+
       <div className=" absolute w-full md:h-1/2 h-1/4 bottom-0 left-0 overflow-hidden z-10 ">
         <Image
           src={vector}

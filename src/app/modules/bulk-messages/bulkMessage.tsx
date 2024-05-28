@@ -48,7 +48,7 @@ const BulkMessage = () => {
   };
 
   return (
-    <div className='h-full'>
+    <div className="h-full">
       <div className="px-[1rem] py-[2rem] h-full">
         <div>
           <h1
@@ -60,8 +60,8 @@ const BulkMessage = () => {
             Bulk Message
           </h1>
         </div>
-        <div className="flex place-items-center justify-between">
-          <div className="">
+        <div className="flex place-items-center justify-between ">
+          <div className="sm:text-sm text-xs">
             <BulkMessageTabs />
           </div>
           <div>
@@ -69,12 +69,13 @@ const BulkMessage = () => {
               leftIcon={bulk_messageIcon}
               iconSize={30}
               onClick={() => handleOnClickOpenModal()}
+              className="sm:text-base text-xs flex justify-between items-center"
             >
               Create Template
             </Button>
           </div>
         </div>
-        <div className="p-[1rem] h-full">
+        <div className="p-[1rem] h-full ">
           <BulkMessageContent />
         </div>
       </div>

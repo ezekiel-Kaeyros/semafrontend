@@ -56,11 +56,10 @@ const ChatbotTopSection: React.FC<any> = ({ selectedChat }: ChatMessages) => {
             </div>
             <div>
               <>{selectedChat?.phone_number}</>
-              <h3 className="text-sm opacity-90">Online</h3>
+              {/* <h3 className="text-sm opacity-90">Online</h3> */}
             </div>
           </div>
-
-          <h1 className="font-bold">{message?.phone_number}</h1>
+          {/* <h1 className="font-bold">{message?.phone_number}</h1> */}
         </div>
       </div>
       <div className="flex justify-center items-center gap-x-6">

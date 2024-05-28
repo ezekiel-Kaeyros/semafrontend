@@ -30,28 +30,31 @@ const ViewTemplateModal: React.FC<{
       isOpen={isShow}
       onOpenChange={showHandler}
       className=" "
-      radius="lg"
+    
       placement="center"
-      closeButton={false}
-          classNames={{
-          wrapper:'',
+      // closeButton={false}
+      classNames={{
+        wrapper: '',
         // body: "py-6",
         // backdrop: "bg-[#292f46]/50 backdrop-opacity-40",
         // base: "border-[#292f46] bg-[#19172c] dark:bg-[#19172c] text-[#a8b0d3]",
         // header: "border-b-[1px] border-[#292f46]",
         // footer: "border-t-[1px] border-[#292f46]",
-        closeButton: 'hidden',
+        // closeButton: 'hidden',
       }}
     >
       <ModalContent>
         <>
-          <ModalBody className="text-black p-0  border">
-            <PreviewComp
-              ImgTemplate={img}
-              // ImgTemplate={photographIcon}
-              textTemplate={body}
-              tagline={footer}
-            />
+          <ModalBody className="text-black p-10">
+            {/* <p>x</p> */}
+            <div className='w-full h-full border'>
+              <PreviewComp
+                ImgTemplate={img}
+                // ImgTemplate={photographIcon}
+                textTemplate={body}
+                tagline={footer}
+              />
+            </div>
           </ModalBody>
         </>
       </ModalContent>

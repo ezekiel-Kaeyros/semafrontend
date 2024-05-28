@@ -43,7 +43,7 @@ import { deleteTemplete } from './actionDeleteTemplete';
 import ViewTemplateModal from './modal/ViewTemplateModal';
 import EditTemplateModal from './modal/EditTemplateModal';
 
-const columns = ['Template Name', 'Category', 'Status', 'Language', 'action'];
+const columns = ['Template Name', 'Status', 'Language', 'action'];
 
 const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
   const [isShow, setIsShow] = useState(false);
@@ -296,9 +296,7 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                           <TableCell className="text-left py-4">
                             {row.name}
                           </TableCell>
-                          <TableCell className="font-[700] text-left py-4">
-                            {''}
-                          </TableCell>
+                        
                           <TableCell className="text-left py-4">
                             <span
                               className={` py-2 rounded-full text-xs font-bold  bg-white ${

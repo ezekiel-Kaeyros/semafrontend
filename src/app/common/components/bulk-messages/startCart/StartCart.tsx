@@ -16,7 +16,7 @@ const StatContent = ({
         {initialStatistiques.map((statItem: IStatistique) => {
           return (
             <>
-              <div className="rounded-md p-2 w-[150px] bg-[#2B2E31]">
+              <div className="rounded-md p-2 min-w-[150px] bg-[#2B2E31]">
                 <span className="flex justify-between">
                   <h1 className="text-[20px]">{statItem.nameStat}</h1>
                   <Image src={statItem.iconStat} alt="" />

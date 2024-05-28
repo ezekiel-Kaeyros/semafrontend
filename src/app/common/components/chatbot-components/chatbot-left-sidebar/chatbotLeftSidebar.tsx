@@ -180,8 +180,8 @@ const ChatbotLeftSidebar = () => {
     };
   }, []);
   return (
-    <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600  dark:bg-mainDark border-r-[0.02px] h-full">
-      <div className="flex flex-col gap-[1.5rem] p-[1rem] h-1/4 ">
+    <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600  dark:bg-mainDark border-r-[0.02px] h-full overflow-y-hidden">
+      <div className="flex flex-col gap-[1.5rem] p-[1rem] h-auto">
         <div className="flex flex-row justify-between p-[.5rem]">
           <ChatHeader
             selectedStatus={selectedStatus}

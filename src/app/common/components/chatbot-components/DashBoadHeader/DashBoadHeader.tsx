@@ -138,7 +138,7 @@ const DashBoadHeader = () => {
                 }}
               >
                 <div className=" flex gap-2 place-items-center">
-                  <p className=" pt-1.5">Singn Out</p>
+                  <p className=" pt-1.5">Log Out</p>
                 </div>
               </DropdownItem>
             </DropdownMenu>
