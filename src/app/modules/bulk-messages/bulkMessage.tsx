@@ -57,7 +57,7 @@ const BulkMessage = () => {
             }}
             className="text-[32px]"
           >
-            Bulk Message
+            Bulk Messages
           </h1>
         </div>
         <div className="flex place-items-center justify-between ">

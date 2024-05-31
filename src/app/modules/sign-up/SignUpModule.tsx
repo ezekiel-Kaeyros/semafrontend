@@ -25,9 +25,12 @@ type SignUpType = {
   company: string;
 };
 import OnboardingModal from '@/app/common/components/modal/OnboardingModal';
-
-const SignUpModule = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+import { setEmailCookies } from '@/cookies/cookies';
+interface SingUpType {
+  step: boolean;
+}
+const SignUpModule = (props: SingUpType) => {
+  const [isLoading, setIsLoading] = useState<boolean>(props.step);
   const [step, setStep] = useState<boolean>(false);
   const pathName = usePathname();
   const { push } = useRouter();
@@ -54,6 +57,7 @@ const SignUpModule = () => {
         .then((result) => {
           if (result.status == 200) {
             setIsLoading(false);
+            setEmailCookies({ email: email });
             push(`/${urlSplit[1]}/login`);
           }
         })
@@ -78,12 +82,7 @@ const SignUpModule = () => {
           />
         </Link>
       ) : (
-        <Image
-          src={arrowIcon}
-          className=" absolute top-10 left-10  cursor-pointer"
-          onClick={() => setStep(false)}
-          alt={'close'}
-        />
+        ''
       )}
       <Toaster position="top-center" reverseOrder={false} />
 

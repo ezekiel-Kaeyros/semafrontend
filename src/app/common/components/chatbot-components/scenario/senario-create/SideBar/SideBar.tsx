@@ -16,6 +16,7 @@ import arrow from '../../../../../../../../public/icons/chatbot/arrow-circle-lef
 import { useSenarioCreate } from '@/zustand_store';
 import Image from 'next/image';
 import arrowIcon from '../../../../../../../../public/icons/chatbot/arrow-left.svg';
+import chatBotSelectedIcon from '../../../../../../../../public/left_side_bar_icons/headsetUser.png';
 
 interface SideBarProps {
   updateOrCreate: string | undefined;
@@ -42,46 +43,42 @@ function SideBar(props: SideBarProps) {
       >
         <Image src={arrow} alt="arrow" />
       </div>
+
       <div
-        className={` absolute  top-14 z-20 flex gap-2 place-items-center ${close ? ' left-0  ' : 'left-80 '} transition-all ease-in-out duration-800 `}
+        className={` font-light w-72 absolute top-3 border border-white py-3 px-2 rounded-xl z-20 flex gap-2 items-center ${close ? ' left-0  ' : 'left-80 '} transition-all ease-in-out duration-800 `}
       >
-        <Image src={arrowIcon} alt="" width={30} height={5} />
         <input
           type="text"
-          className=" text-lg text-white bg-transparent  appearance-none focus:outline-none font-[visby-medium'] font-semibold"
-          defaultValue={nameSenario}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setNameSenario(e.target.value)
-          }
-        />{' '}
-      </div>
-      <div
-        className={` absolute bottom-5 z-20 flex gap-2 place-items-center ${close ? ' left-0  ' : 'left-80 '} transition-all ease-in-out duration-800 `}
-      >
-        <h1>Enter the keywords :</h1>
-        <input
-          type="text"
-          className=" text-md text-white bg-transparent  appearance-none focus:outline-none font-[visby-medium'] font-semibold"
+          className=" text-md text-white bg-transparent  appearance-none focus:outline-none font-[visby-medium'] font-semibold flex-grow"
+          placeholder="Trigger Chatbot Keyword"
           defaultValue={joinArrayToString(keywordsSenario ?? [])}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setKeywordsSenario!(splitStringAndRemoveSpaces(e.target.value))
           }
-        />{' '}
+        />
+        <Image src={chatBotSelectedIcon} alt="arrow" className=" w-7" />
       </div>
       <div
         className={`absolute left-0 top-0 h-full overflow-y-scroll scrollbar-hide z-20 py-2 transition-all overflow-hidden ease-in-out duration-500 ${close ? ' w-0 opacity-0' : 'w-72 opacity-1'}`}
       >
-        <h1 className=" text-xl my-3">
-          {props.updateOrCreate ? 'Update' : 'Create'}
-        </h1>
+        <div
+          className={`  top-14 z-20 flex gap-2 place-items-center ${close ? ' left-0  ' : 'left-80 '} transition-all ease-in-out duration-800 `}
+        >
+          <Image src={arrowIcon} alt="arrow" />
+          <input
+            type="text"
+            className=" text-lg text-white bg-transparent  appearance-none focus:outline-none font-[visby-medium'] font-semibold"
+            defaultValue={nameSenario}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNameSenario(e.target.value)
+            }
+            placeholder="Nom du scenario "
+          />{' '}
+        </div>
+        <p className=" text-xl my-3 font-light ">
+          {props.updateOrCreate && 'Update'}
+        </p>
         <div className=" flex flex-col gap-3">
-          <CarBoxCreate
-            title="Send a message"
-            description="With no responses required from visitor"
-            color="bg-blue-message-primary"
-            icon={<Image src={messageText} alt="" />}
-            typeNode="messageNode"
-          />
           <CarBoxCreate
             title="Ask a question"
             description="Ask question and store user input in variable"
@@ -89,6 +86,14 @@ function SideBar(props: SideBarProps) {
             icon={<Image src={messageQuestion} alt="" />}
             typeNode="questionNode"
           />
+          <CarBoxCreate
+            title="Send a message"
+            description="With no responses required from visitor"
+            color="bg-blue-message-primary"
+            icon={<Image src={messageText} alt="" />}
+            typeNode="messageNode"
+          />
+
           <CarBoxCreate
             title="Set conditional"
             description="Send message based on logical conditions"

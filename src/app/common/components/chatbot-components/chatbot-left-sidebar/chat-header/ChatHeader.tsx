@@ -17,12 +17,14 @@ interface ChatFilterProps {
   selectedStatus: string | any;
   onStatusChange: (status: string) => void;
   onInputChange: any;
+  conversation: any;
 }
 
 const ChatHeader = ({
   selectedStatus,
   onStatusChange,
   onInputChange,
+  conversation,
 }: ChatFilterProps) => {
   const inputRef = useRef<HTMLInputElement>();
   const handleSelect = (id: string | number) => {
@@ -54,6 +56,7 @@ const ChatHeader = ({
       {/* Status filtering component */}
       <div>
         <SecondStatusFilter
+          conversation={conversation}
           options={options}
           handleSelect={handleSelect}
           selectedStatus={selectedStatus}

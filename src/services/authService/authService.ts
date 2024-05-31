@@ -1,4 +1,6 @@
+import { CredetialChatBotType, ResponseCredetialChatBotType } from '..';
 import { DataServiceUserService } from '../dataServiceUserService';
+const URL_CHAT_BOT = 'https://back.chatbot.sem-a.com';
 
 export class AuthService extends DataServiceUserService {
   login = async (data: { email: string; password: string }) => {
@@ -62,4 +64,40 @@ export class AuthService extends DataServiceUserService {
     );
     return response.data;
   };
+
+  /**
+   * Registers a chatbot credential.
+   *
+   * @param data - The chatbot credential data.
+   * @returns The response from the server.
+   */
+  async registerCredentialChatBot(
+    data: CredetialChatBotType
+  ): Promise<ResponseCredetialChatBotType> {
+    try {
+      const response = await this.post(`${URL_CHAT_BOT}/credentials`, data);
+      return response;
+    } catch (error) {
+      console.error('Error registering chatbot credential:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * get a phone id on table Credential on chatbot
+   *
+   * @param email
+   * @returns
+   */
+  async getPhoneNumberId(email: string) {
+    try {
+      const response = await this.get(
+        `${URL_CHAT_BOT}/credentials/user/emai/?email=${email}`
+      );
+      return response;
+    } catch (error) {
+      console.error('Error registering chatbot credential:', error);
+      throw error;
+    }
+  }
 }

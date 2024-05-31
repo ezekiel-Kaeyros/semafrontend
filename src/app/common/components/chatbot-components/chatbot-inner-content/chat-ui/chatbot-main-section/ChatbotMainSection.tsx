@@ -43,7 +43,7 @@ const ChatbotMainSection: React.FC<ChatbotMainSectionProps> = ({
       ? mappedConversations
       : filterdStatusConversation;
 
-  console.log(filterStatus, 'mappedFilteredConversation');
+  console.log(selectedChat, 'selectedChat');
 
   return (
     <div

@@ -29,7 +29,7 @@ const ScenarioList = () => {
   return query.isLoading ? (
     <LoaderSpinner />
   ) : (
-    <div className="flex gap-4 flex-wrap">
+    <div className=" w-full gap-3 grid sm:grid-cols-2  xl:grid-cols-3  2xl:grid-cols-5 ">
       {Array.isArray(query.data) &&
         query.data?.map((scenario, key) => (
           <ScenarioCard

@@ -1,3 +1,4 @@
+import { getUserCookies } from '@/cookies/cookies';
 import DataService from '../dataService';
 import {
   ChatsByCompanyReturnType,
@@ -11,12 +12,12 @@ interface ClientNumber {
 }
 
 const BASE_URL: string | undefined = process.env.API_CHATBOT_URL;
-const clientPhonenumber: ClientNumber[] = [
-  {
-    numberId: 299462959914851,
-    email: 'ketourah@mail.com',
-  },
-];
+// const clientPhonenumber: ClientNumber[] = [
+//   {
+//     numberId: 299462959914851,
+//     email: 'ketourah@mail.com',
+//   },
+// ];
 
 export class ChatbotService extends DataService {
   client: any;
@@ -52,34 +53,12 @@ export class ChatbotService extends DataService {
     return this.get('/companychats/' + id);
   };
 
-  // loadChatsByCompany = async (params: {
-  //   token?: string;
-  //   email: string;
-  // }): Promise<ChatsByCompanyReturnType> => {
-  //   const response: ChatsByCompanyReturnType = await this.get(
-  //     'https://back.chatbot.sem-a.com/companychats/' +
-  //       (clientPhonenumber.find((item) => item.email === params.email)?.numberId
-  //         ? clientPhonenumber.find((item) => item.email === params.email)
-  //             ?.numberId
-  //         : '100609346426084')
-  //   );
-  //   if (response.status === 200) {
-  //     return response;
-  //   } else {
-  //     throw new Error('Failed to fetch data');
-  //   }
-  // };
-
   loadChatsByCompany = async (params: {
     token?: string;
-    email: string;
   }): Promise<ChatsByCompanyReturnType> => {
+    const phone_number_id = getUserCookies().phone_number_id;
     const response: ChatsByCompanyReturnType = await this.get(
-      'https://back.chatbot.sem-a.com/companychats/' +
-        (clientPhonenumber.find((item) => item.email === params.email)?.numberId
-          ? clientPhonenumber.find((item) => item.email === params.email)
-              ?.numberId
-          : '100609346426084')
+      'https://back.chatbot.sem-a.com/companychats/' + phone_number_id
     );
     if (response.status === 200) {
       return response;

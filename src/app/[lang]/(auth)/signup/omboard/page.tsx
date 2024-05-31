@@ -8,7 +8,7 @@ const SignUpPage = () => {
   return (
     <QueryClientProvider client={queryClient}>
       {' '}
-      <SignUpModule step={false} />
+      <SignUpModule step={true} />
     </QueryClientProvider>
   );
 };

@@ -6,6 +6,8 @@ import { ChatItemProps } from './ChatItem.d';
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const ChatItem: React.FC<ChatItemProps> = ({
   id,
@@ -18,6 +20,13 @@ const ChatItem: React.FC<ChatItemProps> = ({
   unread_msg,
 }) => {
   const pathname = usePathname();
+  const { conversationStatus } = useSelector(
+    (state: RootState) => state.setConversationStatus
+  );
+  const currentId = pathname.split('/').pop();
+
+  console.log(currentId, 'conversationStatus');
+  console.log(id, 'conversationStatusid');
 
   let backgroundCol = '';
   switch (status) {
@@ -38,6 +47,17 @@ const ChatItem: React.FC<ChatItemProps> = ({
       backgroundCol = '#182881';
       break;
   }
+
+  const calculatedBackgroundCol = () => {
+    if (currentId === id) {
+      if (status === 'pending' || conversationStatus === 'pending') {
+        return '#915103';
+      } else if (status === 'open' || conversationStatus === 'open') {
+        return '#182881';
+      }
+    }
+    return backgroundCol;
+  };
 
   return (
     <AnimateClick>
@@ -73,10 +93,16 @@ const ChatItem: React.FC<ChatItemProps> = ({
             <h1 className="text-xs opacity-60">{date || 'Dec 10 09:04'}</h1>
             <div
               className={`mt-2 text-xs font-bold py-1 px-3 rounded-full`}
-              style={{ background: `${backgroundCol}` }}
-              // style={{ background: `${color}` }}
+              // style={{ background: `${backgroundCol}` }}
+              style={{ background: `${calculatedBackgroundCol()}` }}
             >
-              {(status && status) || 'open'}
+              {/* {(status && status) || 'open'} */}
+              {currentId !== id || conversationStatus == 'None'
+                ? (status && status) || 'open'
+                : conversationStatus !== 'None' && conversationStatus}
+              {/* {conversationStatus === 'None' && currentId === id
+                ? (status && status) || 'open'
+                : conversationStatus} */}
             </div>
           </div>
         </div>

@@ -5,12 +5,12 @@ interface ClientNumber {
   numberId: number;
   email: string;
 }
-const clientPhonenumber: ClientNumber[] = [
-  {
-    numberId: 299462959914851,
-    email: 'ketourah@mail.com',
-  },
-];
+// const clientPhonenumber: ClientNumber[] = [
+//   {
+//     numberId: 299462959914851,
+//     email: 'ketourah@mail.com',
+//   },
+// ];
 export class BulkMessagesService extends dataServiceBulkmessage {
   sendBulkMessages = async (data: {
     template_name: string;
@@ -18,12 +18,10 @@ export class BulkMessagesService extends dataServiceBulkmessage {
   }) => {
     try {
       const hisEmail = getUserCookies().email;
+      const phone_number_id = getUserCookies().phone_number_id;
       const response = await this.post(
         'https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod/broadcast/' +
-          (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-            ? clientPhonenumber.find((item) => item.email === hisEmail)
-                ?.numberId
-            : '100609346426084'),
+          phone_number_id,
         data
       );
       alert('stop');
@@ -40,13 +38,8 @@ export class BulkMessagesService extends dataServiceBulkmessage {
     recipients_phone_numbers: string[];
   }): Promise<{ data: any; status: any }> => {
     const hisEmail = getUserCookies().email;
-    return this.post(
-      '/broadcast/' +
-        (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          : '100609346426084'),
-      data
-    );
+    const phone_number_id = getUserCookies().phone_number_id;
+    return this.post('/broadcast/' + phone_number_id, data);
   };
 
   deleteTemplete = (
@@ -61,34 +54,26 @@ export class BulkMessagesService extends dataServiceBulkmessage {
     status: any;
   }> => {
     const hisEmail = getUserCookies().email;
-    return this.delete(
-      '/template/' +
-        (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          : '100609346426084') +
-        '/' +
-        name_templete
-    );
+    const phone_number_id = getUserCookies().phone_number_id;
+    return this.delete('/template/' + phone_number_id + '/' + name_templete);
   };
 
   getTemplateByClient = async () => {
     const hisEmail = getUserCookies().email;
+    const phone_number_id = getUserCookies().phone_number_id;
     const response = await this.get(
       'https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod/template/' +
-        (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          : '100609346426084')
+        phone_number_id
     );
     return response.data;
   };
 
   getTemplateSession = async () => {
     const hisEmail = getUserCookies().email;
+    const phone_number_id = getUserCookies().phone_number_id;
     const response = await this.get(
       'https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod/broadcast-session/' +
-        (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          : '100609346426084')
+        phone_number_id
     );
     return response.data;
   };
@@ -123,40 +108,17 @@ export class BulkMessagesService extends dataServiceBulkmessage {
     status: any;
   }> => {
     const hisEmail = getUserCookies().email;
-    //console.log(
-    //   'test_url',
-    //   '/broadcast-session/' +
-    //     (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-    //       ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-    //       : '100609346426084') +
-    //     id
-    // );
-
-    return this.get(
-      '/broadcast-session/' +
-        (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          : '100609346426084/') +
-        id
-    );
+    const phone_number_id = getUserCookies().phone_number_id;
+    return this.get('/broadcast-session/' + phone_number_id + id);
   };
   getDetailTemplateSession = async (id: string) => {
     const hisEmail = getUserCookies().email;
-    // //console.log(
-    //   'test_url',
-    //   'https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod/broadcast-session/' +
-    //     (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-    //       ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-    //       : '100609346426084') +
-    //     '/' +
-    //     id
-    // );
+
+    const phone_number_id = getUserCookies().phone_number_id;
 
     const response = await this.get(
       'https://7ws8gmoso5.execute-api.eu-central-1.amazonaws.com/prod/broadcast-session/' +
-        (clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          ? clientPhonenumber.find((item) => item.email === hisEmail)?.numberId
-          : '100609346426084') +
+        phone_number_id +
         '/' +
         id
     );

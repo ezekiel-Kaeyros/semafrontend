@@ -99,10 +99,8 @@ const OnboardingModal = () => {
       return error;
     }
   };
-
+  // donc ic c'est la fonction des session
   const sessionInfoListener = async (event) => {
-    // ;
-
     if (event.origin !== 'https://www.facebook.com') return;
     try {
       // ;
@@ -115,34 +113,21 @@ const OnboardingModal = () => {
 
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data;
-
           setWabaId(waba_id);
           setNumberId(phone_number_id);
 
           //   window.location.href = 'dashboard/bulk-messages';
-        }
-        // if user cancels the Embedded Signup flow
-        else {
+        } else {
           // ;
 
           const { current_step } = data.data;
         }
       }
-    } catch (error) {
-      // ;
-      // ;
-      // Don’t parse info that’s not a JSON
-      // ;
-    }
+    } catch (error) {}
   };
 
   window.addEventListener('message', sessionInfoListener);
-  ////////////////////////
-
-  // Load the JavaScript SDK asynchronously
   (function (d, s, id) {
-    // ;
-
     var js,
       fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
@@ -154,18 +139,11 @@ const OnboardingModal = () => {
 
   // Facebook Login with JavaScript SDK
   function launchWhatsAppSignup() {
-    // ;
-
-    // Conversion tracking code
-    //fbq && fbq('trackCustom', 'WhatsAppOnboardingStart', {appId: '2448667798617426', feature: 'whatsapp_embedded_signup'});
-
     // Launch Facebook login
     FB.login(
       function (response) {
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
-          // ;
-          //Use this token to call the debug_token API and get the shared WABA's ID
         } else {
           // ;
         }
@@ -210,14 +188,7 @@ const OnboardingModal = () => {
   }
 
   useEffect(() => {
-    if (
-      step == 3 &&
-      numberId.length > 0 &&
-      wabaId.length > 0
-      //   name.length == 0 &&
-      //   number.length == 0
-    ) {
-      // ;
+    if (step == 3 && numberId.length > 0 && wabaId.length > 0) {
       registerHandler(numberId, wabaId);
     }
   }, [step, numberId, wabaId, error, name, number]);
@@ -227,7 +198,7 @@ const OnboardingModal = () => {
         <>
           {' '}
           <div className="flex justify-center items-center mb-9">
-            <Image src={logo} alt=""></Image>
+            <Image src={logo} alt="" />
           </div>
           <h1 className="text-3xl font-bold text-white text-center ">
             Account Setup

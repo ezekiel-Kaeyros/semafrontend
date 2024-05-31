@@ -44,32 +44,34 @@ const DashBoadHeader = () => {
 
       <div className="flex  gap-x-12 items-center ">
         {/* Buttons */}
-        <div className="lg:flex gap-x-4 items-center hidden ">
-          {!pathname?.includes('scenarios') && (
-            <div>
-              <Button
-                href="/dashboard/scenarios"
-                icon={EyeIcon}
-                className="rounded-full text-sm"
-              >
-                Scenario
-              </Button>
+
+        {!pathname?.includes('scenarios') &&
+          !pathname?.includes('bulk-messages') && (
+            <div className="lg:flex gap-x-4 items-center hidden ">
+              <div>
+                <Button
+                  href="/dashboard/scenarios"
+                  icon={EyeIcon}
+                  className="rounded-full text-sm"
+                >
+                  Scenario
+                </Button>
+              </div>
+              <div>
+                <AnimateClick>
+                  <Link
+                    href="/dashboard/chatbot"
+                    className="flex flex-row gap-[.5rem] items-center justify-center bg-mainDarkLight dark:bg-bgBlackForBtn cursor-pointer rounded-lg  h-[40px] py-1 px-3"
+                  >
+                    <span>Conversations</span>
+                    <span className="rounded-full text-[12px] w-[20px] h-[20px] flex justify-center dark:bg-slate-500">
+                      {numberConversations}
+                    </span>
+                  </Link>
+                </AnimateClick>
+              </div>
             </div>
           )}
-          <div>
-            <AnimateClick>
-              <Link
-                href="/dashboard/chatbot"
-                className="flex flex-row gap-[.5rem] items-center justify-center bg-mainDarkLight dark:bg-bgBlackForBtn cursor-pointer rounded-lg  h-[40px] py-1 px-3"
-              >
-                <span>Conversations</span>
-                <span className="rounded-full text-[12px] w-[20px] h-[20px] flex justify-center dark:bg-slate-500">
-                  {numberConversations}
-                </span>
-              </Link>
-            </AnimateClick>
-          </div>
-        </div>
 
         {/* Notification */}
         <div className="flex gap-2">

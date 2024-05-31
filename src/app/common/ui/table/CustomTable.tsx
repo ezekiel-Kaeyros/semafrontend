@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Space } from 'antd';
 import { initialStatistiques } from '../../components/bulk-messages/startCart/dataStat';
@@ -47,6 +47,8 @@ import { CircularProgress } from '@nextui-org/react';
 // import { ButtonI } from '../button/Button';
 import ModalDelete from './modal-delete/ModalDelete';
 import ModaldetailBroadcast from '../../components/bulk-messages/bulk-message-content/saved-templates/filled-bulk-message/TableHistoryBulkMessage/modalDetail/ModalDetail';
+import { ButtonI } from '../button/Button';
+import ModaldetailBroadcastExport from '../../components/bulk-messages/bulk-message-content/saved-templates/filled-bulk-message/TableHistoryBulkMessage/modalDetail/ModalDetailExport';
 
 // const statusColorMap: any = {
 //   completed: 'success',
@@ -81,357 +83,415 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
   const [selectedtDateStart, setSelectedtDateStart] = useState<any>();
   const [identityData, setIdentityData] = useState<any>();
   const [isShowModal, setIsShowModal] = useState(false);
+  const [isShowModalExport, setIsShowModalExport] = useState(false);
+  const [view, setView] = useState(false);
+  const [exp, setExp] = useState(false);
 
   const [idSession, setIdSession] = useState('');
   const [dateSession, setDateSession] = useState('');
+  
   const [visibleColumns, setVisibleColumns] = useState<any>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = useState<any>('all');
-  const [rowsPerPage, setRowsPerPage] = useState<number>(5);
-  const [sortDescriptor, setSortDescriptor] = useState<any>({
-    column: 'age',
-    direction: 'ascending',
-  });
-  // ;
+   const [arrayImport, setArrayImport] = useState<
+     {
+       id: string;
+       tab: any[];
+      
+     }[]
+   >([]);
+   const [statusFilter, setStatusFilter] = useState<any>('all');
+   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+   const [sortDescriptor, setSortDescriptor] = useState<any>({
+     column: 'age',
+     direction: 'ascending',
+   });
+   // ;
 
-  const [page, setPage] = useState<number>(1);
+   const [page, setPage] = useState<number>(1);
 
-  // const pages = Math.ceil(users.length / rowsPerPage);
+   // const pages = Math.ceil(users.length / rowsPerPage);
 
-  // Filtering
-  console.log('reverse', tableSession.reverse());
+   // Filtering
+  //  console.log('reverse', tableSession.reverse());
+  useEffect(() => {
+  console.log('arrayImport',arrayImport);
+  
+},[arrayImport])
+   const hasSearchFilter = Boolean(filterValue);
 
-  const hasSearchFilter = Boolean(filterValue);
+   const filteredItems = React.useMemo<any>(() => {
+     let filteredUsers = [...tableSession];
 
-  const filteredItems = React.useMemo<any>(() => {
-    let filteredUsers = [...tableSession];
+     if (hasSearchFilter) {
+       filteredUsers = filteredUsers.filter((user) =>
+         user.template_name.toLowerCase().includes(filterValue.toLowerCase())
+       );
+     }
+     // if (
+     //   statusFilter !== 'all' &&
+     //   Array.from(statusFilter).length !== statusOptions.length
+     // ) {
+     //   filteredUsers = filteredUsers.filter((user) =>
+     //     Array.from(statusFilter).includes(user.status)
+     //   );
+     // }
 
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.template_name.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-    // if (
-    //   statusFilter !== 'all' &&
-    //   Array.from(statusFilter).length !== statusOptions.length
-    // ) {
-    //   filteredUsers = filteredUsers.filter((user) =>
-    //     Array.from(statusFilter).includes(user.status)
-    //   );
-    // }
+     return filteredUsers;
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [tableSession, filterValue, statusFilter]);
 
-    return filteredUsers;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableSession, filterValue, statusFilter]);
+   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+   const headerColumns = useMemo(() => {
+     return columns.filter((column) =>
+       Array.from(visibleColumns).includes(column.uid)
+     );
+   }, [visibleColumns]);
+   const items = React.useMemo(() => {
+     const start = (page - 1) * rowsPerPage;
+     const end = start + rowsPerPage;
 
-  const headerColumns = useMemo(() => {
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+     return filteredItems.slice(start, end);
+   }, [page, filteredItems, rowsPerPage]);
 
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+   const sortedItems = React.useMemo(() => {
+     return [...items].sort((a, b) => {
+       const first = a[sortDescriptor.column];
+       const second = b[sortDescriptor.column];
+       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column];
-      const second = b[sortDescriptor.column];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+       return sortDescriptor.direction === 'descending' ? -cmp : cmp;
+     });
+   }, [sortDescriptor, items]);
 
-      return sortDescriptor.direction === 'descending' ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
+   // On range picker change
+   const onChangeDateStart: DatePickerProps['onChange'] = (
+     date: any,
+     dateString
+   ) => {
+     const currentDate = moment();
+     const selectedDate = moment(date);
 
-  // On range picker change
-  const onChangeDateStart: DatePickerProps['onChange'] = (
-    date: any,
-    dateString
-  ) => {
-    const currentDate = moment();
-    const selectedDate = moment(date);
+     setCurrentDateStart(currentDate);
+     setSelectedtDateStart(selectedDate);
+     setDateStart(date);
+   };
 
-    setCurrentDateStart(currentDate);
-    setSelectedtDateStart(selectedDate);
-    setDateStart(date);
-  };
+   const onChangeDateEnd: DatePickerProps['onChange'] = (
+     date: any,
+     dateString
+   ) => {
+     const currentDate = moment(); // Current date
+     const selectedDate = moment(date);
+     setCurrentDateEnd(currentDate);
+     setSelectedtDateStart(selectedDate);
+     setDateEnd(date);
+   };
 
-  const onChangeDateEnd: DatePickerProps['onChange'] = (
-    date: any,
-    dateString
-  ) => {
-    const currentDate = moment(); // Current date
-    const selectedDate = moment(date);
-    setCurrentDateEnd(currentDate);
-    setSelectedtDateStart(selectedDate);
-    setDateEnd(date);
-  };
+   // HANDLE CSV EXPORT FUNCTIONALITY
+   let objUrl = '/';
+   if (tableSession.length > 0) {
+     let final_value = [];
+     if (incrementalFiltering === true) {
+       final_value = tableSession;
+     } else {
+       final_value = tableSession;
+     }
 
-  // HANDLE CSV EXPORT FUNCTIONALITY
-  let objUrl = '/';
-  if (tableSession.length > 0) {
-    let final_value = [];
-    if (incrementalFiltering === true) {
-      final_value = tableSession;
-    } else {
-      final_value = tableSession;
-    }
+     const titleKeys = Object.keys(final_value[0]);
+     // //
 
-    const titleKeys = Object.keys(final_value[0]);
-    // //
+     const refinedData = [];
+     refinedData.push(titleKeys);
 
-    const refinedData = [];
-    refinedData.push(titleKeys);
+     users.forEach((item) => {
+       refinedData.push(Object.values(item));
+       // //
+     });
 
-    users.forEach((item) => {
-      refinedData.push(Object.values(item));
-      // //
-    });
+     let csvContent = '';
 
-    let csvContent = '';
+     refinedData.forEach((row) => {
+       csvContent += row.join(',') + '\n';
+       // //
+     });
 
-    refinedData.forEach((row) => {
-      csvContent += row.join(',') + '\n';
-      // //
-    });
+     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' });
+     // //
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' });
-    // //
-
-    objUrl = URL.createObjectURL(blob);
-    // //
-  }
-  const showHandler = () => {
-    setIsShowModal((isShowModal) => !isShowModal);
-    setIdSession('');
-  };
+     objUrl = URL.createObjectURL(blob);
+     // //
+   }
+   const showHandler = () => {
+     setIsShowModal((isShowModal) => !isShowModal);
+     setIdSession('');
+   };
   const renderCell = React.useCallback(
-    (user: any, columnKey: string | number) => {
-      const cellValue = user[columnKey];
+   
+     (user: any, columnKey: string | number) => {
+       const cellValue = user[columnKey];
+   console.log('arrayImport123456',arrayImport)
 
-      switch (columnKey) {
-        case 'name':
-          return (
-            <div className="flex flex-row ">
-              <p
-                className="text-bold text-small capitalize font-normal cursor-pointer"
-                onClick={() => {
-                  // ;
-                  setValueArray(undefined);
-                  setIdSession(user?.id);
-                  setDateSession(
-                    user.created_at.split('T')[0].split('-')[2] +
-                      '-' +
-                      user.created_at.split('T')[0].split('-')[1] +
-                      '-' +
-                      user.created_at.split('T')[0].split('-')[0] +
-                      ' ' +
-                      user.created_at.split('T')[1].split(':')[0] +
-                      ':' +
-                      user.created_at.split('T')[1].split(':')[1]
+     
+
+       switch (columnKey) {
+         case 'name':
+           return (
+             <div className="flex flex-row  items-center gap-3">
+               <input
+                 id={user.template_name}
+                 type="checkbox"
+                 className="h-4 w-4 cursor-pointer"
+                 onClick={() => {
+                  //  console.log('arrayImport',arrayImport);
+                   
+                if (arrayImport.length > 0) {
+                  const value = arrayImport.filter(
+                    (item) => item.id == user?.id
                   );
-                  setIsShowModal((isShowModal) => !isShowModal);
-                }}
-              >
-                {user.template_name}
-              </p>
-            </div>
-          );
-
-        case 'time':
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize font-normal">
-                {user.created_at.split('T')[0].split('-')[2] +
-                  '-' +
-                  user.created_at.split('T')[0].split('-')[1] +
-                  '-' +
-                  user.created_at.split('T')[0].split('-')[0] +
-                  ' ' +
-                  user.created_at.split('T')[1].split(':')[0] +
-                  ':' +
-                  user.created_at.split('T')[1].split(':')[1]}
-              </p>
-            </div>
-          );
-        case 'recipients':
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize font-normal">
-                {user?.broadcasts ? user?.broadcasts.length : 0}
-              </p>
-            </div>
-          );
-        case 'successful':
-          return (
-            <div className="flex flex-row ">
-              <CircularProgress
-                size="lg"
-                classNames={{
-                  indicator: 'text-[green]',
-                  // value: 'text-[green]',
-                }}
-                value={
-                  user?.broadcasts
-                    ? user?.broadcasts.filter(
-                        (item: any) =>
-                          item.status == 'read' || item.status == 'delivered'
-                      ).length
-                    : 0
-                }
-                // color="success"
-                showValueLabel={true}
-                maxValue={user?.broadcasts && user?.broadcasts.length}
-                formatOptions={{ style: 'decimal' }}
-              />
-            </div>
-          );
-        case 'read':
-          return (
-            <div className="flex flex-row ">
-              <CircularProgress
-                size="lg"
-                classNames={{
-                  indicator: 'text-[green]',
-                  // value: 'text-[green]',
-                }}
-                value={
-                  user?.broadcasts
-                    ? user?.broadcasts.filter(
-                        (item: any) => item.status == 'read'
-                      ).length
-                    : 0
-                }
-                // color="success"
-                // formatOptions={{ style: "unit", unit: "kilometer" }}
-                showValueLabel={true}
-                maxValue={user?.broadcasts && user?.broadcasts.length}
-                formatOptions={{ style: 'decimal' }}
-              />
-            </div>
-          );
-        case 'failed':
-          return (
-            <div className="flex flex-row ">
-              <CircularProgress
-                size="lg"
-                value={
-                  user?.broadcasts
-                    ? user?.broadcasts.filter(
-                        (item: any) => item.status == 'failed'
-                      ).length
-                    : 0
-                }
-                color="success"
-                //  formatOptions={{ style: "unit", unit: "kilometer" }}
-                showValueLabel={true}
-                maxValue={user?.broadcasts && user?.broadcasts.length}
-                formatOptions={{ style: 'decimal' }}
-              />
-            </div>
-          );
-
-        case 'actions':
-          return (
-            <div className="relative flex  items-center gap-2">
-              <Button
-                onClick={async () => {
-                  if (user.broadcasts && user?.broadcasts.length > 0) {
-                    try {
-                      // setLoading(true);
-                      // const response = await fetch('https://fakestoreapi.com/products');
-                      // Check if the action result contains data and if it's an array
-                      if (user.broadcasts && Array.isArray(user.broadcasts)) {
-                        const newArray = user.broadcasts.map((item: any) => {
-                          delete item.response_id;
-                          delete item.created_at;
-                          delete item.phone_number_id;
-                          delete item.session_id;
-                          delete item.template_id;
-                          delete item.id;
-                          return {
-                            ...item,
-                            date:
-                              user.created_at.split('T')[0].split('-')[2] +
-                              '-' +
-                              user.created_at.split('T')[0].split('-')[1] +
-                              '-' +
-                              user.created_at.split('T')[0].split('-')[0] +
-                              ' ' +
-                              user.created_at.split('T')[1].split(':')[0] +
-                              ':' +
-                              user.created_at.split('T')[1].split(':')[1],
-                          };
-                        });
-                        //   const dataToExport = products.map((pro: any) => ({
-                        //     title: pro.title,
-                        //     price: pro.lastname,
-                        //     category: pro.category,
-                        //     description: pro.description,
-                        //   }));
-                        // Create Excel workbook and worksheet
-                        const workbook = XLSX.utils.book_new();
-                        const worksheet = XLSX.utils?.json_to_sheet(newArray);
-                        XLSX.utils.book_append_sheet(
-                          workbook,
-                          worksheet,
-                          'ReportExport'
-                        );
-                        // Save the workbook as an Excel file
-                        XLSX.writeFile(workbook, `Report.xlsx`);
-                        console.log(`Exported data to Report.xlsx`);
-                        // setLoading(false);
-                      } else {
-                        // setLoading(false);
-                        // console.log('#==================Export Error');
-                      }
-                    } catch (error: any) {
-                      // setLoading(false);
-                      console.log(
-                        '#==================Export Error',
-                        error.message
-                      );
-                    }
+                  if (value.length > 0) {
+                    const del = arrayImport.filter(
+                      (item) => item.id != user?.id
+                    );
+                    setArrayImport([...del]);
+                    console.log('del', del);
+                  } else {
+                    const add = arrayImport;
+                    add.push({
+                      id: user.id,
+                      tab: user?.broadcasts ? user?.broadcasts : [],
+                    });
+                    setArrayImport([...add]);
+                    console.log('add', add);
                   }
-                }}
-                className="flex items-center px-1 justify-center text-sm bg-[green] text-white gap-3"
-              >
-                <Image src={exportIcon} alt="" className="h-5 w-5" />
-                <span>Xlxs</span>
-              </Button>
+                } else {
+                  const add = arrayImport;
+                  add.push({
+                    id: user.id,
+                    tab: user?.broadcasts ? user?.broadcasts : [],
+                  });
+                  setArrayImport([...add]);
+                  console.log('add')
+                }
+                   // console.log('value',value);
+                 }}
+               />
+               <label
+                 className="text-bold text-small capitalize font-normal cursor-pointer "
+                 onClick={() => {
+                   // ;
+                   setValueArray(undefined);
+                   setIdSession(user?.id);
+                   setDateSession(
+                     user.created_at.split('T')[0].split('-')[2] +
+                       '-' +
+                       user.created_at.split('T')[0].split('-')[1] +
+                       '-' +
+                       user.created_at.split('T')[0].split('-')[0] +
+                       ' ' +
+                       user.created_at.split('T')[1].split(':')[0] +
+                       ':' +
+                       user.created_at.split('T')[1].split(':')[1]
+                   );
+                   setIsShowModal((isShowModal) => !isShowModal);
+                 }}
+               >
+                
+                   {user.template_name}
+                
+               </label>
+             </div>
+           );
 
-              <Button
-                className="flex items-center px-1 justify-center text-sm bg-[red] text-white gap-3"
-                onClick={() => {
-                  if (user.broadcasts && user?.broadcasts.length > 0) {
-                    // alert('ok')
-                    setValueArray(user?.broadcasts);
-                    setIsShowModal(true);
-                       setDateSession(
-                         user.created_at.split('T')[0].split('-')[2] +
-                           '-' +
-                           user.created_at.split('T')[0].split('-')[1] +
-                           '-' +
-                           user.created_at.split('T')[0].split('-')[0] +
-                           ' ' +
-                           user.created_at.split('T')[1].split(':')[0] +
-                           ':' +
-                           user.created_at.split('T')[1].split(':')[1]
+         case 'time':
+           return (
+             <div className="flex flex-col">
+               <p className="text-bold text-small capitalize font-normal">
+                 {user.created_at.split('T')[0].split('-')[2] +
+                   '-' +
+                   user.created_at.split('T')[0].split('-')[1] +
+                   '-' +
+                   user.created_at.split('T')[0].split('-')[0] +
+                   ' ' +
+                   user.created_at.split('T')[1].split(':')[0] +
+                   ':' +
+                   user.created_at.split('T')[1].split(':')[1]}
+               </p>
+             </div>
+           );
+         case 'recipients':
+           return (
+             <div className="flex flex-col">
+               <p className="text-bold text-small capitalize font-normal">
+                 {user?.broadcasts ? user?.broadcasts.length : 0}
+               </p>
+             </div>
+           );
+         case 'successful':
+           return (
+             <div className="flex flex-row ">
+               <CircularProgress
+                 size="lg"
+                 classNames={{
+                   indicator: 'text-[green]',
+                   // value: 'text-[green]',
+                 }}
+                 value={
+                   user?.broadcasts
+                     ? user?.broadcasts.filter(
+                         (item: any) =>
+                           item.status == 'read' || item.status == 'delivered'
+                       ).length
+                     : 0
+                 }
+                 // color="success"
+                 showValueLabel={true}
+                 maxValue={user?.broadcasts && user?.broadcasts.length}
+                 formatOptions={{ style: 'decimal' }}
+               />
+             </div>
+           );
+         case 'read':
+           return (
+             <div className="flex flex-row ">
+               <CircularProgress
+                 size="lg"
+                 classNames={{
+                   indicator: 'text-[green]',
+                   // value: 'text-[green]',
+                 }}
+                 value={
+                   user?.broadcasts
+                     ? user?.broadcasts.filter(
+                         (item: any) => item.status == 'read'
+                       ).length
+                     : 0
+                 }
+                 // color="success"
+                 // formatOptions={{ style: "unit", unit: "kilometer" }}
+                 showValueLabel={true}
+                 maxValue={user?.broadcasts && user?.broadcasts.length}
+                 formatOptions={{ style: 'decimal' }}
+               />
+             </div>
+           );
+         case 'failed':
+           return (
+             <div className="flex flex-row ">
+               <CircularProgress
+                 size="lg"
+                 value={
+                   user?.broadcasts
+                     ? user?.broadcasts.filter(
+                         (item: any) => item.status == 'failed'
+                       ).length
+                     : 0
+                 }
+                 color="success"
+                 //  formatOptions={{ style: "unit", unit: "kilometer" }}
+                 showValueLabel={true}
+                 maxValue={user?.broadcasts && user?.broadcasts.length}
+                 formatOptions={{ style: 'decimal' }}
+               />
+             </div>
+           );
+
+         case 'actions':
+           return (
+             <div className="relative flex  items-center gap-2">
+               <Button
+                 onClick={async () => {
+                   if (user.broadcasts && user?.broadcasts.length > 0) {
+                     try {
+                       // setLoading(true);
+                       // const response = await fetch('https://fakestoreapi.com/products');
+                       // Check if the action result contains data and if it's an array
+                       if (user.broadcasts && Array.isArray(user.broadcasts)) {
+                         const newArray = user.broadcasts.map((item: any) => {
+                           delete item.response_id;
+                           delete item.created_at;
+                           delete item.phone_number_id;
+                           delete item.session_id;
+                           delete item.template_id;
+                           delete item.id;
+                           return {
+                             ...item,
+                             date:
+                               user.created_at.split('T')[0].split('-')[2] +
+                               '-' +
+                               user.created_at.split('T')[0].split('-')[1] +
+                               '-' +
+                               user.created_at.split('T')[0].split('-')[0] +
+                               ' ' +
+                               user.created_at.split('T')[1].split(':')[0] +
+                               ':' +
+                               user.created_at.split('T')[1].split(':')[1],
+                           };
+                         });
+                         //   const dataToExport = products.map((pro: any) => ({
+                         //     title: pro.title,
+                         //     price: pro.lastname,
+                         //     category: pro.category,
+                         //     description: pro.description,
+                         //   }));
+                         // Create Excel workbook and worksheet
+                         const workbook = XLSX.utils.book_new();
+                         const worksheet = XLSX.utils?.json_to_sheet(newArray);
+                         XLSX.utils.book_append_sheet(
+                           workbook,
+                           worksheet,
+                           'ReportExport'
+                         );
+                         // Save the workbook as an Excel file
+                         XLSX.writeFile(workbook, `Report.xlsx`);
+                         console.log(`Exported data to Report.xlsx`);
+                         // setLoading(false);
+                       } else {
+                         // setLoading(false);
+                         // console.log('#==================Export Error');
+                       }
+                     } catch (error: any) {
+                       // setLoading(false);
+                       console.log(
+                         '#==================Export Error',
+                         error.message
                        );
-                  }
-                }}
-              >
-                <Image src={exportIcon} alt="" className="h-5 w-5" />
-                <span>pdf</span>
-              </Button>
-              {/* <Image src={EditIcon} alt="Icon edit" /> */}
-              {/* <Image
+                     }
+                   }
+                 }}
+                 className="flex items-center px-1 justify-center text-sm bg-[green] text-white gap-3"
+               >
+                 <Image src={exportIcon} alt="" className="h-5 w-5" />
+                 <span>Xlxs</span>
+               </Button>
+
+               <Button
+                 className="flex items-center px-1 justify-center text-sm bg-[red] text-white gap-3"
+                 onClick={() => {
+                   if (user.broadcasts && user?.broadcasts.length > 0) {
+                     // alert('ok')
+                     setValueArray(user?.broadcasts);
+                     setIsShowModal(true);
+                     setDateSession(
+                       user.created_at.split('T')[0].split('-')[2] +
+                         '-' +
+                         user.created_at.split('T')[0].split('-')[1] +
+                         '-' +
+                         user.created_at.split('T')[0].split('-')[0] +
+                         ' ' +
+                         user.created_at.split('T')[1].split(':')[0] +
+                         ':' +
+                         user.created_at.split('T')[1].split(':')[1]
+                     );
+                   }
+                 }}
+               >
+                 <Image src={exportIcon} alt="" className="h-5 w-5" />
+                 <span>pdf</span>
+               </Button>
+               {/* <Image src={EditIcon} alt="Icon edit" /> */}
+               {/* <Image
                 src={InformationIcon}
                 alt="Icon info"
                 onClick={() => {
@@ -440,16 +500,16 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                   setIsShowModal((isShowModal) => !isShowModal);
                 }}
               /> */}
-              {/* <Image src={DeleteIcon} alt="Icon delete" /> */}
-              <ModalDelete />
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    []
-  );
+               {/* <Image src={DeleteIcon} alt="Icon delete" /> */}
+               <ModalDelete />
+             </div>
+           );
+         default:
+           return cellValue;
+       }
+     },
+     [arrayImport]
+   );
 
   const onRowsPerPageChange = React.useCallback((e: any) => {
     setRowsPerPage(Number(e.target.value));
@@ -468,7 +528,7 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <div className="flex flex-col w-full overflow-auto no-scrollbar">
+        <div className="flex flex-col w-full overflow-x-auto no-scrollbar pb-1 pt-14">
           Sorted By
           <div className="flex justify-between gap-3 items-end w-full">
             <div className="2xl:w-[55%] w-fit flex flex-row gap-3 h-10">
@@ -551,6 +611,146 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
                   </span>
                 </div>
               </Space>
+              {/* <div className="flex gap-3 "> */}
+              <div className="pb-3 h-14 relative ">
+                <ButtonI
+                  disabled={arrayImport.length == 0 ? true : false}
+                  variant={'bgDark'}
+                  icon={exportIcon}
+                  // rightIcon={ true }
+                  leftIcon={true}
+                  iconSize={20}
+                  className={`${arrayImport.length == 0 ? 'opacity-40' : 'opacity-100'} border h-full w-full`}
+                  // className='text-[12px] h-[50px]'
+                  onClick={() => {
+                    setView((view) => !view);
+                    // setExp(true);
+                  }}
+                >
+                  Export
+                </ButtonI>
+                <div
+                  className={`absolute -top-[70px] w-full  border z-50 p-1 rounded-lg bg-white ${view ? 'block' : 'hidden'}`}
+                >
+                  <p
+                    className="text-[red] cursor-pointer mb-2"
+                    onClick={() => {
+                      setIsShowModalExport((isShowDetail) => !isShowDetail);
+                      setExp(true);
+                      setView(false);
+                    }}
+                  >
+                    pdf
+                  </p>
+                  <p
+                    className="text-[green] cursor-pointer"
+                    onClick={async () => {
+                      if (arrayImport && arrayImport.length > 0) {
+                        arrayImport.map((item) => {
+                          try {
+                            // setLoading(true);
+                            // const response = await fetch('https://fakestoreapi.com/products');
+                            // Check if the action result contains data and if it's an array
+                            if (
+                              item.tab &&
+                              Array.isArray(item.tab)
+                            ) {
+                              const newArray = item.tab.map(
+                                (item: any) => {
+                                  const date1 = item.created_at.toString();
+                                  delete item.response_id;
+                                  delete item.created_at;
+                                  delete item.phone_number_id;
+                                  delete item.session_id;
+                                  delete item.template_id;
+                                  delete item.id;
+                                  return {
+                                    ...item,
+                                    date:
+                                      date1
+                                        .split('T')[0]
+                                        .split('-')[2] +
+                                      '-' +
+                                      date1
+                                        .split('T')[0]
+                                        .split('-')[1] +
+                                      '-' +
+                                      date1
+                                        .split('T')[0]
+                                        .split('-')[0] +
+                                      ' ' +
+                                      date1
+                                        .split('T')[1]
+                                        .split(':')[0] +
+                                      ':' +
+                                      date1
+                                        .split('T')[1]
+                                        .split(':')[1],
+                                  };
+                                }
+                              );
+                              //   const dataToExport = products.map((pro: any) => ({
+                              //     title: pro.title,
+                              //     price: pro.lastname,
+                              //     category: pro.category,
+                              //     description: pro.description,
+                              //   }));
+                              // Create Excel workbook and worksheet
+                              const workbook = XLSX.utils.book_new();
+                              const worksheet =
+                                XLSX.utils?.json_to_sheet(newArray);
+                              XLSX.utils.book_append_sheet(
+                                workbook,
+                                worksheet,
+                                'ReportExport'
+                              );
+                              // Save the workbook as an Excel file
+                              XLSX.writeFile(
+                                workbook,
+                                `Report_` +
+                                  item.tab[0].created_at
+                                    .split('T')[0]
+                                    .split('_')[2] +
+                                  '-' +
+                                  item.tab[0].created_at
+                                    .split('T')[0]
+                                    .split('_')[1] +
+                                  '-' +
+                                  item.tab[0].created_at
+                                    .split('T')[0]
+                                    .split('_')[0] +
+                                  ' ' +
+                                  item.tab[0].created_at
+                                    .split('T')[1]
+                                    .split('_')[0] +
+                                  ':' +
+                                  item.tab[0].created_at
+                                    .split('T')[1]
+                                    .split('_')[1] +
+                                  '.xlsx'
+                              );
+                              console.log(`Exported data to Report.xlsx`);
+                              // setLoading(false);
+                            } else {
+                              // setLoading(false);
+                              // console.log('#==================Export Error');
+                            }
+                          } catch (error: any) {
+                            // setLoading(false);
+                            console.log(
+                              '#==================Export Error',
+                              error.message
+                            );
+                          }
+                        })
+                      }
+                    }}
+                  >
+                    xlsx
+                  </p>
+                </div>
+              </div>
+              {/* </div> */}
             </div>
           </div>
         </div>
@@ -569,6 +769,8 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
     onRowsPerPageChange,
     users.length,
     hasSearchFilter,
+    arrayImport.length,
+    view
   ]);
 
   const bottomContent = React.useMemo(() => {
@@ -667,6 +869,15 @@ const App: React.FC<{ tableSession: any[] }> = ({ tableSession }) => {
           id={idSession}
           date={dateSession}
           datas={valueArray ? valueArray : []}
+        />
+      )}
+      {isShowModalExport && (
+        <ModaldetailBroadcastExport
+          isShow={isShowModalExport}
+          showHandler={()=>setIsShowModalExport(false)}
+          id={idSession}
+          date={dateSession}
+          datas={arrayImport}
         />
       )}
     </>

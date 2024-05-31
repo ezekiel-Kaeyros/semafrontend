@@ -1,12 +1,19 @@
+'use client';
 import Image from 'next/image';
 import img2 from '../../../../../../public/images/Frame 10574.svg';
 import img3 from '../../../../../../public/icons/arrow-right (1).svg';
 import axios from 'axios';
-import { removeUserCookies } from '@/cookies/cookies';
+import {
+  getEmailCookies,
+  getUserCookies,
+  removeUserCookies,
+} from '@/cookies/cookies';
 import { Button } from '@nextui-org/react';
 // import { registered } from '@/utils/onboardingClient';
 import { useState } from 'react';
 import { registered } from '@/utils/onboardingClient';
+import { AuthService, CredetialChatBotType } from '@/services';
+import toast from 'react-hot-toast';
 const FourthStep: React.FC<{
   load?: boolean;
   error: number;
@@ -16,6 +23,25 @@ const FourthStep: React.FC<{
   number?: any;
 }> = ({ load, error, name, waba_id, numberId, number }) => {
   const [loading, setLoading] = useState(false);
+  /**
+   * Function to save a credential on chat bot
+   *
+   * @param data
+   */
+  async function registerCrtlChat(data: CredetialChatBotType) {
+    try {
+      const response = await new AuthService().registerCredentialChatBot(data);
+      if (response.status !== 201) {
+        toast.error(response.response?.data);
+      } else {
+        toast.success(
+          'Credential of chat bot has been perfectly registered  !!'
+        );
+      }
+    } catch {
+      toast.error('An error in the chatbot credential registration process !!');
+    }
+  }
 
   return (
     <div className="text-center">
@@ -49,6 +75,14 @@ const FourthStep: React.FC<{
                 'EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
             });
             // ;
+            registerCrtlChat({
+              company: name,
+              phone_number_id: numberId,
+              verify_token: name,
+              email: getEmailCookies().email,
+              token:
+                'EAAizDOZAPPVIBO4gI0oBhSRcxsegaJNHwAij2SJ1vJ8Ai3W3qijw6MoY4YZCLafsrPMZCrO14IVFZCNNZBe9YXHOrBopmGYojBdzcjM96v0pZByDV5k3mMMKcNwpVaga169GV8D70e90u9frQ499t7WPRPUkpMZAitJPBOnFc26PZCJvOzLXjcPHuZCIafh4Y',
+            });
             setLoading(false);
             if (response == 200) {
               window.location.href = 'dashboard/bulk-messages';

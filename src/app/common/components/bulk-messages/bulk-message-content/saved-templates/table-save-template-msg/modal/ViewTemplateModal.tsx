@@ -1,4 +1,5 @@
 import PreviewComp from '@/app/common/components/forms/bulk-message-form/PreviewComp';
+import usePdf from '@/app/hooks/usePdf';
 import {
   Table,
   TableHeader,
@@ -17,6 +18,7 @@ import {
   ModalBody,
   ModalContent,
 } from '@nextui-org/react';
+import { useEffect, useRef } from 'react';
 
 const ViewTemplateModal: React.FC<{
   isShow: boolean;
@@ -24,13 +26,30 @@ const ViewTemplateModal: React.FC<{
   img: any;
   body: string;
   footer: string;
-}> = ({ isShow, showHandler, img, body, footer }) => {
+  exports?: boolean;
+  data: {
+    img: string;
+    body: string;
+    footer: string;
+    id: string;
+    name: string;
+    url: string;
+  }[];
+}> = ({ isShow, showHandler, img, body, footer, exports, data }) => {
+  const refDiv = useRef(null);
+  const imprimer = usePdf(refDiv);
+
+  useEffect(() => {
+    if (exports) {
+      imprimer();
+      showHandler();
+    }
+  }, []);
   return (
     <Modal
       isOpen={isShow}
       onOpenChange={showHandler}
       className=" "
-    
       placement="center"
       // closeButton={false}
       classNames={{
@@ -46,14 +65,34 @@ const ViewTemplateModal: React.FC<{
       <ModalContent>
         <>
           <ModalBody className="text-black p-10">
-            {/* <p>x</p> */}
-            <div className='w-full h-full border'>
-              <PreviewComp
-                ImgTemplate={img}
-                // ImgTemplate={photographIcon}
-                textTemplate={body}
-                tagline={footer}
-              />
+            {/* <p
+              onClick={() => {
+                showHandler();
+              }}
+            >
+              x
+            </p> */}
+            <div className="w-full h-full border" ref={refDiv}>
+              {data?.length == 0 ? (
+                <PreviewComp
+                  ImgTemplate={img}
+                  // ImgTemplate={photographIcon}
+                  textTemplate={body}
+                  tagline={footer}
+                />
+              ) : (
+                data.map((item) => (
+                  <div key={item.name} className='h-screen'>
+                    <p>{item.name}</p>{' '}
+                    <PreviewComp
+                      ImgTemplate={item.img}
+                      // ImgTemplate={photographIcon}
+                      textTemplate={item.body}
+                      tagline={item.footer}
+                    />
+                  </div>
+                ))
+              )}
             </div>
           </ModalBody>
         </>

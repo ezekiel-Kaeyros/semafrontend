@@ -4,40 +4,44 @@ import Image from 'next/image';
 import dropdownIcon from '../../../../../../../../public/left_side_bar_icons/dropdown.png';
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 import { getStatusInCookie, setStatusInCookie } from '@/cookies/cookies';
-import { useDispatch } from 'react-redux';
-import { setFilteredStatus } from '@/redux/features/chat-bot-slice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setConversationStatus,
+  setFilteredStatus,
+} from '@/redux/features/chat-bot-slice';
+import { RootState } from '@/redux/store';
 
 export const optionsConversation = [
-  {
-    id: 0,
-    status: 'All',
-    numberOfChats: '',
-    color: '',
-  },
+  // {
+  //   id: 0,
+  //   status: 'None',
+  //   numberOfChats: '',
+  //   color: '',
+  // },
+  // {
+  //   id: 1,
+  //   status: 'start',
+  //   numberOfChats: '10',
+  //   color: '#157A3F',
+  // },
   {
     id: 1,
-    status: 'start',
-    numberOfChats: '10',
-    color: '#157A3F',
-  },
-  {
-    id: 2,
     status: 'open',
     numberOfChats: '4',
     color: '#182881',
   },
   {
-    id: 3,
+    id: 2,
     status: 'pending',
     numberOfChats: '2',
     color: '#915103',
   },
-  {
-    id: 4,
-    status: 'expired',
-    numberOfChats: '5',
-    color: '#B00020',
-  },
+  // {
+  //   id: 4,
+  //   status: 'expired',
+  //   numberOfChats: '5',
+  //   color: '#B00020',
+  // },
 ];
 
 interface SelectedChatProps {
@@ -67,11 +71,17 @@ const ConversationFilter: React.FC<StatusFitlerProps> = ({
 }) => {
   const [toggle, setToggle] = useState<boolean>(false);
   const [selected, setSelected] = useState<SelectedChatProps | any>(
-    getStatusInCookie(options[0].status)
-    // options[0].status
+    // getStatusInCookie(options[0].status)
+    // optionsConversation[0].status
+    'None'
   );
   const [selectedColor, setSeletedColor] = useState('');
   const dispatch = useDispatch();
+  const { companychats } = useSelector(
+    (state: RootState) => state.setCompanyChats
+  );
+
+  const { message } = useSelector((state: RootState) => state.setChats);
 
   const handleStatusChange = (status: string | any) => {
     setSelected(status);
@@ -79,10 +89,19 @@ const ConversationFilter: React.FC<StatusFitlerProps> = ({
     dispatch(setFilteredStatus(status));
     // setSelected(getStatusInCookie(status));
     // onStatusChange(getStatusInCookie(status));
-    setStatusInCookie(status);
+    // setStatusInCookie(status);
   };
 
   const selectedStat = !selected?.status ? selected : selected?.status;
+
+  useEffect(() => {
+    dispatch(setConversationStatus(selectedStat));
+  }, [selectedStat]);
+  // const lastChatStatuses =
+  //   message.chat_messages[message?.chat_messages.length - 1];
+
+  console.log(companychats, 'chatssssss');
+  // console.log(lastChatStatuses.chat_status, 'chatssssss');
 
   return (
     <div className="relative">

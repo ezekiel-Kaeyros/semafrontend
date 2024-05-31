@@ -24,7 +24,7 @@ import {
   ModalBody,
   ModalContent,
 } from '@nextui-org/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 // import TransactionConfirm from '@/app/common/components/transactionSending/transaction-confirm/TransactionConfirm';
 
 import React from 'react';
@@ -47,6 +47,17 @@ const columns = ['Template Name', 'Status', 'Language', 'action'];
 
 const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
   const [isShow, setIsShow] = useState(false);
+  const [arrayImport, setArrayImport] = useState<
+    {
+      img: string;
+      body: string;
+      footer: string;
+      id: string;
+      name: string;
+      url: string;
+    }[]
+  >([]);
+  const [exp, setExp] = useState(false);
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isConfirm, setIsConfirm] = useState(false);
@@ -136,7 +147,9 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
 
   //   setShowModalTransfer((showModalTransfer) => !showModalTransfer);
   // };
-
+  useEffect(() => {
+    console.log('arrayImport', arrayImport);
+  }, [arrayImport]);
   return (
     <div>
       {props.data.length > 0 ? (
@@ -190,30 +203,21 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
               <div className="flex gap-3 ">
                 <div className="">
                   <ButtonI
+                    disabled={arrayImport.length == 0 ? true : false}
                     variant={'bgDark'}
-                    icon={importIcon}
+                    icon={exportIcon}
                     // rightIcon={ true }
                     leftIcon={true}
                     iconSize={20}
-
+                    className={`${arrayImport.length == 0 ? 'opacity-40' : 'opacity-100'} border`}
                     // className='text-[12px] h-[50px]'
+                    onClick={() => {
+                         setIsShowDetail((isShowDetail) => !isShowDetail);
+                         setExp(true);
+                    }}
                   >
-                    Import
+                    Export
                   </ButtonI>
-                </div>
-                <div className="">
-                  <Link href={'#'}>
-                    <ButtonI
-                      variant={'bgDark'}
-                      icon={exportIcon}
-                      // rightIcon={ true }
-                      leftIcon={true}
-                      iconSize={20}
-                      // className='text-[12px] h-[50px]'
-                    >
-                      Export
-                    </ButtonI>
-                  </Link>
                 </div>
               </div>
             </div>
@@ -293,10 +297,46 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                           key={index}
                           className="border-t-1  h-14 border-white py-2"
                         >
-                          <TableCell className="text-left py-4">
-                            {row.name}
+                          <TableCell className="text-left py-4 flex itms-center gap-2">
+                            <input
+                              id={row.name}
+                              type="checkbox"
+                              className="h-4 w-4 cursor-pointer"
+                              onClick={() => {
+                                const value = arrayImport.filter(
+                                  (item) => item.name == row.name
+                                );
+                                if (value.length > 0) {
+                                  const del = arrayImport.filter(
+                                    (item) => item.name != row.name
+                                  );
+                                  setArrayImport([...del]);
+                                  console.log('del', del);
+                                } else {
+                                  const add = arrayImport;
+                                  add.push({
+                                    img: row.image_url,
+                                    body: row.body_text,
+                                    footer: row.footer_text,
+                                    id: row.template_id,
+                                    name: row.name,
+                                    url: row.image_url,
+                                  });
+                                  setArrayImport([...add]);
+                                  console.log('add', add);
+                                }
+                                // console.log('value',value);
+                              }}
+                            />
+                            <label
+                              htmlFor={row.name}
+                              className=" cursor-pointer"
+                            >
+                              {' '}
+                              {row.name}
+                            </label>
                           </TableCell>
-                        
+
                           <TableCell className="text-left py-4">
                             <span
                               className={` py-2 rounded-full text-xs font-bold  bg-white ${
@@ -357,11 +397,36 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                                 );
                               }}
                             />
+                            <Button
+                              className="flex items-center px-1 justify-center text-sm bg-[red] text-white gap-3"
+                              onClick={async () => {
+                                setdetail({
+                                  img: row.image_url,
+                                  body: row.body_text,
+                                  footer: row.footer_text,
+                                  id: row.template_id,
+                                  name: row.name,
+                                  url: row.image_url,
+                                });
+                                setIsShowDetail(
+                                  (isShowDetail) => !isShowDetail
+                                );
+                                setExp(true);
+                              }}
+                            >
+                              <Image
+                                src={exportIcon}
+                                alt=""
+                                className="h-5 w-5"
+                              />
+                              <span>pdf</span>
+                            </Button>
                             <Image
                               src={DeleteIcon}
                               className="cursor-pointer"
                               alt="Icon delete"
                               onClick={async () => {
+                                setExp(false);
                                 if (
                                   row.name?.toLocaleLowerCase() !==
                                   'hello_world'
@@ -385,15 +450,20 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
         ''
       )}
 
-      <ViewTemplateModal
-        img={detail.img}
-        footer={detail.footer}
-        body={detail.body}
-        isShow={isShowDetail}
-        showHandler={() => {
-          setIsShowDetail((isShowDetail) => !isShowDetail);
-        }}
-      />
+      {isShowDetail && (
+        <ViewTemplateModal
+          img={detail.img}
+          footer={detail.footer}
+          body={detail.body}
+          isShow={isShowDetail}
+          showHandler={() => {
+            setIsShowDetail(false);
+            setExp(false);
+          }}
+          exports={exp}
+          data={arrayImport}
+        />
+      )}
       <EditTemplateModal
         img={detail.img}
         footer={detail.footer}

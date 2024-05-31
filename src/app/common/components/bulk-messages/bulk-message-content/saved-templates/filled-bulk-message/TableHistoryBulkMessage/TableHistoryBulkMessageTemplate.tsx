@@ -1,10 +1,11 @@
 'use client';
-import importIcon from '../../../../../../../../../public/import.png';
+import importIcon from '../../../../../../../../../public/images/arrow-down (1).svg';
 import exportIcon from '../../../../../../../../../public/export.png';
 
 import InformationIcon from '../../../../../../../../../public/icons/information.svg';
 
 import Image from 'next/image';
+import * as XLSX from 'xlsx';
 
 import {
   Table,
@@ -20,6 +21,7 @@ import {
   Button,
   Input,
   Pagination,
+  CircularProgress,
 } from '@nextui-org/react';
 import { useCallback, useMemo, useState } from 'react';
 // import TransactionConfirm from '@/app/common/components/transactionSending/transaction-confirm/TransactionConfirm';
@@ -35,8 +37,11 @@ import { capitalize } from '@/app/common/ui/table/utils/utils';
 import { SearchIcon } from '@/app/common/ui/table/SearchIcon';
 
 import ModaldetailBroadcast from './modalDetail/ModalDetail';
+import ModalDelete from '@/app/common/ui/table/modal-delete/ModalDelete';
+import ModaldetailBroadcastExport from './modalDetail/ModalDetailExport';
 
-const columns = ['Template Name', 'date', 'action'];
+// const columns = ['Template Name', 'date', 'action'];
+const column = [''];
 type SessionTemplate = {
   id: string;
   template_name: string;
@@ -46,21 +51,32 @@ type SessionTemplate = {
   created_at: string;
 };
 
-const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
+const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; delete?: any }> = (
   props
 ) => {
+  const [isShowModalExport, setIsShowModalExport] = useState(false);
+
   const [isShowModal, setIsShowModal] = useState(false);
+  const [isDisplay, setIsDisplay] = useState('');
 
   const [idSession, setIdSession] = useState('');
-
+  const [valueArray, setValueArray] = useState();
+  const [dateSession, setDateSession] = useState('');
+   const [view, setView] = useState(false);
+   const [exp, setExp] = useState(false);
   const [pageTable, setPageTable] = useState<number>(8);
   const [filterValue, setFilterValue] = useState('');
   const hasSearchFilter = Boolean(filterValue);
-
+     const [arrayImport, setArrayImport] = useState<
+       {
+         id: string;
+         tab: any[];
+       }[]
+     >([]);
   const text =
     ' All templates must adhere to WhatsApp’s Template Message Guidelines. Click here to read';
   const filteredItems = useMemo(() => {
-    let filterTableTemple: SessionTemplate[];
+    let filterTableTemple: any[];
 
     filterTableTemple = props.tableSession;
 
@@ -121,34 +137,8 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
         <>
           <div className="w-full">
             Sorted By
-            <div className="flex w-full justify-between ">
+            <div className="flex w-full gap-5 ">
               <div className="flex gap-5">
-                <Dropdown>
-                  <DropdownTrigger className="hidden sm:flex focus:dark:bg-cardDark w-auto justify-between h-full">
-                    <Button
-                      className=""
-                      endContent={<ChevronDownIcon className="text-sm " />}
-                      variant="flat"
-                    >
-                      latest...
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    disallowEmptySelection
-                    aria-label="Table Columns"
-                    closeOnSelect={false}
-                    // selectedKeys={visibleColumns}
-                    selectionMode="multiple"
-                    // onSelectionChange={setVisibleColumns}
-                  >
-                    {columns.map((column, index) => (
-                      <DropdownItem key={index} className="capitalize">
-                        {capitalize(column)}
-                      </DropdownItem>
-                    ))}
-                  </DropdownMenu>
-                </Dropdown>
-
                 <Input
                   isClearable
                   classNames={{
@@ -164,47 +154,141 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
                   onValueChange={onSearchChange}
                 />
               </div>
-              <div className="flex gap-3 ">
-                <div className="">
-                  <ButtonI
-                    variant={'bgDark'}
-                    icon={importIcon}
-                    // rightIcon={ true }
-                    leftIcon={true}
-                    iconSize={20}
-
-                    // className='text-[12px] h-[50px]'
+              <div className="pb-3 h-14 relative ">
+                <ButtonI
+                  disabled={arrayImport.length == 0 ? true : false}
+                  variant={'bgDark'}
+                  icon={exportIcon}
+                  // rightIcon={ true }
+                  leftIcon={true}
+                  iconSize={20}
+                  className={`${arrayImport.length == 0 ? 'opacity-40' : 'opacity-100'} border h-full w-full`}
+                  // className='text-[12px] h-[50px]'
+                  onClick={() => {
+                    setView((view) => !view);
+                    // setExp(true);
+                  }}
+                >
+                  Export
+                </ButtonI>
+                <div
+                  className={`absolute -top-[70px] w-full  border z-50 p-1 rounded-lg bg-white ${view ? 'block' : 'hidden'}`}
+                >
+                  <p
+                    className="text-[red] cursor-pointer mb-2"
+                    onClick={() => {
+                      setIsShowModalExport((isShowDetail) => !isShowDetail);
+                      setExp(true);
+                      setView(false);
+                    }}
                   >
-                    Import
-                  </ButtonI>
-                </div>
-                <div className="">
-                  <Link href={'#'}>
-                    <ButtonI
-                      variant={'bgDark'}
-                      icon={exportIcon}
-                      // rightIcon={ true }
-                      leftIcon={true}
-                      iconSize={20}
-                      // className='text-[12px] h-[50px]'
-                    >
-                      Export
-                    </ButtonI>
-                  </Link>
+                    pdf
+                  </p>
+                  <p
+                    className="text-[green] cursor-pointer"
+                    onClick={async () => {
+                      if (arrayImport && arrayImport.length > 0) {
+                        arrayImport.map((item) => {
+                          try {
+                            // setLoading(true);
+                            // const response = await fetch('https://fakestoreapi.com/products');
+                            // Check if the action result contains data and if it's an array
+                            if (item.tab && Array.isArray(item.tab)) {
+                              const newArray = item.tab.map((item: any) => {
+                                const date1 = item.created_at.toString();
+                                delete item.response_id;
+                                delete item.created_at;
+                                delete item.phone_number_id;
+                                delete item.session_id;
+                                delete item.template_id;
+                                delete item.id;
+                                return {
+                                  ...item,
+                                  date:
+                                    date1.split('T')[0].split('-')[2] +
+                                    '-' +
+                                    date1.split('T')[0].split('-')[1] +
+                                    '-' +
+                                    date1.split('T')[0].split('-')[0] +
+                                    ' ' +
+                                    date1.split('T')[1].split(':')[0] +
+                                    ':' +
+                                    date1.split('T')[1].split(':')[1],
+                                };
+                              });
+                              //   const dataToExport = products.map((pro: any) => ({
+                              //     title: pro.title,
+                              //     price: pro.lastname,
+                              //     category: pro.category,
+                              //     description: pro.description,
+                              //   }));
+                              // Create Excel workbook and worksheet
+                              const workbook = XLSX.utils.book_new();
+                              const worksheet =
+                                XLSX.utils?.json_to_sheet(newArray);
+                              XLSX.utils.book_append_sheet(
+                                workbook,
+                                worksheet,
+                                'ReportExport'
+                              );
+                              // Save the workbook as an Excel file
+                              XLSX.writeFile(
+                                workbook,
+                                `Report_` +
+                                  item.tab[0].created_at
+                                    .split('T')[0]
+                                    .split('_')[2] +
+                                  '-' +
+                                  item.tab[0].created_at
+                                    .split('T')[0]
+                                    .split('_')[1] +
+                                  '-' +
+                                  item.tab[0].created_at
+                                    .split('T')[0]
+                                    .split('_')[0] +
+                                  ' ' +
+                                  item.tab[0].created_at
+                                    .split('T')[1]
+                                    .split('_')[0] +
+                                  ':' +
+                                  item.tab[0].created_at
+                                    .split('T')[1]
+                                    .split('_')[1] +
+                                  '.xlsx'
+                              );
+                              console.log(`Exported data to Report.xlsx`);
+                              // setLoading(false);
+                            } else {
+                              // setLoading(false);
+                              // console.log('#==================Export Error');
+                            }
+                          } catch (error: any) {
+                            // setLoading(false);
+                            console.log(
+                              '#==================Export Error',
+                              error.message
+                            );
+                          }
+                        });
+                      }
+                    }}
+                  >
+                    xlsx
+                  </p>
                 </div>
               </div>
             </div>
-            <div className="text-[#F18805] px-2 py-2 rounded-lg my-6 bg-white w-fit">
+            {/* <div className="text-[#F18805] px-2 py-2 rounded-lg my-6 bg-white w-fit">
               {text}
-            </div>
-            {/* tables of details of users actions */}
+            </div> */}
+            {/* tables of details of rows actions */}
             <div className="mt-6">
               <div className="  ">
                 <Table
-                  aria-label="Users table"
+                  aria-label="rows table"
                   bottomContent={
                     <div className="md:flex block md:m-0 m-auto w-auto md:w-full justify-between">
-                      <div className="flex text-black md:mb-0 mb-3 ">
+                      {/* <div className="flex text-black md:mb-0 mb-3 ">
                         <label className="mr-2 mt-2 font-[VisbyCF-light]">
                           show :{' '}
                         </label>
@@ -217,13 +301,9 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
                           className="rounded-xl font-[VisbyCF-light] pr-0 text-sm border"
                         >
                           <option key={pageTable}>{pageTable}</option>
-                          {/* {selectOption.map((items) => {
-                            if (items !== pageTable) {
-                              return <option key={items}>{items}</option>;
-                            }
-                          })} */}
+                       
                         </select>
-                      </div>
+                      </div> */}
 
                       <Pagination
                         isCompact
@@ -244,15 +324,15 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
                   sortDescriptor={sortDescriptor}
                   onSortChange={setSortDescriptor}
                   classNames={{
-                    wrapper: ' bg-[#2B2E31] px-0 py-0 ',
+                    wrapper: ' bg-[#2B2E31] px-0 py-0 font-[serif] ',
                     thead: 'bg-[#2B2E31] text-red-800 rounded-none ',
                   }}
                 >
                   <TableHeader
-                    columns={columns}
+                    columns={column}
                     className="bg-transparent   text-red-800 hidden"
                   >
-                    {columns.map((row, index) => {
+                    {column.map((row, index) => {
                       return (
                         <TableColumn
                           className="text-left h-14 bg-[#2B2E31] text-[#CFD4D8] font-semibold"
@@ -268,33 +348,450 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
                       return (
                         <TableRow
                           key={index}
-                          className="border-t-1  h-14 border-white py-2"
+                          className="border-t-1  h-14 border-white py-2 "
                         >
-                          <TableCell className="text-left py-4">
-                            {row.template_name}
-                          </TableCell>
-                          <TableCell className="text-left py-4">
-                            {row.created_at.split('T')[0].split('-')[2] +
-                              '-' +
-                              row.created_at.split('T')[0].split('-')[1] +
-                              '-' +
-                              row.created_at.split('T')[0].split('-')[0] +
-                              ' ' +
-                              row.created_at.split('T')[1].split(':')[0] +
-                              ':' +
-                              row.created_at.split('T')[1].split(':')[1]}
-                          </TableCell>
-                          <TableCell className="relative flex  items-center gap-2">
-                            {' '}
-                            {/* <Image src={EditIcon} alt="Icon edit" /> */}
-                            <Image
-                              src={InformationIcon}
-                              alt="Icon info"
-                              onClick={() => {
-                                setIdSession(row?.id);
-                                setIsShowModal((isShowModal) => !isShowModal);
-                              }}
-                            />
+                          <TableCell className=" w-full ">
+                            <>
+                              <div
+                                className={`flex justify-between w-full ${row.id == isDisplay && 'mb-5'}`}
+                              >
+                                <div className="flex flex-row  items-center gap-3 flex-grow w-96">
+                                  <label
+                                    className="text-bold text-small capitalize font-normal cursor-pointer "
+                                    onClick={() => {}}
+                                  >
+                                    {row.template_name}
+                                  </label>
+                                </div>
+
+                                <div className="flex items-center flex-grow px-5">
+                                  <p className="text-bold text-small capitalize font-normal">
+                                    {props.multibleTable.filter(
+                                      (item: any) =>
+                                        item.template_name == row.template_name
+                                    ).length + ' envoie(s)'}
+                                  </p>
+                                </div>
+
+                                <div className="relative flex  items-center gap-2 flex-grow pl-5 justify-end pr-4">
+                                  <Image
+                                    src={importIcon}
+                                    alt=""
+                                    className={`h-5 w-5 ${isDisplay == row.id && 'rotate-180'} cursor-pointer`}
+                                    onClick={() => {
+                                      if (isDisplay == row.id) {
+                                        setIsDisplay('');
+                                      } else {
+                                        setIsDisplay(row.id);
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="w-full max-h-96 overflow-auto">
+                                {isDisplay == row.id &&
+                                  props.multibleTable.map(
+                                    (item: any, index: number) => {
+                                      if (
+                                        item.template_name == row.template_name
+                                      ) {
+                                        return (
+                                          <div
+                                            className="flex justify-between w-full "
+                                            key={index}
+                                          >
+                                            <div className="flex flex-row  items-center gap-3 flex-grow w-96">
+                                              <input
+                                                id={row.template_name}
+                                                type="checkbox"
+                                                className="h-4 w-4 cursor-pointer"
+                                                onClick={() => {
+                                                  console.log(
+                                                    'arrayImport',
+                                                    arrayImport
+                                                  );
+                                                  if (arrayImport.length > 0) {
+                                                    const value =
+                                                      arrayImport.filter(
+                                                        (items1) =>
+                                                          items1.id == item?.id
+                                                      );
+                                                    if (value.length > 0) {
+                                                      const del =
+                                                        arrayImport.filter(
+                                                          (items1) =>
+                                                            items1.id !=
+                                                            item?.id
+                                                        );
+                                                      setArrayImport([...del]);
+                                                      console.log('del', del);
+                                                    } else {
+                                                      const add = arrayImport;
+                                                      add.push({
+                                                        id: item.id,
+                                                        tab: item?.broadcasts
+                                                          ? item?.broadcasts
+                                                          : [],
+                                                      });
+                                                      setArrayImport([...add]);
+                                                      console.log('add', add);
+                                                    }
+                                                  } else {
+                                                    const add = arrayImport;
+                                                    add.push({
+                                                      id: item.id,
+                                                      tab: item?.broadcasts
+                                                        ? item?.broadcasts
+                                                        : [],
+                                                    });
+                                                    setArrayImport([...add]);
+                                                    console.log('add');
+                                                  }
+                                                  // console.log('value',value);
+                                                }}
+                                              />
+                                              <label
+                                                className="text-bold text-small capitalize font-normal cursor-pointer "
+                                                onClick={() => {
+                                                  setValueArray(undefined);
+                                                  setIdSession(item?.id);
+                                                  setDateSession(
+                                                    item.created_at
+                                                      .split('T')[0]
+                                                      .split('-')[2] +
+                                                      '-' +
+                                                      item.created_at
+                                                        .split('T')[0]
+                                                        .split('-')[1] +
+                                                      '-' +
+                                                      item.created_at
+                                                        .split('T')[0]
+                                                        .split('-')[0] +
+                                                      ' ' +
+                                                      item.created_at
+                                                        .split('T')[1]
+                                                        .split(':')[0] +
+                                                      ':' +
+                                                      item.created_at
+                                                        .split('T')[1]
+                                                        .split(':')[1]
+                                                  );
+                                                  setIsShowModal(
+                                                    (isShowModal) =>
+                                                      !isShowModal
+                                                  );
+                                                }}
+                                              >
+                                                {row.template_name}
+                                              </label>
+                                            </div>
+
+                                            <div className="flex items-center flex-grow w-[160px]">
+                                              <p className="text-bold text-small capitalize font-normal">
+                                                {item.created_at
+                                                  .split('T')[0]
+                                                  .split('-')[2] +
+                                                  '-' +
+                                                  item.created_at
+                                                    .split('T')[0]
+                                                    .split('-')[1] +
+                                                  '-' +
+                                                  item.created_at
+                                                    .split('T')[0]
+                                                    .split('-')[0] +
+                                                  ' ' +
+                                                  item.created_at
+                                                    .split('T')[1]
+                                                    .split(':')[0] +
+                                                  ':' +
+                                                  item.created_at
+                                                    .split('T')[1]
+                                                    .split(':')[1]}
+                                              </p>
+                                            </div>
+
+                                            <div className="flex items-center flex-grow px-5">
+                                              <p className="text-bold text-small capitalize font-normal">
+                                                {item?.broadcasts
+                                                  ? item?.broadcasts.length
+                                                  : 0}{' '}
+                                                {'total'}
+                                              </p>
+                                            </div>
+
+                                            <div className="flex items-center flex-grow px-5">
+                                              <CircularProgress
+                                                size="lg"
+                                                label="Success"
+                                                classNames={{
+                                                  indicator: 'text-[green]',
+                                                  // value: 'text-[green]',
+                                                }}
+                                                value={
+                                                  item?.broadcasts
+                                                    ? item?.broadcasts.filter(
+                                                        (items: any) =>
+                                                          items.status ==
+                                                            'read' ||
+                                                          items.status ==
+                                                            'delivered'
+                                                      ).length
+                                                    : 0
+                                                }
+                                                // color="success"
+                                                showValueLabel={true}
+                                                maxValue={
+                                                  item?.broadcasts &&
+                                                  item?.broadcasts.length
+                                                }
+                                                formatOptions={{
+                                                  style: 'decimal',
+                                                }}
+                                              />
+                                            </div>
+
+                                            <div className="flex items-center flex-grow px-5">
+                                              <CircularProgress
+                                                size="lg"
+                                                label="Read"
+                                                classNames={{
+                                                  indicator: 'text-[blue]',
+                                                  // value: 'text-[green]',
+                                                }}
+                                                value={
+                                                  item?.broadcasts
+                                                    ? item?.broadcasts.filter(
+                                                        (items: any) =>
+                                                          items.status == 'read'
+                                                      ).length
+                                                    : 0
+                                                }
+                                                // color="success"
+                                                // formatOptions={{ style: "unit", unit: "kilometer" }}
+                                                showValueLabel={true}
+                                                maxValue={
+                                                  item?.broadcasts &&
+                                                  item?.broadcasts.length
+                                                }
+                                                formatOptions={{
+                                                  style: 'decimal',
+                                                }}
+                                              />
+                                            </div>
+
+                                            <div className="flex items-center flex-grow px-5">
+                                              <CircularProgress
+                                                size="lg"
+                                                label="Failed"
+                                                value={
+                                                  item?.broadcasts
+                                                    ? item?.broadcasts.filter(
+                                                        (items: any) =>
+                                                          items.status ==
+                                                          'failed'
+                                                      ).length
+                                                    : 0
+                                                }
+                                                classNames={{
+                                                  indicator: 'text-[orange]',
+                                                  // value: 'text-[green]',
+                                                }}
+                                                //  formatOptions={{ style: "unit", unit: "kilometer" }}
+                                                showValueLabel={true}
+                                                maxValue={
+                                                  item?.broadcasts &&
+                                                  item?.broadcasts.length
+                                                }
+                                                formatOptions={{
+                                                  style: 'decimal',
+                                                }}
+                                              />
+                                            </div>
+
+                                            <div className="relative flex  items-center gap-2 flex-grow pl-5">
+                                              <Button
+                                                onClick={async () => {
+                                                  if (
+                                                    item.broadcasts &&
+                                                    item?.broadcasts.length > 0
+                                                  ) {
+                                                    try {
+                                                      // setLoading(true);
+                                                      // const response = await fetch('https://fakestoreapi.com/products');
+                                                      // Check if the action result contains data and if it's an array
+                                                      if (
+                                                        item.broadcasts &&
+                                                        Array.isArray(
+                                                          item.broadcasts
+                                                        )
+                                                      ) {
+                                                        const newArray =
+                                                          item.broadcasts.map(
+                                                            (items: any) => {
+                                                              delete items.response_id;
+                                                              delete items.created_at;
+                                                              delete items.phone_number_id;
+                                                              delete items.session_id;
+                                                              delete items.template_id;
+                                                              delete items.id;
+                                                              return {
+                                                                ...item,
+                                                                date:
+                                                                  item.created_at
+                                                                    .split(
+                                                                      'T'
+                                                                    )[0]
+                                                                    .split(
+                                                                      '-'
+                                                                    )[2] +
+                                                                  '-' +
+                                                                  item.created_at
+                                                                    .split(
+                                                                      'T'
+                                                                    )[0]
+                                                                    .split(
+                                                                      '-'
+                                                                    )[1] +
+                                                                  '-' +
+                                                                  item.created_at
+                                                                    .split(
+                                                                      'T'
+                                                                    )[0]
+                                                                    .split(
+                                                                      '-'
+                                                                    )[0] +
+                                                                  ' ' +
+                                                                  item.created_at
+                                                                    .split(
+                                                                      'T'
+                                                                    )[1]
+                                                                    .split(
+                                                                      ':'
+                                                                    )[0] +
+                                                                  ':' +
+                                                                  item.created_at
+                                                                    .split(
+                                                                      'T'
+                                                                    )[1]
+                                                                    .split(
+                                                                      ':'
+                                                                    )[1],
+                                                              };
+                                                            }
+                                                          );
+                                                        //   const dataToExport = products.map((pro: any) => ({
+                                                        //     title: pro.title,
+                                                        //     price: pro.lastname,
+                                                        //     category: pro.category,
+                                                        //     description: pro.description,
+                                                        //   }));
+                                                        // Create Excel workbook and worksheet
+                                                        const workbook =
+                                                          XLSX.utils.book_new();
+                                                        const worksheet =
+                                                          XLSX.utils?.json_to_sheet(
+                                                            newArray
+                                                          );
+                                                        XLSX.utils.book_append_sheet(
+                                                          workbook,
+                                                          worksheet,
+                                                          'ReportExport'
+                                                        );
+                                                        // Save the workbook as an Excel file
+                                                        XLSX.writeFile(
+                                                          workbook,
+                                                          `Report.xlsx`
+                                                        );
+                                                        console.log(
+                                                          `Exported data to Report.xlsx`
+                                                        );
+                                                        // setLoading(false);
+                                                      } else {
+                                                        // setLoading(false);
+                                                        // console.log('#==================Export Error');
+                                                      }
+                                                    } catch (error: any) {
+                                                      // setLoading(false);
+                                                      console.log(
+                                                        '#==================Export Error',
+                                                        error.message
+                                                      );
+                                                    }
+                                                  }
+                                                }}
+                                                className="flex items-center px-1 justify-center text-sm bg-[green] text-white gap-3"
+                                              >
+                                                <Image
+                                                  src={exportIcon}
+                                                  alt=""
+                                                  className="h-5 w-5"
+                                                />
+                                                <span>Xlxs</span>
+                                              </Button>
+
+                                              <Button
+                                                className="flex items-center px-1 justify-center text-sm bg-[red] text-white gap-3"
+                                                onClick={() => {
+                                                  if (
+                                                    item.broadcasts &&
+                                                    item?.broadcasts.length > 0
+                                                  ) {
+                                                    // alert('ok')
+                                                    setValueArray(
+                                                      item?.broadcasts
+                                                    );
+                                                    setIsShowModal(true);
+                                                    setDateSession(
+                                                      item.created_at
+                                                        .split('T')[0]
+                                                        .split('-')[2] +
+                                                        '-' +
+                                                        item.created_at
+                                                          .split('T')[0]
+                                                          .split('-')[1] +
+                                                        '-' +
+                                                        item.created_at
+                                                          .split('T')[0]
+                                                          .split('-')[0] +
+                                                        ' ' +
+                                                        item.created_at
+                                                          .split('T')[1]
+                                                          .split(':')[0] +
+                                                        ':' +
+                                                        item.created_at
+                                                          .split('T')[1]
+                                                          .split(':')[1]
+                                                    );
+                                                  }
+                                                }}
+                                              >
+                                                <Image
+                                                  src={exportIcon}
+                                                  alt=""
+                                                  className="h-5 w-5"
+                                                />
+                                                <span>pdf</span>
+                                              </Button>
+                                              {/* <Image src={EditIcon} alt="Icon edit" /> */}
+                                              {/* <Image
+                src={InformationIcon}
+                alt="Icon info"
+                onClick={() => {
+                  // ;
+                  setIdSession(row?.id);
+                  setIsShowModal((isShowModal) => !isShowModal);
+                }}
+              /> */}
+                                              {/* <Image src={DeleteIcon} alt="Icon delete" /> */}
+                                              <ModalDelete />
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                    }
+                                  )}
+                              </div>
+                            </>
                           </TableCell>
                         </TableRow>
                       );
@@ -308,13 +805,24 @@ const TableHistoryTemplete: React.FC<{ tableSession?: any; delete?: any }> = (
       ) : (
         ''
       )}
-{/* 
-      <ModaldetailBroadcast
-        isShow={isShowModal}
-        showHandler={showHandler}
-        id={idSession}
-        date=''
-      /> */}
+      {isShowModal && (
+        <ModaldetailBroadcast
+          isShow={isShowModal}
+          showHandler={showHandler}
+          id={idSession}
+          date={dateSession}
+          datas={valueArray ? valueArray : []}
+        />
+      )}
+      {isShowModalExport && (
+        <ModaldetailBroadcastExport
+          isShow={isShowModalExport}
+          showHandler={() => setIsShowModalExport(false)}
+          id={idSession}
+          date={dateSession}
+          datas={arrayImport}
+        />
+      )}
     </div>
   );
 };

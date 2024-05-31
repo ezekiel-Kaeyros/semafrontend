@@ -1,3 +1,4 @@
+import { getUserCookies } from '@/cookies/cookies';
 import DataService from '../dataService';
 import { GetSenario, ScenarioInput } from './senarioService.d';
 import axios, { AxiosInstance } from 'axios';
@@ -7,13 +8,6 @@ interface ClientNumber {
 }
 
 const BASE_URL = 'https://back.chatbot.sem-a.com';
-// string | undefined = process.env.API_CHATBOT_URL;
-const clientPhonenumber: ClientNumber[] = [
-  {
-    numberId: 299462959914851,
-    email: 'ketourah@mail.com',
-  },
-];
 
 export class SenarioService extends DataService {
   client: AxiosInstance;
@@ -48,13 +42,9 @@ export class SenarioService extends DataService {
     email: string;
   }): Promise<{ data: GetSenario[]; status: number }> => {
     try {
+      const phone_number_id = getUserCookies().phone_number_id;
       const response = await this.client.get(
-        BASE_URL + '/scenarios/' + '100609346426084'
-        // (clientPhonenumber.find((item) => item.email === params.email)
-        //   ?.numberId
-        //   ? clientPhonenumber.find((item) => item.email === params.email)
-        //       ?.numberId
-        //   : '100609346426084')
+        BASE_URL + '/scenarios/' + phone_number_id
       );
       if (response.status === 200) {
         return response;
@@ -104,11 +94,6 @@ export class SenarioService extends DataService {
       const response = await this.client.put(
         BASE_URL + '/edit/' + params.id,
         params.data
-        // (clientPhonenumber.find((item) => item.email === params.email)
-        //   ?.numberId
-        //   ? clientPhonenumber.find((item) => item.email === params.email)
-        //       ?.numberId
-        //   : '100609346426084')
       );
       if (response.status === 200) {
         return response;

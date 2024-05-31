@@ -12,6 +12,8 @@ import setScenarioObject from './features/filter-actions';
 import selectDetailValue from './features/modal-slice';
 import setChats from './features/chat-bot-slice';
 import setFilteredStatus from './features/chat-bot-slice';
+import setCompanyChats from './features/chat-bot-slice';
+import setConversationStatus from './features/chat-bot-slice';
 // import pointOfSaleViewReducer from './features/create-point-of-sale-slice';
 // import ChannelClusterReducer from './features/channel-cluster-slice';
 // import ActivityReducer from './features/activities-slice';
@@ -31,6 +33,8 @@ export const store = configureStore({
     selectDetailValue,
     setChats,
     setFilteredStatus,
+    setCompanyChats,
+    setConversationStatus,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

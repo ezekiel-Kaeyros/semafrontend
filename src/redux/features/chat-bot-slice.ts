@@ -22,6 +22,7 @@ const initialState: ChatBotType = {
   chatsConversation: [],
   message: {} as ChatConversationType,
   filterStatus: '',
+  conversationStatus: '',
 };
 
 export const auth = createSlice({
@@ -100,6 +101,10 @@ export const auth = createSlice({
     setFilteredStatus: (state, action) => {
       state.filterStatus = action.payload;
     },
+
+    setConversationStatus: (state, action) => {
+      state.conversationStatus = action.payload;
+    },
   },
 });
 
@@ -118,6 +123,7 @@ export const {
   setCompanyChats,
   setConversationChats,
   setFilteredStatus,
+  setConversationStatus,
   // updateConversation,
 } = auth.actions;
 export default auth.reducer;

@@ -1,3 +1,20 @@
+export type ChatMessageType = {
+  text: string;
+  is_bot: boolean;
+  is_admin: boolean;
+  date?: string;
+  chat_status: string;
+  scenario_name?: string;
+};
+
+export type ChatConversationType = {
+  chat_messages: ChatMessageType[];
+  phone_number: string;
+  unread_msg: number;
+  color?: string | any;
+  label?: string | any;
+};
+
 /* eslint-disable no-unused-vars */
 export type StatusFitlerProps = {
   options: Array<{
@@ -9,6 +26,7 @@ export type StatusFitlerProps = {
   handleSelect?: (id: string | number) => void;
   selectedStatus: string;
   onStatusChange: (status: string) => void;
+  conversation: ChatConversationType[];
 };
 
 export const options = [

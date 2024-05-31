@@ -46,7 +46,7 @@ const SendMessage = () => {
   // const [c] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
   const [showCountries, setShowCountries] = useState(false);
-  const [countriess,setcountriess]=useState(countries)
+  const [countriess, setcountriess] = useState(countries);
   const [templeteValues, setTempleteValues] = useState({ id: '', name: '' });
   const [inputValue, setInputValue] = useState<FileList>();
   const [data, setData] = useState<string[]>([]);
@@ -57,7 +57,7 @@ const SendMessage = () => {
   const [country, setCountry] = useState({
     icon: countries[0].icon,
     name: countries[0].abbrev,
-    code:countries[0].code
+    code: countries[0].code,
   });
   const sendBulkMessage = async (number: string[], name: string) => {
     const dataToSendForBulkmessage = {
@@ -104,16 +104,12 @@ const SendMessage = () => {
             const dummyTableNumber = Object.values(item);
             tablenumber.push(dummyTableNumber[0]);
           });
-          if (tablenumber.length > 0 && tablenumber.length<=1000) {
+          if (tablenumber.length > 0 && tablenumber.length <= 1000) {
             setData(tablenumber);
-            
-            
-
           } else {
             toast.error(
               'ce fichier est peut-être vide ou contient plus de 1000 numéros'
             );
-            
           }
         }
       };
@@ -122,7 +118,7 @@ const SendMessage = () => {
   };
   const getIdHandler = (e: any) => {
     const value = e.target.value;
-   
+
     setTempleteValues({
       id: '',
       name: value,
@@ -143,7 +139,7 @@ const SendMessage = () => {
         setDataInput(dummyTableNumber);
       }
     } else {
-      dummyTableNumber.push( country.code+numberToSend);
+      dummyTableNumber.push(country.code + numberToSend);
       setDataInput(dummyTableNumber);
     }
   };
@@ -160,7 +156,10 @@ const SendMessage = () => {
   });
   let numberToSend = watch('numberToSend');
   let findCountry = watch('findCountry');
-  const onSubmit: SubmitHandler<{ numberToSend: string,findCountry:string }> = async (data) => {
+  const onSubmit: SubmitHandler<{
+    numberToSend: string;
+    findCountry: string;
+  }> = async (data) => {
     reset();
   };
   const changeCountyHandler = (item: any) => {
@@ -174,7 +173,7 @@ const SendMessage = () => {
       name: item.abbrev,
       code: item.code.replaceAll('+', ''),
     });
-  }
+  };
   useEffect(() => {
     if (isRefresh) {
       clientQuery.invalidateQueries({ queryKey: ['getTemplete'] });
@@ -199,12 +198,11 @@ const SendMessage = () => {
             .toLocaleLowerCase()
             .includes(findCountry.toLocaleLowerCase())
       );
-      setcountriess(val)
+      setcountriess(val);
     } else {
-      setcountriess(countries)
+      setcountriess(countries);
     }
-
-  }, [isAdd, dataInput, refesh, numberToSend, isLoading,findCountry]);
+  }, [isAdd, dataInput, refesh, numberToSend, isLoading, findCountry]);
   return (
     <div
       // onClick={}
@@ -383,59 +381,63 @@ const SendMessage = () => {
               {/* })} */}
             </div>
           )}
-          <div className="mt-6">
-            <Button
-              className="w-auto m-auto px-8"
-              disabled={
-                isLoading ||
-                !inputValue ||
-                templeteValues.name == '' ||
-                data.length < 1
-                  ? true
-                  : false
-              }
-              variant={
-                isLoading ||
-                !inputValue ||
-                data.length < 1 ||
-                templeteValues.name == ''
-                  ? 'disabled'
-                  : 'mainColor'
-              }
-              onClick={async () => {
-                sendBulkMessage(data, templeteValues.name);
+          <div className="mt-6 flex justify-between items-center">
+            <div>
+              {' '}
+              <Button
+                className="w-auto m-auto px-8"
+                disabled={
+                  isLoading ||
+                  !inputValue ||
+                  templeteValues.name == '' ||
+                  data.length < 1
+                    ? true
+                    : false
+                }
+                variant={
+                  isLoading ||
+                  !inputValue ||
+                  data.length < 1 ||
+                  templeteValues.name == ''
+                    ? 'disabled'
+                    : 'mainColor'
+                }
+                onClick={async () => {
+                  sendBulkMessage(data, templeteValues.name);
+                }}
+              >
+                {isLoading ? 'transfering...' : 'send '}
+              </Button>
+            </div>
 
-                // const dataToSendForBulkmessage = {
-                //   recipients_phone_numbers: data,
-                //   template_name: templeteValues.name,
-                // };
-                // //  try {
-                // //    await sendBulkMessageMutation(dataToSendForBulkmessage);
-                // //    //console.log(
-                // //      dataToSendForBulkmessage.template_name,
-                // //      'template'
-                // //    );
-                // //    alert('none');
-                // //  } catch (error) {
-                // //   alert('none')
-                // //  }
+            <div>
+              <Button
+                onClick={async () => {
+                  try {
+                    const newArray = [{ number: '237666666666' }];
 
-                // try {
-                //   setIsLoading(true);
-                //   const respon = await postBulkMessage(
-                //     dataToSendForBulkmessage
-                //   );
-                //   toast.success('message sent');
-                //   setIsLoading(false);
-                //   // ;
-                //   setInputValue(undefined);
-                // } catch (error) {
-                //   setIsLoading(false);
-                // }
-              }}
-            >
-              {isLoading ? 'transfering...' : 'send '}
-            </Button>
+                    const workbook = XLSX.utils.book_new();
+                    const worksheet = XLSX.utils?.json_to_sheet(newArray);
+                    XLSX.utils.book_append_sheet(
+                      workbook,
+                      worksheet,
+                      'ReportExport'
+                    );
+                    // Save the workbook as an Excel file
+                    XLSX.writeFile(workbook, `exemple.xlsx`);
+                  } catch (error: any) {
+                    // setLoading(false);
+                    console.log(
+                      '#==================Export Error',
+                      error.message
+                    );
+                  }
+                }}
+                className="flex justify-center text-xs bg-mainDarkLight"
+              >
+                <span>Download a template example</span>
+              </Button>
+            </div>
           </div>
         </form>
 

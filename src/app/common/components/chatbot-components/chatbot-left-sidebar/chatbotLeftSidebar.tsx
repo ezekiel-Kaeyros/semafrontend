@@ -74,9 +74,11 @@ const ChatbotLeftSidebar = () => {
   const loadChatsByCompany = async () => {
     const hisEmail = getUserCookies().email;
 
-    const response = await new ChatbotService().loadChatsByCompany({
-      email: hisEmail,
-    });
+
+    const response = await new ChatbotService().loadChatsByCompany({});
+
+
+    console.log(response.data, 'responseData');
     if (response) {
       dispatch(setConversationChats(response.data.conversations));
       dispatch(setCompanyChats(response.data));
@@ -117,7 +119,10 @@ const ChatbotLeftSidebar = () => {
       [...item.chat_messages].reverse()[0].chat_status === selectedStatus
   );
 
-  const filteredSelected = selectedStatus === 'All' ? newDataCloned : filtered;
+  const filteredSelected =
+    selectedStatus === 'All' || selectedStatus == '' ? newDataCloned : filtered;
+
+  console.log(selectedStatus, 'selectedStatus');
 
   // handleInput Change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,6 +139,7 @@ const ChatbotLeftSidebar = () => {
 
   // const [filteredChatsConversation, setFilteredChatsConversation] =
   //   useState<ChatConversationType[]>([]);
+
 
   const InputFiltered = !inputValue ? filteredSelected : filteredChats;
 
@@ -179,11 +185,13 @@ const ChatbotLeftSidebar = () => {
       socket.close();
     };
   }, []);
+
   return (
     <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600  dark:bg-mainDark border-r-[0.02px] h-full overflow-y-hidden">
       <div className="flex flex-col gap-[1.5rem] p-[1rem] h-auto">
         <div className="flex flex-row justify-between p-[.5rem]">
           <ChatHeader
+            conversation={newDataCloned}
             selectedStatus={selectedStatus}
             onStatusChange={handleStatusChange}
             onInputChange={handleInputChange}

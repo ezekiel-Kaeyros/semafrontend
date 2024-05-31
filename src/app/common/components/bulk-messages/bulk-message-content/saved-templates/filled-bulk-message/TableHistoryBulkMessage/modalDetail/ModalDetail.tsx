@@ -130,11 +130,15 @@ const imprimer=usePdf(refDiv)
             }
           })
           .catch((errors) => {
+            console.log('errors',errors);
+            
             setIsError(true);
           });
       } catch (error) {
         setIsLoad(false);
         setIsError(true);
+            console.log('error', error);
+
       }
       //   setCurrentIdSession(idSession);
       //   setIdSession('');

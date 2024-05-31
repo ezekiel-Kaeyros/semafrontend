@@ -1,4 +1,3 @@
-'use client';
 import { Button } from '@/app/common/ui/button/Button';
 import InputField from '@/app/common/ui/forms/text-field/InputField';
 import { Spinner } from '@nextui-org/react';
@@ -6,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 import loginUserIcon from '../../../../public/icons/userIcon.svg';
 import logo from '../../../../public/images/sema-logo-2.svg';
@@ -17,7 +16,11 @@ import { AuthService } from '@/services';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/hooks/useAuth';
 import { login } from '@/redux/features/auth-slice';
-import { setUserCookies } from '@/cookies/cookies';
+import {
+  getUserCookies,
+  setEmailCookies,
+  setUserCookies,
+} from '@/cookies/cookies';
 
 type SignInType = {
   email: string;
@@ -41,20 +44,36 @@ const SignInModule = () => {
     mode: 'onChange' || 'onBlur' || 'onSubmit',
   });
 
-  const onSubmit: SubmitHandler<SignInType> = (data) => {
+  async function checkPhoneNumber(email: string) {
+    const response = await new AuthService().getPhoneNumberId(email);
+    if (response.status === 200 && response.data[0].phone_number_id) {
+      const user = getUserCookies();
+      setUserCookies({
+        ...user,
+        phone_number_id: response.data[0].phone_number_id,
+      });
+      push(`/${urlSplit[1]}/dashboard`);
+    } else {
+      toast.error(' your omboarding is not complete !!');
+      push(`/${urlSplit[1]}/signup/omboard`);
+    }
+  }
+
+  const onSubmit: SubmitHandler<SignInType> = async (data) => {
     try {
       setIsLoading(true);
       const response = new AuthService()
         .login2(data)
-        .then((result) => {
+        .then(async (result) => {
           if (result.status == 200) {
             setUserCookies({ ...result.data, email: data.email });
+            setEmailCookies({ email: data.email });
             dispatch(login(result.data));
-            push(`/${urlSplit[1]}/dashboard`);
+            await checkPhoneNumber(data.email);
           }
         })
         .catch((error) => {
-          alert('something wrong try again');
+          toast.error('something wrong try again');
           setIsLoading(false);
         });
     } catch (error) {

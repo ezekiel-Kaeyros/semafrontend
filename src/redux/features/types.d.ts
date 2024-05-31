@@ -22,12 +22,15 @@ export type ChatMessageType = {
   is_admin: boolean;
   date?: string;
   is_read?: boolean;
+  chat_status: string;
+  scenario_name: string;
 };
 
 export type ChatConversationType = {
-  _id?: string;
+  // _id?: string;
   phone_number: string;
   chat_messages: ChatMessageType[];
+  unread_msg?: number;
 };
 
 export type ChatsByCompanyReturnType = {
@@ -107,6 +110,7 @@ export interface ChatBotType {
   chatsConversation: ChatConversationType[];
   message: ChatConversationType;
   filterStatus: string;
+  conversationStatus: string;
 }
 
 export interface BulkMessageTabSilceType {
