@@ -21,6 +21,49 @@ import { useBolkMessage } from '@/app/hooks/useBulkMessage';
 import { refesh } from '@/redux/features/bulk-message-slice';
 import { Select, SelectItem } from '@nextui-org/react';
 import { countries } from './Country/dataCounties';
+import Link from 'next/link';
+// import Link54 from '../../../../../[lang]/(dashboard)/dashboard/api/download';
+
+const ArrayExemple = [
+  {
+    Instructions:
+      'ce fichier a pour but de vous donner les instructions pour remplir votre fichier excel que vous aller utiliser pour envoyer votre bulkmessage',
+  },
+  {
+    Instructions:
+      'pour envoyer votre bulkmessage vous devez juste créer  votre fichier excel constitué d’une seule colonne appelé numéro placée sous la première colone qui contiendra tous les numéros à envoyer',
+  },
+  {
+    Instructions: 'les numéro de téléphones doivent avoir un format spécifique',
+  },
+  {
+    Instructions:
+      "'-les numéros commencent avec le code du pays c’est obligatoire sans ça le message n’ira pas pour ce numéro ",
+  },
+  {
+    Instructions:
+      '-le code du pays est  sans le symbole (+) ni 00 devant ex: pour le cameroun au lieu de commencer par 00237 ou +237 il faut juste mettre 237',
+  },
+  {
+    Instructions:
+      "'-les numéros ne doivent pas avoir d’espaces c’est obligatoire sinon le numero ne recevra pas de message ex: pour le cameroun 237690000000",
+  },
+  { Instructions: '' },
+  {
+    Instructions:
+      'le fichier exemple.xlsx est un exemple d’un fichier qui peut être envoyé il contient juste un numéro libre à vous d’ajouter autant que vous voudrez en respectant les consignes',
+  },
+  { Instructions: '' },
+
+  {
+    Instructions:
+      'nb: le fichier excell a soummettre doit avoir une seule colonne et la colone doit être placée sous la colonne A',
+  },
+  {
+    Instructions:
+      'la ligne 1 doit être le titre de la colonne et les numéros doivent commencer à partir de la ligne 2 exactement comme dans le fichier exmple.xlsx il vous est d’ailleur conseillé d’utiliser le fichier ',
+  },
+];
 
 type bulkmessageDataType = {
   name: string;
@@ -59,6 +102,39 @@ const SendMessage = () => {
     name: countries[0].abbrev,
     code: countries[0].code,
   });
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+        //  const response = await fetch(
+        //    '../../../../../[lang]/(dashboard)/dashboard/api/download'
+        //  );
+        const response = await fetch(
+          '/api/download'
+        );
+         if (!response.ok) {
+           throw new Error('Network response was not ok');
+         }
+console.log(response);
+
+      //    const blob = await response.blob();
+      //    const url = window.URL.createObjectURL(blob);
+      //    const a = document.createElement('a');
+      // a.href = url;
+      // console.log('url',url);
+      
+      //    a.download = 'oui.xlsx';
+      //    document.body.appendChild(a);
+      //    a.click();
+      //    a.remove();
+      // window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+    } finally {
+      setDownloading(false);
+    }
+  };
   const sendBulkMessage = async (number: string[], name: string) => {
     const dataToSendForBulkmessage = {
       recipients_phone_numbers: number,
@@ -80,6 +156,36 @@ const SendMessage = () => {
     }
   };
 
+  const onGetExporProduct = async (
+    title?: string,
+    worksheetname?: string,
+    arrayProps?: any[],
+    time?: string
+  ) => {
+    try {
+      console.log('array', arrayProps);
+
+      if (arrayProps && Array.isArray(arrayProps) && arrayProps.length > 0) {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils?.json_to_sheet(arrayProps);
+        XLSX.utils.book_append_sheet(workbook, worksheet, worksheetname);
+
+        const date1 = arrayProps[0].created_at
+          ? arrayProps[0].created_at.toString()
+          : '';
+
+        XLSX.writeFile(workbook, `${title}.xlsx`);
+        console.log(`Exported data to ${title}.xlsx`);
+        // setLoading(false);
+      } else {
+        // setLoading(false);
+        // console.log('#==================Export Error');
+      }
+    } catch (error: any) {
+      // setLoading(false);
+      console.log('#==================Export Error', error.message);
+    }
+  };
   const handleFileSelected = async (e: any) => {
     const ext = e.target?.files[0]?.name.split('.').pop();
     ext !== 'xlsx' ? toast.error('bad file') : '';
@@ -106,6 +212,8 @@ const SendMessage = () => {
           });
           if (tablenumber.length > 0 && tablenumber.length <= 1000) {
             setData(tablenumber);
+            console.log('tablenumber-----------',tablenumber);
+            
           } else {
             toast.error(
               'ce fichier est peut-être vide ou contient plus de 1000 numéros'
@@ -133,7 +241,9 @@ const SendMessage = () => {
   const addNumber = () => {
     let dummyTableNumber: string[] = dataInput;
     if (dummyTableNumber.length > 0) {
-      const check = dummyTableNumber.filter((item) => item === numberToSend);
+      const check = dummyTableNumber.filter(
+        (item) => country.code + item === country.code + numberToSend
+      );
       if (check.length == 0) {
         dummyTableNumber.push(country.code + numberToSend);
         setDataInput(dummyTableNumber);
@@ -207,7 +317,7 @@ const SendMessage = () => {
     <div
       // onClick={}
       onDoubleClick={() => showCountries && setShowCountries(false)}
-      className="h-full "
+      className="h-full font-[serif]"
     >
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex justify-center w-full items-center mb-5 mt-12">
@@ -215,13 +325,14 @@ const SendMessage = () => {
           // color="secondary"
           size="lg"
           label="select template"
-          placeholder="select template"
+          placeholder="---"
           selectionMode="single"
-          className="max-w-sm "
+          className="max-w-sm font-[serif]"
           classNames={{
             trigger: 'border text-white',
-            value: 'text-white',
-            label: 'text-white ',
+            value: 'text-white sm:text-base text-sm',
+            label: 'text-white sm:text-base text-sm',
+            listboxWrapper: 'font-[serif]',
           }}
           onChange={(e: any) => {
             // ;
@@ -411,32 +522,36 @@ const SendMessage = () => {
             </div>
 
             <div>
-              <Button
+              {/* <p
                 onClick={async () => {
-                  try {
-                    const newArray = [{ number: '237666666666' }];
+                  setIsLoading(true);
 
-                    const workbook = XLSX.utils.book_new();
-                    const worksheet = XLSX.utils?.json_to_sheet(newArray);
-                    XLSX.utils.book_append_sheet(
-                      workbook,
-                      worksheet,
-                      'ReportExport'
+                  const array = [
+                    { text: 'exemple', tab: [{ numero: '237666167464' }] },
+                    { text: 'instructions', tab: ArrayExemple },
+                  ];
+                  array.map(async (item) => {
+                    const response = await onGetExporProduct(
+                      item.text,
+                      item.text,
+                      item.tab
                     );
-                    // Save the workbook as an Excel file
-                    XLSX.writeFile(workbook, `exemple.xlsx`);
-                  } catch (error: any) {
-                    // setLoading(false);
-                    console.log(
-                      '#==================Export Error',
-                      error.message
-                    );
-                  }
+                  });
+                  setIsLoading(false);
                 }}
-                className="flex justify-center text-xs bg-mainDarkLight"
+                className="border rounded-full px-3 py-2 cursor-pointer"
               >
-                <span>Download a template example</span>
-              </Button>
+                {downloading ? 'Downloading...' : 'download template'}
+              </p> */}
+              <a
+                href="/api/download"
+                // download="/cat.png"
+                className="flex justify-center text-xs bg-mainDarkLight border rounded-xl px-3 py-2 "
+                target="_blank"
+              >
+                <span>upload template exemple</span>
+              </a>
+              {/* <span onClick={handleDownload}>upload template exemple</span> */}
             </div>
           </div>
         </form>
@@ -449,40 +564,33 @@ const SendMessage = () => {
         >
           <p className="mb-5">Enter your numbers (5 numbers max)</p>
           {dataInput && (
-            <div className="md:w-6/12 w-11/12 m-auto grid md:grid-cols-3 grid-cols-2 sm:gap-3 gap-1 my-10 text-sm">
+            <div className="2xl:w-7/12 md:w-10/12 w-full m-auto flex flex-wrap gap-3 justify-center  sm:gap-5  my-10 md:text-base text-sm">
               {dataInput.map((Item, index) => (
-                <div key={index} className="grid grid-cols-1 mt-5 gap-3 w-full">
-                  {/* { filename && filename?.map(({ name }) => { */}
-                  {/* return ( */}
-                  <div className="border border-[lightgray] rounded-3xl w-full">
-                    <div className="flex justify-between items-center px-3 py-2 ">
-                      <div>
-                        <h1>{Item}</h1>
-                      </div>
-                      <div
-                        onClick={() => {
-                          deleNumber(Item);
-                        }}
-                        className="flex items-center justify-center md:text-xl cursor-pointer"
-                      >
-                        {/* <Image src={crossIcom} alt="cross Icon" className='cursor-pointer' onClick={handleRemoveFile}/> */}
-                        x
-                      </div>
-                    </div>
-                  </div>
-                  {/* ); */}
-                  {/* })} */}
+                <div
+                  key={index}
+                  className="flex justify-between items-center md:gap-3 gap-2 w-fit border rounded-full px-3 py-2"
+                >
+                  <span className="font-[serif]">{Item}</span>
+
+                  <span
+                    onClick={() => {
+                      deleNumber(Item);
+                    }}
+                    className="flex items-center justify-center md:text-xl cursor-pointer "
+                  >
+                    x
+                  </span>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="lg:w-7/12 md:w-10/12 w-full m-auto flex items-center justify-between">
+          <div className="2xl:w-7/12 md:w-10/12 w-full m-auto flex items-center justify-center gap-2">
             {' '}
-            <div className="relative lg:w-2/12 w-3/12 border h-14 rounded-xl flex items-center cursor-pointer">
+            <div className="relative w-fit  border h-14 rounded-xl flex items-center cursor-pointer">
               {country.icon.length > 0 && (
                 <div
-                  className="flex items-center justify-around w-full px-1"
+                  className="flex items-center justify-between w-full px-2 gap-3"
                   onClick={() => setShowCountries((state) => !state)}
                 >
                   <Image
@@ -490,19 +598,17 @@ const SendMessage = () => {
                     width={20}
                     height={20}
                     alt=""
-                    className="lg:h-5 lg:w-6 md:h-4 md:w-4 h-3 w-3"
+                    className="xl:h-6 xl:w-6 md:h-4 md:w-4 h-3 w-3"
                   />
-                  <span className="md:ml-2 lg:text-base text-xs sm:block hidden">
+                  <span className=" xl:text-sm text-xs lg:block hidden">
                     {country.name}
                   </span>
-                  <span className="md:ml-2 lg:text-base text-xs">
-                    {country.code}
-                  </span>
+                  <span className=" xl:text-sm text-xs">{country.code}</span>
                 </div>
               )}
 
               <div
-                className={`w-[250%] absolute top-16 h-72   shadow-md bg-black rounded-lg z-[80]  ${showCountries ? 'block' : 'hidden'}`}
+                className={`md:w-[250%] w-[350%] absolute top-16 h-72   shadow-md bg-black rounded-lg z-[80]  ${showCountries ? 'block' : 'hidden'}`}
               >
                 <div className="flex flex-col justify-between w-full h-full">
                   <div className="h-14  w-full" onClick={() => {}}>
@@ -531,7 +637,7 @@ const SendMessage = () => {
                               height={14}
                               alt=""
                             />
-                            <span className="ml-3 lg:text-sm text- xs">
+                            <span className="ml-3 lg:text-sm text-xs">
                               {item.country}
                             </span>
                           </span>
@@ -542,7 +648,7 @@ const SendMessage = () => {
                 </div>
               </div>
             </div>
-            <div className="lg:w-[82%] w-[73%]">
+            <div className="flex-grow">
               <InputField
                 icon={call}
                 icon2={

@@ -110,7 +110,16 @@ export interface ChatBotType {
   chatsConversation: ChatConversationType[];
   message: ChatConversationType;
   filterStatus: string;
-  conversationStatus: string;
+  conversationStatus: string | any;
+  currentChatStatus: string;
+  arrayStatus: {
+    id: string;
+    status: string;
+    color: string;
+  }[];
+  selectedStatus: string;
+  companyId: string;
+  loadingStatus: boolean;
 }
 
 export interface BulkMessageTabSilceType {
@@ -122,6 +131,7 @@ export interface BulkMessageTabSilceType {
   tableTemplete: TypeItemTableSaveTemplete[];
   itemTableTemplete: TypeItemTableSaveTemplete;
   isRefresh: boolean;
+  isActive:string
 }
 
 export interface TombolaServiceTabSilceType {

@@ -29,7 +29,7 @@ const SavedTemplates = () => {
     <div>
       {/* <FilledBulkMessage /> */}
       {posts && posts.data && posts.data.length > 0 ? (
-        <TableSaveTemplete data={posts.data} delete={ refreshHandler} />
+        <TableSaveTemplete data={posts.data.reverse()} delete={ refreshHandler} />
       ) : (
         <EmptyBulkMessage />
       )}

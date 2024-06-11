@@ -1,7 +1,7 @@
 import { Edge, Node } from 'reactflow';
 export type NodeDataType = {
   id: string;
-  value: any;
+  value?: any;
   type?: 'response' | 'question';
   link?: string;
 };

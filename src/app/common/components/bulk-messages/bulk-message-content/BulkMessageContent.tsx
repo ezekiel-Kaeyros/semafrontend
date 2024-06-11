@@ -7,7 +7,7 @@ import { useBolkMessage } from '@/app/hooks/useBulkMessage';
 import { BulkMessageTabTypeI } from '@/redux/features/types';
 
 const BulkMessageContent = () => {
-  const { bulkMessageTabs } = useBolkMessage();
+  const { bulkMessageTabs,tab1 } = useBolkMessage();
   const [selectedTab, setSelectedTab] = useState<BulkMessageTabTypeI>();
   const findSelectedItems = () => {
     bulkMessageTabs &&
@@ -18,21 +18,33 @@ const BulkMessageContent = () => {
         }
       });
   };
-  // ;
-  useEffect(() => {
-    findSelectedItems();
-  }, [bulkMessageTabs]);
-  // ;
+           
 
-  return (
-    <div className='h-full '>
-      {selectedTab?.id === 1 ? <SendMessage /> : ''}
 
-      {selectedTab?.id === 3 ? <SavedTemplates /> : ''}
+    const [id, setId] = useState<any>();
 
-      {selectedTab?.id === 2 && <History />}
-    </div>
-  );
+    useEffect(() => {
+      const id1 = localStorage.getItem('activeTab');
+      id1 && setId(id1);
+      console.log('tab1',tab1);
+      
+    }, [tab1]);
+    useEffect(() => {
+      findSelectedItems();
+    }, [bulkMessageTabs]);
+    // ;
+    // useEffect(() => {
+
+    // }, []);
+    return (
+      <div className="h-full ">
+        {(id && id == '1') || (!id && (tab1 == '1' || tab1=="4")) ? <SendMessage /> : ''}
+
+        {(id && id == '3') || (!id && tab1 == '3') ? <SavedTemplates /> : ''}
+
+        {((id && id == '2') || (!id && tab1 == '2')) && <History />}
+      </div>
+    );
 };
 
 export default BulkMessageContent;

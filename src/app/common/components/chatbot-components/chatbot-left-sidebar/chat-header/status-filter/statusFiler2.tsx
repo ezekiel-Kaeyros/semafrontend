@@ -1,9 +1,16 @@
 import AnimateClick from '@/app/common/ui/animate-click/AnimateClick';
 import { getStatusInCookie, setStatusInCookie } from '@/cookies/cookies';
-import { setFilteredStatus } from '@/redux/features/chat-bot-slice';
+import {
+  setCurrentChatStatus,
+  setFilteredStatus,
+  setSelectedStatus,
+} from '@/redux/features/chat-bot-slice';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { StatusFitlerProps } from './StatusFilter.d';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { useRouter } from 'next/navigation';
 
 interface SelectedChatProps {
   id: number;
@@ -18,28 +25,30 @@ const SecondStatusFilter: React.FC<StatusFitlerProps> = ({
   selectedStatus,
   onStatusChange,
   conversation,
+  realTimeStatusArr,
 }) => {
   const [selected, setSelected] = useState<SelectedChatProps | any>(
-    getStatusInCookie(options[0].status)
-    // options[0].status
+    options[0].status
   );
+  // getStatusInCookie(options[0].status);
   const [selectedColor, setSeletedColor] = useState('');
   const dispatch = useDispatch();
+  const { currentChatStatus } = useSelector(
+    (state: RootState) => state.setCurrentChatStatus
+  );
+  const router = useRouter();
 
   const handleStatusChange = (status: string | any) => {
     setSelected(status);
     onStatusChange(status);
     dispatch(setFilteredStatus(status));
+    dispatch(setSelectedStatus(status));
+    router.push(`/en/dashboard/chatbot`);
+    dispatch(setCurrentChatStatus(null));
     // setSelected(getStatusInCookie(status));
     // onStatusChange(getStatusInCookie(status));
-    setStatusInCookie(status);
+    // setStatusInCookie(status);
   };
-
-  const lastChatStatuses = conversation?.map((conversation) => {
-    const lastMessage =
-      conversation.chat_messages[conversation.chat_messages.length - 1];
-    return lastMessage.chat_status;
-  });
 
   // Step 1: Initialize statusCount with all statuses from the options array, setting counts to 0
   const statusCount = options.reduce((acc: any, option) => {
@@ -50,7 +59,7 @@ const SecondStatusFilter: React.FC<StatusFitlerProps> = ({
   }, {});
 
   // Step 2: Count the occurrences of each status in the statusArray
-  lastChatStatuses?.forEach((status) => {
+  realTimeStatusArr?.forEach((status: any) => {
     if (statusCount.hasOwnProperty(status)) {
       statusCount[status]++;
     }
@@ -65,18 +74,18 @@ const SecondStatusFilter: React.FC<StatusFitlerProps> = ({
     };
   });
 
-  console.log(statusCount, 'statusCount');
-  console.log(options, 'this is conversation');
-  console.log(lastChatStatuses, 'this is conversation');
-
   return (
     <div>
       <div className="flex">
         {updatedOptions?.map((option, key) => {
+          const isActive = currentChatStatus
+            ? currentChatStatus === option.status
+            : selected === option.status;
           return (
             <AnimateClick key={key}>
               <div
-                className={`py-2 px-2 flex justify-between rounded-md items-center gap-x-2 ${selected == option.status ? 'bg-gray-900' : ''}`}
+                // className={`py-2 px-2 flex justify-between rounded-md items-center gap-x-2 ${isActive ? 'bg-gray-900' : ''}`}
+                className={`py-2 px-2 flex justify-between rounded-md items-center gap-x-2 ${isActive ? 'bg-gray-900' : ''}`}
                 onClick={() => {
                   handleSelect && handleSelect(option?.status),
                     setSelected(option.status),
@@ -85,7 +94,6 @@ const SecondStatusFilter: React.FC<StatusFitlerProps> = ({
                 }}
               >
                 {option?.status}
-
                 <div
                   style={{ backgroundColor: `${option?.color}` }}
                   className="w-5 h-5 p-1 text-xs rounded-md flex justify-center items-center font bold"

@@ -23,7 +23,7 @@ import {
   Pagination,
   CircularProgress,
 } from '@nextui-org/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // import TransactionConfirm from '@/app/common/components/transactionSending/transaction-confirm/TransactionConfirm';
 
 import React from 'react';
@@ -51,28 +51,35 @@ type SessionTemplate = {
   created_at: string;
 };
 
-const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; delete?: any }> = (
-  props
-) => {
+const TableHistoryTemplete: React.FC<{
+  multibleTable?: any;
+  tableSession?: any;
+  delete?: any;
+}> = (props) => {
   const [isShowModalExport, setIsShowModalExport] = useState(false);
-
+  const [all, setAll] = useState('');
+  const [noCheck, SetnoCheck] = useState(0);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isDisplay, setIsDisplay] = useState('');
 
   const [idSession, setIdSession] = useState('');
   const [valueArray, setValueArray] = useState();
   const [dateSession, setDateSession] = useState('');
-   const [view, setView] = useState(false);
-   const [exp, setExp] = useState(false);
+  const [view, setView] = useState(false);
+  const [exp, setExp] = useState(false);
   const [pageTable, setPageTable] = useState<number>(8);
   const [filterValue, setFilterValue] = useState('');
   const hasSearchFilter = Boolean(filterValue);
-     const [arrayImport, setArrayImport] = useState<
-       {
-         id: string;
-         tab: any[];
-       }[]
-     >([]);
+  const editorRef = useRef<null | HTMLDivElement>(null);
+
+  const [arrayImport, setArrayImport] = useState<
+    {
+      id: string;
+      tab: any[];
+      name: string;
+      date: string;
+    }[]
+  >([]);
   const text =
     ' All templates must adhere to WhatsApp’s Template Message Guidelines. Click here to read';
   const filteredItems = useMemo(() => {
@@ -92,6 +99,8 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
   }, [filterValue, hasSearchFilter, props.tableSession]);
 
   const [page, setPage] = useState(1);
+  const [isChange, setIsChange] = useState(false);
+
   const pages = Math.ceil(filteredItems.length / pageTable);
 
   const items = useMemo(() => {
@@ -131,6 +140,163 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
     setIdSession('');
   };
 
+  const numberTotal = (type: string, tab: any[], name: string) => {
+    if (type == 'total') {
+      let num = 0;
+      const arrayfilter = tab.map((item: any) => {
+        num = item.broadcasts ? num + item.broadcasts.length : num + 0;
+        return num;
+      });
+
+      const initialValue = 0;
+      const sumWithInitial = arrayfilter.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        initialValue
+      );
+      return arrayfilter[arrayfilter.length - 1];
+    }
+
+    if (type == 'failed') {
+      let num = 0;
+
+      const arrayfilter = tab.map((item: any) => {
+        item.broadcasts &&
+          item.broadcasts.map((row: any) => {
+            if (row.status == 'failed') {
+              num = num + 1;
+
+              return num;
+            }
+          });
+      });
+      // console.log('arrayfilter', arrayfilter);
+      return num;
+    }
+
+    if (type == 'success') {
+      let num = 0;
+
+      const arrayfilter = tab.map((item: any) => {
+        item.broadcasts &&
+          item.broadcasts.map((row: any) => {
+            if (row.status == 'read' || row.status == 'delivered') {
+              num = num + 1;
+
+              return num;
+            }
+          });
+      });
+      // console.log('arrayfilter', arrayfilter);
+      return num;
+    }
+
+    if (type == 'read') {
+      let num = 0;
+
+      const arrayfilter = tab.map((item: any) => {
+        item.broadcasts &&
+          item.broadcasts.map((row: any) => {
+            if (row.status == 'read') {
+              //  console.log('row', row);
+
+              num = num + 1;
+              //  console.log('read', num);
+
+              return num;
+            }
+          });
+      });
+
+      return num;
+    }
+  };
+
+  const onGetExporProduct = async (
+    title?: string,
+    worksheetname?: string,
+    arrayProps?: any[],
+    time?: string
+  ) => {
+    try {
+      // setLoading(true);
+      // const response = await fetch('https://fakestoreapi.com/products');
+      // Check if the action result contains data and if it's an array
+      console.log('array', arrayProps);
+
+      if (arrayProps && Array.isArray(arrayProps) && arrayProps.length > 0) {
+        const newArray = arrayProps.map((item) => {
+          const date1 = item.created_at ? item.created_at.toString() : '';
+
+          delete item.response_id;
+          delete item.created_at;
+          delete item.phone_number_id;
+          delete item.session_id;
+          delete item.template_id;
+          delete item.id;
+          return {
+            ...item,
+            date: time?
+              time.split('T')[0].split('-')[2] +
+              '-' +
+              time.split('T')[0].split('-')[1] +
+              '-' +
+              time.split('T')[0].split('-')[0] +
+              ' ' +
+              time.split('T')[1].split(':')[0] +
+              ':' +
+              time.split('T')[1].split(':')[1] : '',
+          };
+        });
+        //   const dataToExport = products.map((pro: any) => ({
+        //     title: pro.title,
+        //     price: pro.lastname,
+        //     category: pro.category,
+        //     description: pro.description,
+        //   }));
+        // Create Excel workbook and worksheet
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils?.json_to_sheet(newArray);
+        XLSX.utils.book_append_sheet(workbook, worksheet, worksheetname);
+        // Save the workbook as an Excel file
+        const date1 = arrayProps[0].created_at
+          ? arrayProps[0].created_at.toString()
+          : '';
+
+        XLSX.writeFile(
+          workbook,
+          `${title}_${
+            time
+              ? time.split('T')[0].split('-')[2] +
+                '-' +
+                time.split('T')[0].split('-')[1] +
+                '-' +
+                time.split('T')[0].split('-')[0] +
+                ' ' +
+                time.split('T')[1].split(':')[0] +
+                ':' +
+                time.split('T')[1].split(':')[1]
+              : ''
+          }.xlsx`
+        );
+        console.log(`Exported data to ${title}.xlsx`);
+        // setLoading(false);
+      } else {
+        // setLoading(false);
+        // console.log('#==================Export Error');
+      }
+    } catch (error: any) {
+      // setLoading(false);
+      console.log('#==================Export Error', error.message);
+    }
+  };
+   useEffect(() => {
+     if (isChange) {
+       if (editorRef.current) {
+         editorRef.current.scrollIntoView();
+       }
+     }
+     // getFileHandler('../../../../../../public');
+   }, [isChange, page]);
   return (
     <div>
       {props.tableSession.length > 0 ? (
@@ -156,23 +322,24 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
               </div>
               <div className="pb-3 h-14 relative ">
                 <ButtonI
-                  disabled={arrayImport.length == 0 ? true : false}
+                  disabled={arrayImport.length == 0 && all == '' ? true : false}
                   variant={'bgDark'}
                   icon={exportIcon}
                   // rightIcon={ true }
                   leftIcon={true}
                   iconSize={20}
-                  className={`${arrayImport.length == 0 ? 'opacity-40' : 'opacity-100'} border h-full w-full`}
+                  className={`${arrayImport.length == 0 && all == '' ? 'opacity-40' : 'opacity-100'} border h-full w-full`}
                   // className='text-[12px] h-[50px]'
                   onClick={() => {
                     setView((view) => !view);
                     // setExp(true);
                   }}
                 >
-                  Export
+                  {/* Export */}
+                  {arrayImport.length}
                 </ButtonI>
                 <div
-                  className={`absolute -top-[70px] w-full  border z-50 p-1 rounded-lg bg-white ${view ? 'block' : 'hidden'}`}
+                  className={`absolute -top-[70px] w-full  border z-50 p-1 rounded-lg bg-white ${view && arrayImport.length > 0 ? 'block' : 'hidden'}`}
                 >
                   <p
                     className="text-[red] cursor-pointer mb-2"
@@ -186,89 +353,16 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                   </p>
                   <p
                     className="text-[green] cursor-pointer"
-                    onClick={async () => {
+                    onClick={() => {
                       if (arrayImport && arrayImport.length > 0) {
-                        arrayImport.map((item) => {
-                          try {
-                            // setLoading(true);
-                            // const response = await fetch('https://fakestoreapi.com/products');
-                            // Check if the action result contains data and if it's an array
-                            if (item.tab && Array.isArray(item.tab)) {
-                              const newArray = item.tab.map((item: any) => {
-                                const date1 = item.created_at.toString();
-                                delete item.response_id;
-                                delete item.created_at;
-                                delete item.phone_number_id;
-                                delete item.session_id;
-                                delete item.template_id;
-                                delete item.id;
-                                return {
-                                  ...item,
-                                  date:
-                                    date1.split('T')[0].split('-')[2] +
-                                    '-' +
-                                    date1.split('T')[0].split('-')[1] +
-                                    '-' +
-                                    date1.split('T')[0].split('-')[0] +
-                                    ' ' +
-                                    date1.split('T')[1].split(':')[0] +
-                                    ':' +
-                                    date1.split('T')[1].split(':')[1],
-                                };
-                              });
-                              //   const dataToExport = products.map((pro: any) => ({
-                              //     title: pro.title,
-                              //     price: pro.lastname,
-                              //     category: pro.category,
-                              //     description: pro.description,
-                              //   }));
-                              // Create Excel workbook and worksheet
-                              const workbook = XLSX.utils.book_new();
-                              const worksheet =
-                                XLSX.utils?.json_to_sheet(newArray);
-                              XLSX.utils.book_append_sheet(
-                                workbook,
-                                worksheet,
-                                'ReportExport'
-                              );
-                              // Save the workbook as an Excel file
-                              XLSX.writeFile(
-                                workbook,
-                                `Report_` +
-                                  item.tab[0].created_at
-                                    .split('T')[0]
-                                    .split('_')[2] +
-                                  '-' +
-                                  item.tab[0].created_at
-                                    .split('T')[0]
-                                    .split('_')[1] +
-                                  '-' +
-                                  item.tab[0].created_at
-                                    .split('T')[0]
-                                    .split('_')[0] +
-                                  ' ' +
-                                  item.tab[0].created_at
-                                    .split('T')[1]
-                                    .split('_')[0] +
-                                  ':' +
-                                  item.tab[0].created_at
-                                    .split('T')[1]
-                                    .split('_')[1] +
-                                  '.xlsx'
-                              );
-                              console.log(`Exported data to Report.xlsx`);
-                              // setLoading(false);
-                            } else {
-                              // setLoading(false);
-                              // console.log('#==================Export Error');
-                            }
-                          } catch (error: any) {
-                            // setLoading(false);
-                            console.log(
-                              '#==================Export Error',
-                              error.message
-                            );
-                          }
+                        arrayImport.map(async (item) => {
+                          const response = await onGetExporProduct(
+                            item.name,
+                            'rapport',
+                            item.tab,
+                            item.date
+                          );
+                          // console.log('item',item);
                         });
                       }
                     }}
@@ -312,7 +406,10 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                         color="primary"
                         page={page}
                         total={pages}
-                        onChange={(page) => setPage(page)}
+                        onChange={(page) => {
+                          setPage(page);
+                          setIsChange(true);
+                        }}
                         className="sm:w-auto "
                         classNames={{
                           cursor: 'bg-[red]',
@@ -350,12 +447,54 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                           key={index}
                           className="border-t-1  h-14 border-white py-2 "
                         >
-                          <TableCell className=" w-full ">
+                          <TableCell className=" w-full px-0">
                             <>
                               <div
-                                className={`flex justify-between w-full ${row.id == isDisplay && 'mb-5'}`}
+                                className={`flex px-2 justify-between w-full text-lg ${row.id == isDisplay && 'mb-10 bg-[#585858]'}`}
                               >
-                                <div className="flex flex-row  items-center gap-3 flex-grow w-96">
+                                <div className="flex flex-row  items-center gap-3 flex-grow w-96 ">
+                                  <input
+                                    id={row.created_at}
+                                    type="checkbox"
+                                    className="h-5 w-5 cursor-pointer"
+                                    checked={all == row.template_name}
+                                    onClick={() => {
+                                      if (
+                                        all == '' ||
+                                        all != row.template_name
+                                      ) {
+                                        const array: any[] = [];
+                                        setAll(row.template_name);
+                                        SetnoCheck(0);
+                                        const arrayCheck =
+                                          props.multibleTable.map(
+                                            (item: any) => {
+                                              if (
+                                                item.template_name ==
+                                                row.template_name
+                                              ) {
+                                                array.push({
+                                                  id: item.id,
+                                                  tab: item.broadcasts
+                                                    ? item.broadcasts
+                                                    : [],
+                                                  name: item.template_name,
+                                                  date: item.created_at,
+                                                });
+                                              }
+                                            }
+                                          );
+                                        console.log('array', array);
+
+                                        setArrayImport([...array]);
+                                      } else {
+                                        setAll('');
+                                        setArrayImport([]);
+                                        setView(false);
+                                      }
+                                      // console.log('value',value);
+                                    }}
+                                  />
                                   <label
                                     className="text-bold text-small capitalize font-normal cursor-pointer "
                                     onClick={() => {}}
@@ -363,21 +502,131 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                     {row.template_name}
                                   </label>
                                 </div>
-
-                                <div className="flex items-center flex-grow px-5">
-                                  <p className="text-bold text-small capitalize font-normal">
-                                    {props.multibleTable.filter(
-                                      (item: any) =>
-                                        item.template_name == row.template_name
-                                    ).length + ' envoie(s)'}
-                                  </p>
+                                <div className="flex items-center flex-grow w-[160px] ">
+                                  dates
                                 </div>
 
-                                <div className="relative flex  items-center gap-2 flex-grow pl-5 justify-end pr-4">
+                                <div className="flex items-center flex-grow px-5 ">
+                                  <p className="text-bold text-small capitalize font-normal">
+                                    {
+                                      // let val:number=0
+                                      numberTotal(
+                                        'total',
+                                        props.multibleTable.filter(
+                                          (item: any) =>
+                                            item.template_name ==
+                                            row.template_name
+                                        ),
+                                        row.template_name
+                                      ) + ''
+                                    }
+                                  </p>
+                                </div>
+                                <div className="flex items-center flex-grow px-5 ">
+                                  <CircularProgress
+                                    size="lg"
+                                    label="Total success"
+                                    classNames={{
+                                      indicator: 'text-[green]',
+                                      // value: 'text-[green]',
+                                    }}
+                                    value={numberTotal(
+                                      'success',
+                                      props.multibleTable.filter(
+                                        (item: any) =>
+                                          item.template_name ==
+                                          row.template_name
+                                      ),
+                                      row.template_name
+                                    )}
+                                    // color="success"
+                                    showValueLabel={true}
+                                    maxValue={numberTotal(
+                                      'total',
+                                      props.multibleTable.filter(
+                                        (item: any) =>
+                                          item.template_name ==
+                                          row.template_name
+                                      ),
+                                      row.template_name
+                                    )}
+                                    formatOptions={{
+                                      style: 'decimal',
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex items-center flex-grow px-5 ">
+                                  <CircularProgress
+                                    size="lg"
+                                    label="Total read"
+                                    classNames={{
+                                      indicator: 'text-[blue]',
+                                      // value: 'text-[green]',
+                                    }}
+                                    value={numberTotal(
+                                      'read',
+                                      props.multibleTable.filter(
+                                        (item: any) =>
+                                          item.template_name ==
+                                          row.template_name
+                                      ),
+                                      row.template_name
+                                    )}
+                                    // color="success"
+                                    showValueLabel={true}
+                                    maxValue={numberTotal(
+                                      'total',
+                                      props.multibleTable.filter(
+                                        (item: any) =>
+                                          item.template_name ==
+                                          row.template_name
+                                      ),
+                                      row.template_name
+                                    )}
+                                    formatOptions={{
+                                      style: 'decimal',
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex items-center flex-grow px-5 ">
+                                  <CircularProgress
+                                    size="lg"
+                                    label="Total failed"
+                                    classNames={{
+                                      indicator: 'text-[orange]',
+                                      // value: 'text-[green]',
+                                    }}
+                                    value={numberTotal(
+                                      'failed',
+                                      props.multibleTable.filter(
+                                        (item: any) =>
+                                          item.template_name ==
+                                          row.template_name
+                                      ),
+                                      row.template_name
+                                    )}
+                                    // color="success"
+                                    showValueLabel={true}
+                                    maxValue={numberTotal(
+                                      'total',
+                                      props.multibleTable.filter(
+                                        (item: any) =>
+                                          item.template_name ==
+                                          row.template_name
+                                      ),
+                                      row.template_name
+                                    )}
+                                    formatOptions={{
+                                      style: 'decimal',
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="relative flex  items-center gap-2 flex-grow pl-5 justify-end pr-4  w-[218px]">
                                   <Image
                                     src={importIcon}
                                     alt=""
-                                    className={`h-5 w-5 ${isDisplay == row.id && 'rotate-180'} cursor-pointer`}
+                                    className={`h-6 w-6  ${isDisplay == row.id && 'rotate-180'} cursor-pointer`}
                                     onClick={() => {
                                       if (isDisplay == row.id) {
                                         setIsDisplay('');
@@ -388,24 +637,34 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                   />
                                 </div>
                               </div>
-                              <div className="w-full max-h-96 overflow-auto">
+                              <div className="w-full max-h-96 overflow-y-auto ">
                                 {isDisplay == row.id &&
-                                  props.multibleTable.map(
-                                    (item: any, index: number) => {
+                                  props.multibleTable
+                                    .reverse()
+                                    .map((item: any, index: number) => {
                                       if (
                                         item.template_name == row.template_name
                                       ) {
                                         return (
                                           <div
-                                            className="flex justify-between w-full "
+                                            className="flex justify-between w-full py-2 px-2"
                                             key={index}
                                           >
-                                            <div className="flex flex-row  items-center gap-3 flex-grow w-96">
+                                            <div className="flex flex-row  items-center gap-3 flex-grow w-96 ">
                                               <input
                                                 id={row.template_name}
+                                                checked={
+                                                  arrayImport.filter(
+                                                    (items1) =>
+                                                      items1.id == item?.id
+                                                  ).length > 0
+                                                    ? true
+                                                    : false
+                                                }
                                                 type="checkbox"
-                                                className="h-4 w-4 cursor-pointer"
+                                                className="h-5 w-5  cursor-pointer"
                                                 onClick={() => {
+                                                  SetnoCheck(0);
                                                   console.log(
                                                     'arrayImport',
                                                     arrayImport
@@ -432,6 +691,8 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                                         tab: item?.broadcasts
                                                           ? item?.broadcasts
                                                           : [],
+                                                        name: item.template_name,
+                                                        date: item.created_at,
                                                       });
                                                       setArrayImport([...add]);
                                                       console.log('add', add);
@@ -443,6 +704,8 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                                       tab: item?.broadcasts
                                                         ? item?.broadcasts
                                                         : [],
+                                                      name: item.template_name,
+                                                      date: item.created_at,
                                                     });
                                                     setArrayImport([...add]);
                                                     console.log('add');
@@ -486,7 +749,7 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                               </label>
                                             </div>
 
-                                            <div className="flex items-center flex-grow w-[160px]">
+                                            <div className="flex items-center flex-grow w-[160px] ">
                                               <p className="text-bold text-small capitalize font-normal">
                                                 {item.created_at
                                                   .split('T')[0]
@@ -510,16 +773,16 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                               </p>
                                             </div>
 
-                                            <div className="flex items-center flex-grow px-5">
+                                            <div className="flex items-center flex-grow px-5 ">
                                               <p className="text-bold text-small capitalize font-normal">
                                                 {item?.broadcasts
                                                   ? item?.broadcasts.length
                                                   : 0}{' '}
-                                                {'total'}
+                                                {'sent'}
                                               </p>
                                             </div>
 
-                                            <div className="flex items-center flex-grow px-5">
+                                            <div className="flex items-center flex-grow px-5 ">
                                               <CircularProgress
                                                 size="lg"
                                                 label="Success"
@@ -550,7 +813,7 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                               />
                                             </div>
 
-                                            <div className="flex items-center flex-grow px-5">
+                                            <div className="flex items-center flex-grow px-5 ">
                                               <CircularProgress
                                                 size="lg"
                                                 label="Read"
@@ -579,7 +842,7 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                               />
                                             </div>
 
-                                            <div className="flex items-center flex-grow px-5">
+                                            <div className="flex items-center flex-grow px-5 ">
                                               <CircularProgress
                                                 size="lg"
                                                 label="Failed"
@@ -608,7 +871,7 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                               />
                                             </div>
 
-                                            <div className="relative flex  items-center gap-2 flex-grow pl-5">
+                                            <div className="relative flex  items-center gap-2 flex-grow pl-5 ">
                                               <Button
                                                 onClick={async () => {
                                                   if (
@@ -635,7 +898,7 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                                               delete items.template_id;
                                                               delete items.id;
                                                               return {
-                                                                ...item,
+                                                                ...items,
                                                                 date:
                                                                   item.created_at
                                                                     .split(
@@ -788,8 +1051,7 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
                                           </div>
                                         );
                                       }
-                                    }
-                                  )}
+                                    })}
                               </div>
                             </>
                           </TableCell>
@@ -823,6 +1085,7 @@ const TableHistoryTemplete: React.FC<{multibleTable?:any, tableSession?: any; de
           datas={arrayImport}
         />
       )}
+      <div ref={editorRef}></div>
     </div>
   );
 };

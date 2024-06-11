@@ -80,7 +80,7 @@ function LayoutTypesNode({
                 <p className=" pt-1.5">Set as start node</p>
               </div>
             </DropdownItem>
-            <DropdownItem key="duplicate" onClick={() => duplicate!()}>
+            {/* <DropdownItem key="duplicate" onClick={() => duplicate!()}>
               <div className=" flex gap-2 place-items-center">
                 <Image
                   src={copyIcon}
@@ -89,7 +89,7 @@ function LayoutTypesNode({
                 />
                 <p className=" pt-1.5">Duplicate</p>
               </div>
-            </DropdownItem>
+            </DropdownItem> */}
           </DropdownMenu>
         </Dropdown>
       </div>

@@ -92,7 +92,7 @@ export class AuthService extends DataServiceUserService {
   async getPhoneNumberId(email: string) {
     try {
       const response = await this.get(
-        `${URL_CHAT_BOT}/credentials/user/emai/?email=${email}`
+        `${URL_CHAT_BOT}/credentials/user/email/?email=${email}`
       );
       return response;
     } catch (error) {

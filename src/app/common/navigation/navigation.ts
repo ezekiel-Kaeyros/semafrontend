@@ -32,7 +32,7 @@ export const navigation = [
   },
   {
     id: 3,
-    title: 'Bulk Messages',
+    title: 'Bulk Message',
     url: 'dashboard/bulk-messages',
     icon: bulkMessageIcon,
     selectedIcon: bulkMessageSelectedIcon,

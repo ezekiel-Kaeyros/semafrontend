@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { SenarioType } from './types';
 
 export const useSenarioCreate = create<SenarioType>((set) => ({
-  nameSenario: 'Scenario name',
+  nameSenario: '',
   nodesData: [],
   edgesData: [],
   keywords: [],
@@ -13,5 +13,12 @@ export const useSenarioCreate = create<SenarioType>((set) => ({
     set((state) => ({ ...state, nameSenario: nameSena })),
   setKeywordsSenario: (keysSena) =>
     set((state) => ({ ...state, keywords: keysSena })),
-  reset: () => set((state) => ({ ...state, nodesData: [], edgesData: [] })),
+  reset: () =>
+    set((state) => ({
+      ...state,
+      nodesData: [],
+      edgesData: [],
+      nameSenario: '',
+      keywords: [],
+    })),
 }));

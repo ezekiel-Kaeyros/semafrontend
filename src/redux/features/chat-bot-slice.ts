@@ -23,6 +23,11 @@ const initialState: ChatBotType = {
   message: {} as ChatConversationType,
   filterStatus: '',
   conversationStatus: '',
+  currentChatStatus: '',
+  arrayStatus: [],
+  selectedStatus: '',
+  companyId: '',
+  loadingStatus: false,
 };
 
 export const auth = createSlice({
@@ -105,6 +110,35 @@ export const auth = createSlice({
     setConversationStatus: (state, action) => {
       state.conversationStatus = action.payload;
     },
+
+    setCurrentChatStatus: (state, action) => {
+      state.currentChatStatus = action.payload;
+      // console.log(action.payload, 'payload');
+    },
+
+    setArrayStatus: (state, action) => {
+      const { id, status, color } = action.payload;
+      const dummyArr = state.arrayStatus;
+      if (dummyArr.length === 0) {
+        state.arrayStatus = [action.payload];
+      } else {
+        const check = dummyArr.filter((item) => item.id != id);
+        check.push(action.payload);
+        state.arrayStatus = check;
+      }
+    },
+
+    setSelectedStatus: (state, action) => {
+      state.selectedStatus = action.payload;
+    },
+
+    setCompanyId: (state, action) => {
+      state.companyId = action.payload;
+    },
+
+    setLoadingStatus: (state, action) => {
+      state.loadingStatus = action.payload;
+    },
   },
 });
 
@@ -124,6 +158,11 @@ export const {
   setConversationChats,
   setFilteredStatus,
   setConversationStatus,
+  setCurrentChatStatus,
+  setArrayStatus,
+  setSelectedStatus,
+  setCompanyId,
+  setLoadingStatus,
   // updateConversation,
 } = auth.actions;
 export default auth.reducer;

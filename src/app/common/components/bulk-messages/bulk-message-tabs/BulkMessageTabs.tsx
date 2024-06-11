@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BulkMessageTabType } from './bulk-message-tab/bulkMessageTab.d';
 import BulkMessageTab from './bulk-message-tab/BulkMessageTab';
 import { useBolkMessage } from '@/app/hooks/useBulkMessage';
@@ -24,21 +24,35 @@ const tabDataAll = [
 ];
 
 const BulkMessageTabs = () => {
-  const {
-    bulkMessageTabs,
-  }: { dispatch: any; bulkMessageTabs: BulkMessageTabTypeI[] } =
-    useBolkMessage();
+   const {
+     bulkMessageTabs,
+     tab1,
+   }: { dispatch: any; bulkMessageTabs: BulkMessageTabTypeI[]; tab1: string } =
+     useBolkMessage();
+  const [id, setId] = useState<any>(tab1);
+ 
 
+  useEffect(() => {
+    const id = localStorage.getItem('activeTab');
+    id && setId(id);
+     console.log('id',id);
+console.log(tab1);
+    
+  }, [tab1]);
   return (
     <div className="flex gap-4">
-      {bulkMessageTabs &&
-        bulkMessageTabs?.map((tab: BulkMessageTabType) => (
+      {tabDataAll &&
+        tabDataAll?.map((tab: BulkMessageTabType) => (
           <BulkMessageTab
             tabData={bulkMessageTabs}
             key={tab?.id}
             id={tab?.id}
             label={tab?.label}
-            selected={tab?.selected}
+            selected={
+              id == '4' && '1' == tab.id.toString()
+                ? true
+                : id == tab.id.toString()
+            }
           />
         ))}
     </div>

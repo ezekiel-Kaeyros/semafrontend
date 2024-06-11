@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { ChatItemProps } from './ChatItem.d';
@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { useDispatch } from 'react-redux';
+import { setCurrentChatStatus } from '@/redux/features/chat-bot-slice';
+import { Spinner } from '@nextui-org/react';
 
 const ChatItem: React.FC<ChatItemProps> = ({
   id,
@@ -18,15 +21,23 @@ const ChatItem: React.FC<ChatItemProps> = ({
   status,
   color,
   unread_msg,
+  selectedChatStatus,
+  handleSelected,
 }) => {
   const pathname = usePathname();
-  const { conversationStatus } = useSelector(
-    (state: RootState) => state.setConversationStatus
+  const { currentChatStatus } = useSelector(
+    (state: RootState) => state.setCurrentChatStatus
   );
+  const [currentStatus, setCurrentStatus] = useState(status);
   const currentId = pathname.split('/').pop();
+  const dispatch = useDispatch();
 
-  console.log(currentId, 'conversationStatus');
-  console.log(id, 'conversationStatusid');
+  const { loadingStatus } = useSelector(
+    (state: RootState) => state.setLoadingStatus
+  );
+
+  // console.log(currentId, 'conversationStatus909090');
+  // console.log(id, 'conversationStatusid');
 
   let backgroundCol = '';
   switch (status) {
@@ -50,19 +61,44 @@ const ChatItem: React.FC<ChatItemProps> = ({
 
   const calculatedBackgroundCol = () => {
     if (currentId === id) {
-      if (status === 'pending' || conversationStatus === 'pending') {
+      if (status === 'pending' || currentChatStatus === 'pending') {
         return '#915103';
-      } else if (status === 'open' || conversationStatus === 'open') {
+      } else if (status === 'open' || currentChatStatus === 'open') {
         return '#182881';
       }
     }
     return backgroundCol;
   };
 
+  // let chatStatus =
+  //   currentId !== id || conversationStatus == 'None'
+  //     ? (status && status) || 'open'
+  //     : conversationStatus !== 'None' && conversationStatus;
+
+  // console.log(status, 'statussss');
+
+  useEffect(() => {
+    if (currentId === id) {
+      if (status !== currentChatStatus) {
+        setCurrentStatus(status);
+      }
+      dispatch(setCurrentChatStatus(status));
+    }
+  }, [currentId, status]);
+
+  useEffect(() => {
+    // dispatch(setCurrentChatStatus(currentStatus));
+    // dispatch(setCurrentChatStatus(status));
+    if (currentId === id) {
+      setCurrentStatus(currentChatStatus);
+    }
+  }, []);
+
   return (
     <AnimateClick>
       <Link href={`/dashboard/chatbot/${id}`}>
         <div
+          onClick={handleSelected}
           className={`w-full py-4 px-8 ${pathname === `/en/dashboard/chatbot/${id}` && ' bg-mainDarkLight border-r-4 border-primary'} flex justify-between items-center hover:dark:bg-mainDarkLight ${pathname === `/fr/dashboard/chatbot/${id}` && ' bg-mainDarkLight border-r-4 border-primary'}`}
         >
           <div className="flex relative gap-x-4">
@@ -97,9 +133,14 @@ const ChatItem: React.FC<ChatItemProps> = ({
               style={{ background: `${calculatedBackgroundCol()}` }}
             >
               {/* {(status && status) || 'open'} */}
-              {currentId !== id || conversationStatus == 'None'
+              {/* {currentId !== id || conversationStatus == 'None'
                 ? (status && status) || 'open'
-                : conversationStatus !== 'None' && conversationStatus}
+                : conversationStatus !== 'None' && conversationStatus} */}
+              {loadingStatus && currentId == id ? (
+                <Spinner size="sm" />
+              ) : (
+                status
+              )}
               {/* {conversationStatus === 'None' && currentId === id
                 ? (status && status) || 'open'
                 : conversationStatus} */}

@@ -14,6 +14,12 @@ import setChats from './features/chat-bot-slice';
 import setFilteredStatus from './features/chat-bot-slice';
 import setCompanyChats from './features/chat-bot-slice';
 import setConversationStatus from './features/chat-bot-slice';
+import setCurrentChatStatus from './features/chat-bot-slice';
+import setArrayStatus from './features/chat-bot-slice';
+import setRealTimeStausArr from './features/chat-bot-slice';
+import setSelectedStatus from './features/chat-bot-slice';
+import setCompanyId from './features/chat-bot-slice';
+import setLoadingStatus from './features/chat-bot-slice';
 // import pointOfSaleViewReducer from './features/create-point-of-sale-slice';
 // import ChannelClusterReducer from './features/channel-cluster-slice';
 // import ActivityReducer from './features/activities-slice';
@@ -35,6 +41,11 @@ export const store = configureStore({
     setFilteredStatus,
     setCompanyChats,
     setConversationStatus,
+    setCurrentChatStatus,
+    setArrayStatus,
+    setSelectedStatus,
+    setCompanyId,
+    setLoadingStatus,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

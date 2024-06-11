@@ -33,6 +33,7 @@ const initialState: BulkMessageTabSilceType = {
   itemTableTemplete: {} as TypeItemTableSaveTemplete,
   tableTemplete: [],
   isRefresh: false,
+  isActive:'4'
 };
 
 export const bulkMessageReducer = createSlice({
@@ -52,7 +53,10 @@ export const bulkMessageReducer = createSlice({
       const { tabData, id } = action.payload;
       const updatedTabData = tabData?.map((tab: BulkMessageTabTypeI) => {
         if (tab?.id === id) {
-          return { ...tab, selected: true };
+            localStorage.setItem('activeTab', id);
+
+            return { ...tab, selected: true };
+        
         }
         return { ...tab, selected: false };
       });
@@ -74,6 +78,14 @@ export const bulkMessageReducer = createSlice({
     },
     refesh: (state, action) => {
       state.isRefresh=action.payload
+    },
+
+    setTab: (state, action) => {
+      console.log(action.payload,'++++++++++++++++++');
+      
+      state.isActive = action.payload
+            localStorage.setItem('activeTab', action.payload);
+      
     }
    
   },
@@ -85,6 +97,7 @@ export const {
   toggleHistory,
   changeTab,
   refesh,
+  setTab,
  
   addItemTableTemplete,
 } = bulkMessageReducer.actions;

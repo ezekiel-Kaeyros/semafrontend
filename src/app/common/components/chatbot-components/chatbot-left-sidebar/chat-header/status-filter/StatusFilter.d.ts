@@ -27,6 +27,7 @@ export type StatusFitlerProps = {
   selectedStatus: string;
   onStatusChange: (status: string) => void;
   conversation: ChatConversationType[];
+  realTimeStatusArr: any;
 };
 
 export const options = [

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { CarBoxCreate, CarBoxOptionAndCatalog } from '../components';
 import messageText from '../../../../../../../../public/icons/chatbot/message-text.svg';
 import messageTick from '../../../../../../../../public/icons/chatbot/message-tick.svg';
@@ -17,6 +17,7 @@ import { useSenarioCreate } from '@/zustand_store';
 import Image from 'next/image';
 import arrowIcon from '../../../../../../../../public/icons/chatbot/arrow-left.svg';
 import chatBotSelectedIcon from '../../../../../../../../public/left_side_bar_icons/headsetUser.png';
+import { isNullOrUndefined } from '@typegoose/typegoose/lib/internal/utils';
 
 interface SideBarProps {
   updateOrCreate: string | undefined;
@@ -26,6 +27,7 @@ function SideBar(props: SideBarProps) {
   const { setNameSenario, setKeywordsSenario } = useSenarioCreate();
   const nameSenario = useSenarioCreate((state) => state.nameSenario);
   const keywordsSenario = useSenarioCreate((state) => state.keywords);
+  const nameScenarioRef = useRef<HTMLInputElement>(null);
 
   function splitStringAndRemoveSpaces(input: string) {
     const parts = input.split(',');
@@ -35,6 +37,12 @@ function SideBar(props: SideBarProps) {
   function joinArrayToString(arr: string[]) {
     return arr.join(', ');
   }
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.target.blur(); // Retire le focus de l'input
+    }
+  };
   return (
     <>
       <div
@@ -69,6 +77,16 @@ function SideBar(props: SideBarProps) {
             type="text"
             className=" text-lg text-white bg-transparent  appearance-none focus:outline-none font-[visby-medium'] font-semibold"
             defaultValue={nameSenario}
+            ref={nameScenarioRef}
+            onKeyUp={(event) => {
+              const { key } = event;
+              console.log(key);
+              if (key === 'Enter') {
+                if (nameScenarioRef.current) {
+                  nameScenarioRef?.current?.blur();
+                }
+              }
+            }}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNameSenario(e.target.value)
             }

@@ -6,7 +6,9 @@ import EmptyChatboxMessageImg from '../../../../../../public/icons/chatbot/empty
 import {
   setChats,
   setCompanyChats,
+  setCompanyId,
   setConversationChats,
+  setCurrentChatStatus,
   toggleDisplayChatUI,
 } from '@/redux/features/chat-bot-slice';
 import { io } from 'socket.io-client';
@@ -35,15 +37,28 @@ import {
 import { input } from '@nextui-org/react';
 import { useNumberConversationsData } from '@/zustand_store/numberConversation-store';
 import { useGlobalContext } from '@/app/common/contex-provider';
+import { RootState } from '@/redux/store';
+import { useSelector } from 'react-redux';
 
 const ChatbotLeftSidebar = () => {
   const { setNb } = useNumberConversationsData();
   const dispatch = useDispatch();
   const [check, setChecked] = useState('');
   const [inputValue, setInputValue] = useState<string>('');
+  // const [selectedStatus, setSelectedStatus] = useState(
+  //   getStatusInCookie('All')
+  // );
+  const { selectedStatus } = useSelector(
+    (state: RootState) => state.setSelectedStatus
+  );
 
-  const [selectedStatus, setSelectedStatus] = useState(
-    getStatusInCookie('All')
+  const { arrayStatus } = useSelector(
+    (state: RootState) => state.setArrayStatus
+  );
+
+  // handling leftsidebard status individual
+  const [selectedChatStatus, setSelectedChatStatus] = useState<string | null>(
+    null
   );
 
   const { selectedScenarioLabel } = useGlobalContext();
@@ -52,11 +67,18 @@ const ChatbotLeftSidebar = () => {
   const handleStatusChange = (status: any) => {
     // setSelectedStatus();
     setStatusInCookie(status);
-    setSelectedStatus(getStatusInCookie(status));
+    // setSelectedStatus(getStatusInCookie(status));
     //  getStatusInCookie(options[0].status);
   };
 
   const handleSelected = (item: any) => {
+    setSelectedChatStatus(
+      // item.chat_messages[item.chat_messages.length - 1].chat_status
+      [...item.chat_messages].reverse()[0].chat_status
+    );
+    dispatch(
+      setCurrentChatStatus([...item.chat_messages].reverse()[0].chat_status)
+    );
     if (check != item.phone_number) {
       setChecked(item.phone_number);
       dispatch(toggleDisplayChatUI(true));
@@ -74,14 +96,13 @@ const ChatbotLeftSidebar = () => {
   const loadChatsByCompany = async () => {
     const hisEmail = getUserCookies().email;
 
-
     const response = await new ChatbotService().loadChatsByCompany({});
 
-
-    console.log(response.data, 'responseData');
+    // console.log(response, 'responseData');
     if (response) {
       dispatch(setConversationChats(response.data.conversations));
       dispatch(setCompanyChats(response.data));
+      dispatch(setCompanyId(response.data.phone_number_id));
       setNb(response.data.conversations.length);
       return response.data;
     } else {
@@ -92,10 +113,7 @@ const ChatbotLeftSidebar = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['chatsByCompany', token],
     queryFn: () => loadChatsByCompany(),
-    // refetchInterval: 5000,
   });
-
-  //  ;
 
   let newData: ChatConversationType[] | any =
     !(data instanceof Error) &&
@@ -122,8 +140,6 @@ const ChatbotLeftSidebar = () => {
   const filteredSelected =
     selectedStatus === 'All' || selectedStatus == '' ? newDataCloned : filtered;
 
-  console.log(selectedStatus, 'selectedStatus');
-
   // handleInput Change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputTagrgeValue = event.target.value;
@@ -139,7 +155,6 @@ const ChatbotLeftSidebar = () => {
 
   // const [filteredChatsConversation, setFilteredChatsConversation] =
   //   useState<ChatConversationType[]>([]);
-
 
   const InputFiltered = !inputValue ? filteredSelected : filteredChats;
 
@@ -186,6 +201,18 @@ const ChatbotLeftSidebar = () => {
     };
   }, []);
 
+  const getStatus = (item: any) => {
+    return arrayStatus.length > 0 &&
+      arrayStatus.filter((e) => e.id == item.phone_number).length > 0
+      ? arrayStatus.filter((e) => e.id == item.phone_number)[0].status
+      : [...item.chat_messages].reverse()[0].chat_status;
+  };
+
+  // const statuses = mappedConversations?.map((item: any) => getStatus(item));
+  const statuses = newDataCloned?.map((item: any) => getStatus(item));
+
+  // console.log(statuses, 'statuses');
+
   return (
     <div className="transition-all duration-300 ease-in-out delay-150 border-slate-600  dark:bg-mainDark border-r-[0.02px] h-full overflow-y-hidden">
       <div className="flex flex-col gap-[1.5rem] p-[1rem] h-auto">
@@ -195,6 +222,7 @@ const ChatbotLeftSidebar = () => {
             selectedStatus={selectedStatus}
             onStatusChange={handleStatusChange}
             onInputChange={handleInputChange}
+            realTimeStatusArr={statuses}
           />
         </div>
       </div>
@@ -219,7 +247,13 @@ const ChatbotLeftSidebar = () => {
               handleSelected={() => handleSelected(item)}
               key={key}
               number={item?.phone_number}
-              status={[...item.chat_messages].reverse()[0].chat_status}
+              status={
+                arrayStatus.length > 0 &&
+                arrayStatus.filter((e) => e.id == item.phone_number).length > 0
+                  ? arrayStatus.filter((e) => e.id == item.phone_number)[0]
+                      .status
+                  : [...item.chat_messages].reverse()[0].chat_status
+              }
               color={item.color}
               unread_msg={item.unread_msg}
               // message={item?.chat_messages
@@ -228,6 +262,7 @@ const ChatbotLeftSidebar = () => {
               date={formatDate(
                 item?.chat_messages.slice(-1)[0]?.date?.toString()
               )}
+              selectedChatStatus={selectedChatStatus}
             />
           );
         })}

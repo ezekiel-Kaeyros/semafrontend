@@ -39,7 +39,7 @@ function ImageNode({ id, deletefc, defaultValue, setContent }: ImageNodeType) {
   useEffect(() => {}, [filesState]);
   return (
     <div className="bg-mainDarkLight  w-full rounded-lg  nodrag p-2 nodrag ">
-      <div className=" flex justify-end w-full  pt-2 ">
+      <div className="  justify-end w-full  pt-2 hidden ">
         <Image
           src={trashIcon}
           alt=""
@@ -59,8 +59,7 @@ function ImageNode({ id, deletefc, defaultValue, setContent }: ImageNodeType) {
           alt=""
           width={32}
           height={32}
-          className={`${defaultValue === ' ' ? '' : ' w-full h-hull object-cover  p-1 rounded-2xl '} ${loading && 'hidden'} nodrag cursor-pointer`}
-          onClick={() => deletefc(id)}
+          className={`${defaultValue === ' ' ? '' : ' w-full h-hull object-cover  p-1 rounded-2xl '} ${loading && 'hidden'}  nodrag cursor-pointer`}
         />
       </div>
       <div className="">

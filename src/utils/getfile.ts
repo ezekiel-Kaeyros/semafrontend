@@ -2,7 +2,7 @@
 import path from 'path';
 import fs from 'fs';
 import { newSessionImport } from './newImportSession';
-
+// import fich from '../';
 export const getFileHandler = async (link: string) => {
   // ;
 
@@ -11,38 +11,48 @@ export const getFileHandler = async (link: string) => {
     '../../../../../../../public/Rectangle 247.jpg'
   );
   // ;
-
-  const fileNames: any[] = [];
-  let key: any[] = [];
-
-  function readFileAsync(directoryPath: string) {
-    return new Promise((resolve, reject) => {
-      fs.readFile(directoryPath, (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const newFile = new File([data], 'Rectangle 247.jpg', {
-          type: 'image/png',
-        });
-        // ;
-
-        resolve(newFile);
-      });
-    });
+fs.stat(directoryPath, (err, stats) => {
+  if (err) {
+    console.error(err);
+    return;
   }
-  // readFileAsync(directoryPath);
-  // readFileAsync(directoryPath);
-  const responseFile = await readFileAsync(directoryPath);
+  console.log(stats.isFile(),'file');
+  ; // true
+  stats.isDirectory(); // false
+  stats.isSymbolicLink(); // false
+  stats.size; // 1024000 //= 1MB
+});
+  // const fileNames: any[] = [];
+  // let key: any[] = [];
 
-  if (typeof responseFile === 'object' && responseFile instanceof File) {
-    const response = await newSessionImport(
-      responseFile?.size.toString(),
-      responseFile,
-      'https://bulkmessage.sem-a.com'
-    );
-    return response;
-  }
+  // function readFileAsync(directoryPath: string) {
+  //   return new Promise((resolve, reject) => {
+  //     fs.readFile(directoryPath, (err, data) => {
+  //       if (err) {
+  //         reject(err);
+  //         return;
+  //       }
+  //       const newFile = new File([data], 'Rectangle 247.jpg', {
+  //         type: 'image/png',
+  //       });
+  //       // ;
+
+  //       resolve(newFile);
+  //     });
+  //   });
+  // }
+  // // readFileAsync(directoryPath);
+  // // readFileAsync(directoryPath);
+  // const responseFile = await readFileAsync(directoryPath);
+
+  // if (typeof responseFile === 'object' && responseFile instanceof File) {
+  //   const response = await newSessionImport(
+  //     responseFile?.size.toString(),
+  //     responseFile,
+  //     'https://bulkmessage.sem-a.com'
+  //   );
+  //   return response;
+  // }
 
   // Utilisation de la fonction readFileAsync
   // readFileAsync(directoryPath)

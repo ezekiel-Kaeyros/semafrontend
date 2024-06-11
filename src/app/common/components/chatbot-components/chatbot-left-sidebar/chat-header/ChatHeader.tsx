@@ -18,6 +18,7 @@ interface ChatFilterProps {
   onStatusChange: (status: string) => void;
   onInputChange: any;
   conversation: any;
+  realTimeStatusArr: any;
 }
 
 const ChatHeader = ({
@@ -25,6 +26,7 @@ const ChatHeader = ({
   onStatusChange,
   onInputChange,
   conversation,
+  realTimeStatusArr,
 }: ChatFilterProps) => {
   const inputRef = useRef<HTMLInputElement>();
   const handleSelect = (id: string | number) => {
@@ -61,6 +63,7 @@ const ChatHeader = ({
           handleSelect={handleSelect}
           selectedStatus={selectedStatus}
           onStatusChange={onStatusChange}
+          realTimeStatusArr={realTimeStatusArr}
         />
       </div>
 

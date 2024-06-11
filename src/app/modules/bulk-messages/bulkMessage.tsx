@@ -15,6 +15,8 @@ import BulkMessageForm from '@/app/common/components/forms/bulk-message-form/Bul
 import ChoosePricing from '@/app/common/components/bulk-messages/payment-mode/choose-pricing/ChoosePricing';
 import { useQuery } from '@tanstack/react-query';
 import { AuthService } from '@/services';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 const BulkMessage = () => {
   // const { user }=useAuth()
@@ -26,6 +28,8 @@ const BulkMessage = () => {
   const handleOnClickOpenModal = () => {
     dispatch(toggleOpenModal(true));
   };
+  //  const router = useRouter();
+  //  const { tab } = router.query;
   //   useEffect(() => {
   //   user && // ;
 
@@ -57,22 +61,21 @@ const BulkMessage = () => {
             }}
             className="text-[32px]"
           >
-            Bulk Messages
+            Bulk Message
           </h1>
         </div>
-        <div className="flex place-items-center justify-between ">
+        <div className="flex items-center justify-between  gap-2">
           <div className="sm:text-sm text-xs">
             <BulkMessageTabs />
           </div>
           <div>
-            <Button
-              leftIcon={bulk_messageIcon}
-              iconSize={30}
+            <button
               onClick={() => handleOnClickOpenModal()}
-              className="sm:text-base text-xs flex justify-between items-center"
+              className="sm:text-base text-xs flex md:gap-3  sm:justify-between justify-center items-center  sm:px-4 px-2 py-2 rounded-full bg-primary font-semibold"
             >
-              Create Template
-            </Button>
+              <Image src={bulk_messageIcon} alt="" className="md:h-8 h-5 md:w-8 w-5" />
+              <span>Create Template</span>
+            </button>
           </div>
         </div>
         <div className="p-[1rem] h-full ">

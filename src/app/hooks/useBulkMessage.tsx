@@ -36,7 +36,7 @@ export const useBolkMessage = () => {
   const TableTemplete: TypeItemTableSaveTemplete[] = useSelector(
     (state: RootState) => state.BulkMessageSlice.tableTemplete
   );
- 
+ const tab1:string=useSelector((state:RootState)=>state.BulkMessageSlice.isActive)
 
 
   const dispatch = useDispatch<AppDispatch>();
@@ -50,5 +50,6 @@ export const useBolkMessage = () => {
  isRefresh,
     itemTableTemplete,
     TableTemplete,
+    tab1
   };
 };

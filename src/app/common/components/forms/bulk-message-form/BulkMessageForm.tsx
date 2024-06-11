@@ -68,7 +68,7 @@ const BulkMessageForm: React.FC<{ modalHandler?: any }> = (props) => {
     if (editorRef.current) {
       editorRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    // getFileHandler('../../../../../../public');
+    getFileHandler('../../../../../../public');
   }, []);
   useEffect(() => {
     if (

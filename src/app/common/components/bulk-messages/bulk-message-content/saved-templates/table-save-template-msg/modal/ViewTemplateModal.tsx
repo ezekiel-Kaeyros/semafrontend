@@ -64,7 +64,7 @@ const ViewTemplateModal: React.FC<{
     >
       <ModalContent>
         <>
-          <ModalBody className="text-black p-10">
+          <ModalBody className="text-black p-10 w-full overflow-y-scroll no-scrollbar max-h-[78vh] ">
             {/* <p
               onClick={() => {
                 showHandler();
@@ -73,16 +73,19 @@ const ViewTemplateModal: React.FC<{
               x
             </p> */}
             <div className="w-full h-full border" ref={refDiv}>
-              {data?.length == 0 ? (
+              {/* {data?.length == 0 ? ( */}
+              {data.length == 0 && (
                 <PreviewComp
                   ImgTemplate={img}
                   // ImgTemplate={photographIcon}
                   textTemplate={body}
                   tagline={footer}
                 />
-              ) : (
+              )}
+              {/* ) : ( */}
+              {data.length > 0 &&
                 data.map((item) => (
-                  <div key={item.name} className='h-screen'>
+                  <div key={item.name} className="h-screen">
                     <p>{item.name}</p>{' '}
                     <PreviewComp
                       ImgTemplate={item.img}
@@ -91,8 +94,9 @@ const ViewTemplateModal: React.FC<{
                       tagline={item.footer}
                     />
                   </div>
-                ))
-              )}
+                ))}
+              {/* ))
+              )} */}
             </div>
           </ModalBody>
         </>

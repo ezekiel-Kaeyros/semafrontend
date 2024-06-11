@@ -52,18 +52,33 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
     });
   }
   function addImage() {
-    setContent((cont) => {
-      let newTable: NodeDataType[] = [];
-      let content = cont.forEach((cnt) => {
-        if (cnt.id === data?.id) {
-          return newTable.push({ ...cnt, link: ' ' });
-        } else {
-          return newTable.push(cnt);
-        }
+    if (content[0]) {
+      setContent((cont) => {
+        let newTable: NodeDataType[] = [];
+        let content = cont.forEach((cnt) => {
+          if (cnt.id === data?.id) {
+            return newTable.push({ ...cnt, link: ' ' });
+          } else {
+            return newTable.push(cnt);
+          }
+        });
+        return newTable;
       });
-
-      return newTable;
-    });
+    } else {
+      setContent([
+        ...content,
+        {
+          id: data?.id,
+          type: 'question',
+          link: ' ',
+        },
+      ]);
+      setAddNodesData!({
+        id: data?.id,
+        type: 'question',
+        link: ' ',
+      });
+    }
   }
   console.log(content[0]);
 
@@ -180,12 +195,14 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
                 if (item.type === 'question') {
                   return (
                     <div key={index} className=" flex flex-col gap-2">
-                      <AddTextNode
-                        id={data.id}
-                        deletefc={deleteItemContent}
-                        setContent={updateValueContent}
-                        defaultValue={item.value}
-                      />
+                      {item?.value !== undefined && (
+                        <AddTextNode
+                          id={data.id}
+                          deletefc={deleteItemContent}
+                          setContent={updateValueContent}
+                          defaultValue={item.value}
+                        />
+                      )}
                       {item.link !== undefined && (
                         <ImageNode
                           id={data.id}
@@ -209,17 +226,19 @@ function QuestionTypeNode({ data, isConnectable }: QuestionTypeNodeType) {
             /> */}
           </div>
           <div className=" w-full flex flex-wrap  gap-x-1 gap-y-2">
-            {content.length === 0 && (
-              <ButtonNode title="Add text" fc={addTextNode} />
-            )}
-            {content[0]?.link === undefined && (
-              // <ButtonNode
-              //   disabled={content.length !== 1}
-              //   title="Stock answer var"
-              //   fc={addStockAnswerNode}
-              // />
-              <ButtonNode title="Image" fc={addImage} />
-            )}
+            {content[0]?.value === undefined &&
+              content[0]?.link === undefined && (
+                <ButtonNode title="Add text" fc={addTextNode} />
+              )}
+            {content[0]?.link === undefined &&
+              content[0]?.value === undefined && (
+                // <ButtonNode
+                //   disabled={content.length !== 1}
+                //   title="Stock answer var"
+                //   fc={addStockAnswerNode}
+                // />
+                <ButtonNode title="Image" fc={addImage} />
+              )}
             {/* <ButtonNode title="Audio" fc={addAudioNode} />
             <ButtonNode title="video" fc={addVideoNode} />
             <ButtonNode title="Document" fc={addDocumentNode} />

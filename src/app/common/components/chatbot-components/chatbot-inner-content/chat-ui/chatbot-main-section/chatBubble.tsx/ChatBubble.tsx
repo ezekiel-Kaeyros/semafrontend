@@ -13,7 +13,6 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   name,
   isAdmin,
 }) => {
-  console.log(message, 'message');
   const [imageUrl, setImageUrl] = useState('');
   const urlPattern =
     /^http:\/\/back\.chatbot\.sem-a\.com\/uploads\/file-\d{13}-\d{9}\.(jpg|jpeg|png)$/;
@@ -48,7 +47,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
           className=" rounded-xl backdrop-filter backdrop-blur-lg bg-slate-700 bg-opacity-10  px-4 py-2
  mb-2"
         >
-          {message && <>{message}</>}
+          {/* {message && <>{message}</>} */}
 
           {imageUrl ? (
             <Image
@@ -60,7 +59,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
               // layout="responsive"
             />
           ) : (
-            <p>{message}</p>
+            message && <>{message}</>
           )}
         </div>
         <div

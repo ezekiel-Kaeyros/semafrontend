@@ -52,6 +52,8 @@ export function middleware(request: NextRequest) {
   const publicPath = [
     `/${locale}`,
     `/${locale}/login`,
+    // `/${locale}/dashboard/chatbot`,
+    // `/${locale}/dashboard/bulk-messages`,
     `/${locale}/signup`,
     `/${locale}/verify-code`,
   ];

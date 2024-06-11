@@ -24,7 +24,7 @@ import {
   ModalBody,
   ModalContent,
 } from '@nextui-org/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // import TransactionConfirm from '@/app/common/components/transactionSending/transaction-confirm/TransactionConfirm';
 
 import React from 'react';
@@ -42,8 +42,9 @@ import { SearchIcon } from '@/app/common/ui/table/SearchIcon';
 import { deleteTemplete } from './actionDeleteTemplete';
 import ViewTemplateModal from './modal/ViewTemplateModal';
 import EditTemplateModal from './modal/EditTemplateModal';
+import { prop } from '@typegoose/typegoose';
 
-const columns = ['Template Name', 'Status', 'Language', 'action'];
+const columns = ['Template Name', 'Status', 'Language', 'actions'];
 
 const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
   const [isShow, setIsShow] = useState(false);
@@ -60,8 +61,10 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
   const [exp, setExp] = useState(false);
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isChange, setIsChange] = useState(false);
   const [isConfirm, setIsConfirm] = useState(false);
   const [nameTemplateState, setNameTemplateState] = useState('');
+  const [info, setInfo] = useState('');
   const { TableTemplete } = useBolkMessage();
   const [detail, setdetail] = useState({
     img: '',
@@ -75,6 +78,7 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
   const [filterValue, setFilterValue] = useState('');
   const hasSearchFilter = Boolean(filterValue);
   // ;
+   const editorRef = useRef<null | HTMLDivElement>(null);
 
   const text =
     ' All templates must adhere to WhatsApp’s Template Message Guidelines. Click here to read';
@@ -129,6 +133,7 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
+      // setIsChange(true)
     } else {
       setFilterValue('');
     }
@@ -147,9 +152,29 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
 
   //   setShowModalTransfer((showModalTransfer) => !showModalTransfer);
   // };
-  useEffect(() => {
-    console.log('arrayImport', arrayImport);
-  }, [arrayImport]);
+  
+
+   // ;
+
+  
+   useEffect(() => {
+     console.log('sortedItems', sortedItems);
+     console.log('filterItems', filteredItems);
+     console.log('data', props.data);
+     console.log('arrayImport', arrayImport);
+     console.log('items', items);
+   }, [arrayImport]);
+  
+  
+  
+   useEffect(() => {
+   if (isChange) {
+      if (editorRef.current) {
+        editorRef.current.scrollIntoView();
+      }
+   }
+     // getFileHandler('../../../../../../public');
+   }, [isChange,page]);
   return (
     <div>
       {props.data.length > 0 ? (
@@ -157,34 +182,8 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
           <Toaster position="top-center" reverseOrder={false} />
           <div className="w-full">
             Sorted By
-            <div className="flex w-full justify-between ">
+            <div className="flex w-full  gap-5 ">
               <div className="flex gap-5">
-                <Dropdown>
-                  <DropdownTrigger className="hidden sm:flex focus:dark:bg-cardDark w-auto justify-between h-full">
-                    <Button
-                      className=""
-                      endContent={<ChevronDownIcon className="text-sm " />}
-                      variant="flat"
-                    >
-                      latest...
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    disallowEmptySelection
-                    aria-label="Table Columns"
-                    closeOnSelect={false}
-                    // selectedKeys={visibleColumns}
-                    selectionMode="multiple"
-                    // onSelectionChange={setVisibleColumns}
-                  >
-                    {columns.map((column, index) => (
-                      <DropdownItem key={index} className="capitalize">
-                        {capitalize(column)}
-                      </DropdownItem>
-                    ))}
-                  </DropdownMenu>
-                </Dropdown>
-
                 <Input
                   isClearable
                   classNames={{
@@ -212,11 +211,12 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                     className={`${arrayImport.length == 0 ? 'opacity-40' : 'opacity-100'} border`}
                     // className='text-[12px] h-[50px]'
                     onClick={() => {
-                         setIsShowDetail((isShowDetail) => !isShowDetail);
-                         setExp(true);
+                      setIsShowDetail((isShowDetail) => !isShowDetail);
+                      setExp(true);
                     }}
                   >
-                    Export
+                    {/* Export */}
+                    {arrayImport.length}
                   </ButtonI>
                 </div>
               </div>
@@ -231,7 +231,7 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                   aria-label="Users table"
                   bottomContent={
                     <div className="md:flex block md:m-0 m-auto w-auto md:w-full justify-between">
-                      <div className="flex text-black md:mb-0 mb-3 ">
+                      {/* <div className="flex text-black md:mb-0 mb-3 ">
                         <label className="mr-2 mt-2 font-[VisbyCF-light]">
                           show :{' '}
                         </label>
@@ -244,13 +244,13 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                           className="rounded-xl font-[VisbyCF-light] pr-0 text-sm border"
                         >
                           <option key={pageTable}>{pageTable}</option>
-                          {/* {selectOption.map((items) => {
+                          {selectOption.map((items) => {
                             if (items !== pageTable) {
                               return <option key={items}>{items}</option>;
                             }
-                          })} */}
+                          })}
                         </select>
-                      </div>
+                      </div> */}
 
                       <Pagination
                         isCompact
@@ -259,7 +259,10 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                         color="primary"
                         page={page}
                         total={pages}
-                        onChange={(page) => setPage(page)}
+                        onChange={(page) => {
+                          setPage(page);
+                          setIsChange(true);
+                        }}
                         className="sm:w-auto "
                         classNames={{
                           cursor: 'bg-[red]',
@@ -271,9 +274,11 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                   sortDescriptor={sortDescriptor}
                   onSortChange={setSortDescriptor}
                   classNames={{
-                    wrapper: ' bg-[#2B2E31] px-0 py-0 ',
-                    thead: 'bg-[#2B2E31] text-red-800 rounded-none ',
+                    wrapper: ' bg-[#2B2E31] px-0 py-0 font-[serif]',
+                    thead: 'bg-[#2B2E31] text-red-800 rounded-none xl:text-xl',
+                    tbody: 'w-full',
                   }}
+                  className=""
                 >
                   <TableHeader
                     columns={columns}
@@ -282,7 +287,7 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                     {columns.map((row, index) => {
                       return (
                         <TableColumn
-                          className="text-left h-14 bg-[#2B2E31] text-[#CFD4D8] font-semibold"
+                          className="text-left h-14 bg-[#2B2E31] text-[#CFD4D8] font-semibold xl:text-xl "
                           key={index}
                         >
                           {row}
@@ -291,17 +296,24 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                     })}
                   </TableHeader>
                   <TableBody items={sortedItems}>
-                    {sortedItems.reverse().map((row, index) => {
+                    {sortedItems.map((row, index) => {
                       return (
                         <TableRow
                           key={index}
-                          className="border-t-1  h-14 border-white py-2"
+                          className="border-t-1  h-14 border-white py-2 xl:text-lg w-full"
                         >
-                          <TableCell className="text-left py-4 flex itms-center gap-2">
+                          <TableCell className="text-left py-4 flex items-center gap-2">
                             <input
+                              checked={
+                                arrayImport.filter(
+                                  (item) => item.name == row.name
+                                ).length > 0
+                                  ? true
+                                  : false
+                              }
                               id={row.name}
                               type="checkbox"
-                              className="h-4 w-4 cursor-pointer"
+                              className="xl:h-5 xl:w-5 h-4 w-4 cursor-pointer"
                               onClick={() => {
                                 const value = arrayImport.filter(
                                   (item) => item.name == row.name
@@ -330,16 +342,16 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                             />
                             <label
                               htmlFor={row.name}
-                              className=" cursor-pointer"
+                              className=" cursor-pointer xl:text-lg"
                             >
                               {' '}
                               {row.name}
                             </label>
                           </TableCell>
 
-                          <TableCell className="text-left py-4">
+                          <TableCell className="text-left py-4 xl:w-96 lg:w-48">
                             <span
-                              className={` py-2 rounded-full text-xs font-bold  bg-white ${
+                              className={` py-2 rounded-full xl:text-base md:text-sm text-xs font-bold   bg-white ${
                                 row.status === 'APPROVED' &&
                                 'bg-respon text-[#04773B] px-3 py-3'
                               }
@@ -356,11 +368,10 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                               {row.status}
                             </span>
                           </TableCell>
-                          <TableCell className="text-left py-4">
+                          <TableCell className="text-left py-4 xl:text-lg xl:w-96 lg:w-48">
                             {row?.language}
                           </TableCell>
-                          <TableCell className="relative flex  items-center gap-2">
-                            {' '}
+                          <TableCell className="relative flex  items-center xl:gap-5 gap-2 ">
                             <Image
                               src={EditIcon}
                               alt="Icon edit"
@@ -384,6 +395,8 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                               src={InformationIcon}
                               alt="Icon info"
                               onClick={() => {
+                                setArrayImport([]);
+
                                 setdetail({
                                   img: row.image_url,
                                   body: row.body_text,
@@ -397,8 +410,14 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                                 );
                               }}
                             />
-                            <Button
-                              className="flex items-center px-1 justify-center text-sm bg-[red] text-white gap-3"
+                            {/* <Button
+                              onMouseEnter={() => {
+                                alert('ok');
+                              }}
+                              // onMouseLeave={() => {
+                              //   alert('ok');
+                              // }}
+                              className="flex items-center -px-3 justify-center text-sm bg-[red] text-white"
                               onClick={async () => {
                                 setdetail({
                                   img: row.image_url,
@@ -412,15 +431,73 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
                                   (isShowDetail) => !isShowDetail
                                 );
                                 setExp(true);
+                                setArrayImport([]);
+                              }}
+                            > */}
+                            <Image
+                              src={exportIcon}
+                              alt=""
+                              className="h-8 w-8  bg-[red] border-[red] rounded-lg p-1 sm:hidden block"
+                              onMouseEnter={() => {
+                                setInfo(row.name);
+                              }}
+                              onMouseLeave={() => {
+                                setInfo('');
+                              }}
+                              onClick={async () => {
+                                setdetail({
+                                  img: row.image_url,
+                                  body: row.body_text,
+                                  footer: row.footer_text,
+                                  id: row.template_id,
+                                  name: row.name,
+                                  url: row.image_url,
+                                });
+                                setIsShowDetail(
+                                  (isShowDetail) => !isShowDetail
+                                );
+                                setExp(true);
+                                setArrayImport([]);
+                              }}
+                            />
+                            <span
+                              className="h-8 w-8  cursor-pointer relative  items-center justify-center bg-[red] border-[red] rounded-lg sm:flex hidden"
+                              onMouseEnter={() => {
+                                setInfo(row.name);
+                              }}
+                              onMouseLeave={() => {
+                                setInfo('');
+                              }}
+                              onClick={async () => {
+                                setdetail({
+                                  img: row.image_url,
+                                  body: row.body_text,
+                                  footer: row.footer_text,
+                                  id: row.template_id,
+                                  name: row.name,
+                                  url: row.image_url,
+                                });
+                                setIsShowDetail(
+                                  (isShowDetail) => !isShowDetail
+                                );
+                                setExp(true);
+                                setArrayImport([]);
                               }}
                             >
                               <Image
                                 src={exportIcon}
                                 alt=""
-                                className="h-5 w-5"
+                                width={20}
+                                height={20}
+                                // className="h-5 w-5  "
                               />
-                              <span>pdf</span>
-                            </Button>
+                              <div
+                                className={`absolute h-8 w-8 z-[100] top-5 -right-8 p-1 bg-white text-black flex items-center justify-center text-sm rounded-lg ${info == row.name ? 'block' : 'hidden'}`}
+                              >
+                                pdf
+                              </div>
+                            </span>
+                            {/* </Button> */}
                             <Image
                               src={DeleteIcon}
                               className="cursor-pointer"
@@ -555,6 +632,7 @@ const TableSaveTemplete: React.FC<{ data?: any; delete?: any }> = (props) => {
           </>
         </ModalContent>
       </Modal>
+      <div ref={editorRef}></div>
     </div>
   );
 };

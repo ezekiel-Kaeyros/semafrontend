@@ -10,7 +10,7 @@ import DataService from '@/services/dataService';
 import toast from 'react-hot-toast';
 import { GetSenario } from '@/services';
 import { getUserCookies } from '@/cookies/cookies';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 interface ButtonSaveProps {
   edges: Edge[];
   updateOrCreate: string | undefined;
@@ -18,11 +18,11 @@ interface ButtonSaveProps {
 }
 
 function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
-  const { setNameSenario, nameSenario, setKeywordsSenario } =
+  const { setNameSenario, nameSenario, setKeywordsSenario, reset } =
     useSenarioCreate();
   const nodesData = useSenarioCreate((state) => state.nodesData);
   const keywordsSenario = useSenarioCreate((state) => state.keywords);
-  // const { push } = useRouter();
+  const { push } = useRouter();
   function findStartNode(edges: Edge[]) {
     const targetNodes = new Set(edges.map((edge: Edge) => edge.target));
     for (const edge of edges) {
@@ -74,6 +74,18 @@ function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
 
     const nodeStart = findStartNode(edges);
     if (nodeStart) {
+      if (keywordsSenario?.length === 0) {
+        toast.error(" You don't know any keywords!", {
+          duration: 5000,
+        });
+        return;
+      }
+      if (nameSenario === '') {
+        toast.error(' You have not entered the name of your scenario !!', {
+          duration: 5000,
+        });
+        return;
+      }
       const currentModel: MainModel = traverseEdges(nodeStart, true);
       let desc: MainModel[] = [];
       if (updateOrCreate && cacheUpdate) {
@@ -107,6 +119,8 @@ function ButtonSave({ edges, updateOrCreate, cacheUpdate }: ButtonSaveProps) {
         const response = await new SenarioService().create(data);
         if (response?.status === 201) {
           toast.success('Votre scénario a été sauvegardé avec succès.');
+          reset!();
+          push('/dashboard/scenarios');
         } else {
           const pons: any = response;
           console.log(response);
